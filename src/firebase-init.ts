@@ -3,6 +3,8 @@ import "firebase/auth";
 import "firebase/firestore";
 import "firebase/analytics";
 
+// Fonction d'initialisation de Firebase
+// Documentation : https://firebase.google.com/docs
 export function firebaseInit() {
   // Configuration Firebase de "Ma Partothèque Web App"
   // Pour Firebase JS SDK v7.20.0 et plus récent, measurementId est optionnel.
