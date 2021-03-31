@@ -7,7 +7,6 @@ import "firebase/auth";
 import { firebaseInit } from "@/firebase-init";
 import { firestorePlugin } from "vuefire";
 import VueMq from "vue-mq";
-// import VueScreen from "vue-screen";
 
 Vue.config.productionTip = false;
 
@@ -19,10 +18,10 @@ firebaseInit();
 // Documentation : https://vuefire.vuejs.org/
 Vue.use(firestorePlugin);
 
-// Initialisation de VueScreen avec des breakpoints personnalisés
+// Initialisation de Vue MQ avec des breakpoints personnalisés
 // L'objet dans lequel sont stockés les breakpoints contiennent leur
 // nom et la largeur maximale de l'écran pour qu'ils soient appliqués.
-// Documentation : https://github.com/reegodev/vue-screen/tree/v1.5.3#vuescreen
+// Documentation : https://github.com/AlexandreBonaventure/vue-mq
 Vue.use(VueMq, {
   breakpoints: {
     xs: 600, // xs < 600px : Petits à grands téléphones

@@ -5,6 +5,7 @@
         nomIconeNav="menu"
         styleIconeNav="color: blue"
         couleurRippleIconeNav="rgba(255, 0, 0, 0.7)"
+        centrerTitrePetitsEcran
       >
         <template v-slot:titre>Ma Partothèque</template>
         <template v-slot:menu-nav>
@@ -36,9 +37,11 @@ export default Vue.extend({
   font-family: "Times New Roman", Times, serif;
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
 }
+
 .ml,
 .mx {
   &-0 {
