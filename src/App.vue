@@ -3,9 +3,10 @@
     <nav>
       <ToolBar
         nomIconeNav="menu"
-        styleIconeNav="color: blue"
-        couleurRippleIconeNav="rgba(255, 0, 0, 0.7)"
+        styleIconeNav="color: white"
+        couleurRippleIconeNav="#8765ef"
         centrerTitrePetitsEcran
+        chemin_avatar="https://toccatech.com/media/avatars/Philippe_Google_carre.jpg"
       >
         <template v-slot:titre>Ma Partothèque</template>
         <template v-slot:menu-nav>
@@ -33,8 +34,16 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+// Import de la famille EB Garamond avec les styles suivants :
+//    - Regular 400
+//    - Regular 400 italic
+//    - Bold 700
+//    - Bold 700 italic
+// Lien vers ces styles sur Google Fonts : https://fonts.google.com/share?selection.family=EB%20Garamond:ital,wght@0,400;0,700;1,400;1,700
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
 * {
-  font-family: "Times New Roman", Times, serif;
+  font-family: "EB Garamond", serif;
   box-sizing: border-box;
 }
 

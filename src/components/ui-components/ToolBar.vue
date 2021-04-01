@@ -25,17 +25,24 @@
       <ul class="menu-nav" v-if="['md', 'lg', 'xl'].includes($mq)">
         <slot name="menu-nav"></slot>
       </ul>
+      <div
+        class="avatar-container"
+        v-if="chemin_avatar && ['md', 'lg', 'xl'].includes($mq)"
+      >
+        <img :src="chemin_avatar" alt="Avatar de l'utilisateur" />
+      </div>
     </Container>
   </div>
 </template>
 
 <style lang="scss">
 .toolbar {
-  background-color: #ddd;
+  background-color: #b388ff;
+  color: white;
 
   .container {
     display: flex;
-    height: 50px;
+    height: 60px;
   }
 
   .presentation {
@@ -89,11 +96,28 @@
       padding: 0 15px;
       text-decoration: none;
       text-align: center;
-      color: black;
+      color: white;
       transition: background-color 400ms;
+
       &:hover {
-        background-color: deepskyblue;
+        background-color: #8765ef;
       }
+    }
+  }
+
+  .avatar-container {
+    height: 100%;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+
+    img {
+      height: 85%;
+      width: auto;
+      border-radius: 50%;
+      padding: 2px;
+      border: 2px solid #33c9ff;
+      cursor: pointer;
     }
   }
 }
@@ -114,6 +138,7 @@ export default Vue.extend({
     styleIconeNav: String,
     couleurRippleIconeNav: String,
     centrerTitrePetitsEcran: Boolean,
+    chemin_avatar: String,
   },
 });
 </script>

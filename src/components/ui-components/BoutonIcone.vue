@@ -22,7 +22,7 @@
     transition: background-color 300ms;
 
     &:hover {
-      background-color: rgb(239, 239, 239);
+      background-color: #c19eff;
     }
   }
 
