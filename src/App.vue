@@ -48,6 +48,9 @@ export default Vue.extend({
 * {
   font-family: "EB Garamond", serif;
   box-sizing: border-box;
+  /* Enlever l'arrière-plan bleu lors d'un clic sur un bouton sur mobiles : */
+  /* https://stackoverflow.com/questions/45049873/how-to-remove-the-blue-background-of-button-on-mobile */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
