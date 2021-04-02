@@ -34,13 +34,16 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-// Import de la famille EB Garamond avec les styles suivants :
-//    - Regular 400
-//    - Regular 400 italic
-//    - Bold 700
-//    - Bold 700 italic
-// Lien vers ces styles sur Google Fonts : https://fonts.google.com/share?selection.family=EB%20Garamond:ital,wght@0,400;0,700;1,400;1,700
-@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+/* Import de la famille EB Garamond (grâce au paquet npm fontsource) avec les styles suivants : */
+/*    - Regular 400 */
+/*    - Regular 400 italic */
+/*    - Bold 700 */
+/*    - Bold 700 italic */
+/* Lien vers le dépôt sur GitHub : https://github.com/fontsource/fontsource/tree/master/packages/eb-garamond */
+@import "~@fontsource/eb-garamond/400.css"; /* Regular 400 */
+/* @import "~@fontsource/eb-garamond/400-italic.css"; */ /* Regular 400 italic */
+@import "~@fontsource/eb-garamond/700.css"; /* Bold 700 */
+/* @import "~@fontsource/eb-garamond/700-italic.css"; */ /* Bold 700 italic */
 
 * {
   font-family: "EB Garamond", serif;
