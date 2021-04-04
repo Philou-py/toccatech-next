@@ -15,7 +15,7 @@ button.btn {
   border: 0;
   color: white;
   border-radius: 0.25rem;
-  /* box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3); */
+  // box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
   cursor: pointer;
   overflow: hidden;
   max-width: 100%;
@@ -53,16 +53,16 @@ export default Vue.extend({
   },
   methods: {
     createRipple(event: MouseEvent) {
-      const button = event.currentTarget as HTMLButtonElement;
-      const circle = document.createElement("span");
-      const diameter = Math.max(button.clientWidth, button.clientHeight);
-      const radius = diameter / 2;
-      circle.style.width = circle.style.height = `${diameter}px`;
-      circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
-      circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-      circle.style.backgroundColor = this.couleurRipple;
-      circle.classList.add("ripple");
-      button.appendChild(circle);
+      const bouton = event.currentTarget as HTMLButtonElement;
+      const cercle = document.createElement("span");
+      const diamètre = Math.max(bouton.clientWidth, bouton.clientHeight);
+      const rayon = diamètre / 2;
+      cercle.style.width = cercle.style.height = `${diamètre}px`;
+      cercle.style.left = `${event.clientX - bouton.offsetLeft - rayon}px`;
+      cercle.style.top = `${event.clientY - bouton.offsetTop - rayon}px`;
+      cercle.style.backgroundColor = this.couleurRipple;
+      cercle.classList.add("ripple");
+      bouton.appendChild(cercle);
     },
   },
 });
