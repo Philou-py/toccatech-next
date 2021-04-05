@@ -1,31 +1,41 @@
 <template>
-  <button @mousedown="createRipple" class="btn" :style="couleurBouton">
-    <slot></slot>
+  <button @mousedown="createRipple" class="btn" :style="variablesCSS" :class="{ texte: texte }">
+    <div class="texte-bouton">
+      <slot></slot>
+    </div>
   </button>
 </template>
 
 <style lang="scss">
 button.btn {
-  background-color: teal;
-  padding: 0 28px;
+  display: inline-block;
+  background-color: var(--couleur);
+  padding: 0 16px;
   font-size: 15px;
-  line-height: 54px;
   text-transform: uppercase;
   outline: none;
   border: 0;
   color: white;
   border-radius: 0.25rem;
-  // box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
   cursor: pointer;
   overflow: hidden;
-  max-width: 100%;
+  height: 36px;
+  min-width: 64px;
   position: relative;
-  border: 2px solid teal;
+  /* border: 2px solid teal; */
   transition: all 300ms;
-}
 
-button.btn:hover {
-  box-shadow: 0 0 0 1px white inset;
+  /* &:hover { */
+  /*   box-shadow: 0 0 0 1px white inset; */
+  /* } */
+
+  &.texte {
+    background-color: white;
+    font-weight: 500;
+    color: var(--couleur);
+  }
 }
 
 span.ripple {
@@ -33,7 +43,7 @@ span.ripple {
   border-radius: 50%;
   transform: scale(0);
   animation: ripple 700ms ease-in-out;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: var(--couleur-ripple);
 }
 
 @keyframes ripple {
@@ -48,9 +58,21 @@ span.ripple {
 import Vue from "vue";
 export default Vue.extend({
   props: {
-    couleurBouton: String,
+    couleur: String,
     couleurRipple: String,
+    texte: Boolean,
   },
+
+  computed: {
+    variablesCSS(): object {
+      var couleurRippleDéfaut = this.texte ? "rgba(24, 103, 192, 0.7)" : "rgba(255, 255, 255, 0.7)";
+      return {
+        "--couleur": this.couleur ? this.couleur : "var(--couleur-primaire)",
+        "--couleur-ripple": this.couleurRipple ? this.couleurRipple : couleurRippleDéfaut,
+      };
+    },
+  },
+
   methods: {
     createRipple(event: MouseEvent) {
       const bouton = event.currentTarget as HTMLButtonElement;

@@ -25,11 +25,8 @@
       <ul class="menu-nav" v-if="['md', 'lg', 'xl'].includes($mq)">
         <slot name="menu-nav"></slot>
       </ul>
-      <div
-        class="avatar-container"
-        v-if="chemin_avatar && ['md', 'lg', 'xl'].includes($mq)"
-      >
-        <img :src="chemin_avatar" alt="Avatar de l'utilisateur" />
+      <div class="avatar-container" v-if="cheminAvatar && ['md', 'lg', 'xl'].includes($mq)">
+        <img :src="cheminAvatar" alt="Avatar de l'utilisateur" />
       </div>
     </Container>
   </div>
@@ -138,7 +135,7 @@ export default Vue.extend({
     styleIconeNav: String,
     couleurRippleIconeNav: String,
     centrerTitrePetitsEcran: Boolean,
-    chemin_avatar: String,
+    cheminAvatar: String,
   },
 });
 </script>
