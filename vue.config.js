@@ -6,7 +6,7 @@ module.exports = {
       // Note: cette option se nomme "prependData" avec sass-loader v8
       // Voir : https://cli.vuejs.org/guide/css.html#passing-options-to-pre-processor-loaders
       scss: {
-        prependData: '@import "@/assets/styles/variables.scss";',
+        additionalData: '@import "@/assets/styles/variables.scss";',
       },
     },
   },
