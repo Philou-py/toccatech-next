@@ -1,5 +1,9 @@
 <template>
-  <button @mousedown="createRipple" class="btn" :style="variablesCSS" :class="{ texte: texte }">
+  <button
+    @mousedown="createRipple"
+    class="btn"
+    :class="{ primaire: couleur == 'primaire', texte: texte }"
+  >
     <div class="texte-bouton">
       <slot></slot>
     </div>
@@ -9,13 +13,12 @@
 <style lang="scss">
 button.btn {
   display: inline-block;
-  background-color: var(--couleur);
   padding: 0 16px;
   font-size: 15px;
+  font-weight: 500;
   text-transform: uppercase;
   outline: none;
   border: 0;
-  color: white;
   border-radius: 0.25rem;
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
     0 1px 5px 0 rgba(0, 0, 0, 0.12);
@@ -24,26 +27,47 @@ button.btn {
   height: 36px;
   min-width: 64px;
   position: relative;
-  /* border: 2px solid teal; */
   transition: all 300ms;
+  background-color: #f5f5f5;
+  color: rgba(0, 0, 0, 0.87);
 
-  /* &:hover { */
-  /*   box-shadow: 0 0 0 1px white inset; */
-  /* } */
+  &:hover {
+    background-color: rgba(black, 0.1);
+  }
+
+  span.ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 700ms ease-in-out;
+    background-color: rgba(black, 0.3);
+  }
+
+  &.primaire {
+    color: white;
+    background-color: $couleur-primaire;
+
+    &:hover {
+      background-color: rgba($couleur-primaire, 0.9);
+    }
+
+    span.ripple {
+      background-color: rgba(white, 0.7);
+    }
+  }
 
   &.texte {
     background-color: white;
-    font-weight: 500;
-    color: var(--couleur);
-  }
-}
+    color: $couleur-primaire;
 
-span.ripple {
-  position: absolute;
-  border-radius: 50%;
-  transform: scale(0);
-  animation: ripple 700ms ease-in-out;
-  background-color: var(--couleur-ripple);
+    &:hover {
+      background-color: rgba($couleur-primaire, 0.1);
+    }
+
+    span.ripple {
+      background-color: rgba($couleur-primaire, 0.7);
+    }
+  }
 }
 
 @keyframes ripple {
@@ -56,21 +80,12 @@ span.ripple {
 
 <script lang="ts">
 import Vue from "vue";
+
 export default Vue.extend({
   props: {
     couleur: String,
     couleurRipple: String,
     texte: Boolean,
-  },
-
-  computed: {
-    variablesCSS(): object {
-      var couleurRippleDéfaut = this.texte ? "rgba(24, 103, 192, 0.7)" : "rgba(255, 255, 255, 0.7)";
-      return {
-        "--couleur": this.couleur ? this.couleur : "var(--couleur-primaire)",
-        "--couleur-ripple": this.couleurRipple ? this.couleurRipple : couleurRippleDéfaut,
-      };
-    },
   },
 
   methods: {
