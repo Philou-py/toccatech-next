@@ -54,6 +54,8 @@ export default Vue.extend({
 @import "~@fontsource/eb-garamond/700.css"; // Bold 700
 // @import "~@fontsource/eb-garamond/700-italic.css"; // Bold 700 italic
 
+@import "@/assets/styles/colors.scss";
+
 * {
   font-family: "EB Garamond", serif;
   box-sizing: border-box;

@@ -1,9 +1,5 @@
 <template>
-  <button
-    @mousedown="createRipple"
-    class="btn"
-    :class="{ primaire: couleur == 'primaire', texte: texte }"
-  >
+  <button @mousedown="createRipple" class="btn" :class="{ texte: texte }">
     <div class="texte-bouton">
       <slot></slot>
     </div>
@@ -43,29 +39,18 @@ button.btn {
     background-color: rgba(black, 0.3);
   }
 
-  &.primaire {
-    color: white;
-    background-color: $couleur-primaire;
-
-    &:hover {
-      background-color: rgba($couleur-primaire, 0.9);
-    }
-
-    span.ripple {
-      background-color: rgba(white, 0.7);
-    }
-  }
-
   &.texte {
-    background-color: white;
-    color: $couleur-primaire;
+    background-color: transparent;
+    box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+      0 1px 3px 0 rgba(0, 0, 0, 0.12) !important;
+    color: rgba(0, 0, 0, 0.87);
 
     &:hover {
-      background-color: rgba($couleur-primaire, 0.1);
+      background-color: rgba(black, 0.1);
     }
 
     span.ripple {
-      background-color: rgba($couleur-primaire, 0.7);
+      background-color: rgba(black, 0.3);
     }
   }
 }
