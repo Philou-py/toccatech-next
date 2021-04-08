@@ -1,5 +1,10 @@
 <template>
-  <button @mousedown="createRipple" class="btn" :class="{ texte: texte }">
+  <button
+    @mousedown="createRipple"
+    :class="{ texte: texte, désactivé: désactivé }"
+    :disabled="désactivé"
+    class="btn"
+  >
     <div class="texte-bouton">
       <slot></slot>
     </div>
@@ -53,6 +58,12 @@ button.btn {
       background-color: rgba(black, 0.3);
     }
   }
+
+  &.désactivé {
+    background-color: rgba(black, 0.12) !important;
+    color: rgba(black, 0.26) !important;
+    cursor: default !important;
+  }
 }
 
 @keyframes ripple {
@@ -71,6 +82,7 @@ export default Vue.extend({
     couleur: String,
     couleurRipple: String,
     texte: Boolean,
+    désactivé: Boolean,
   },
 
   methods: {
