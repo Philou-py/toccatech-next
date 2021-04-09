@@ -4,6 +4,7 @@
     :class="{ texte: texte, désactivé: désactivé }"
     :disabled="désactivé"
     class="btn"
+    id="btn"
   >
     <div class="texte-bouton">
       <slot></slot>
@@ -45,10 +46,9 @@ button.btn {
   }
 
   &.texte {
-    background-color: transparent;
-    box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
-      0 1px 3px 0 rgba(0, 0, 0, 0.12) !important;
-    color: rgba(0, 0, 0, 0.87);
+    /* box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+       0 1px 3px 0 rgba(0, 0, 0, 0.12) !important; */
+    box-shadow: none;
 
     &:hover {
       background-color: rgba(black, 0.1);
@@ -59,7 +59,9 @@ button.btn {
     }
   }
 
-  &.désactivé {
+  // Ajouter le sélecteur #btn permet que ce style l'emporte sur l'ajout d'une potentielle classe
+  // de couleur par le composant parent, car le sélecteur id a une plus haute priorité qu'une classe.
+  &.désactivé#btn {
     background-color: rgba(black, 0.12) !important;
     color: rgba(black, 0.26) !important;
     cursor: default !important;
