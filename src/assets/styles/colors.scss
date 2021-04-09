@@ -453,12 +453,12 @@ $colors: map-deep-merge(
 // Création des classes permettant d'appliquer les couleurs ci-dessus
 
 @mixin background-color($color_value) {
-  background-color: $color_value;
-  border-color: $color_value;
+  background-color: $color_value !important;
+  border-color: $color_value !important;
 }
 @mixin text-color($color_value) {
-  color: $color_value;
-  caret-color: $color_value;
+  color: $color_value !important;
+  caret-color: $color_value !important;
 }
 
 // Changement de la couleur du texte si l'arrière plan est trop sombre.
@@ -466,30 +466,30 @@ $colors: map-deep-merge(
   @if index("base" "darken-1" "darken-2" "darken-3" "darken-4", $color_type) != null {
     @if $color_type == "base" {
       .#{$color_name} {
-        color: white;
+        color: white !important;
       }
 
       .btn.#{$color_name} {
         &:hover {
-          background-color: lighten($color_value, 13%);
+          background-color: lighten($color_value, 13%) !important;
         }
 
         span.ripple {
-          background-color: rgba(white, 0.7);
+          background-color: rgba(white, 0.7) !important;
         }
       }
     } @else {
       .#{$color_name}.#{$color_type} {
-        color: white;
+        color: white !important;
       }
 
       .btn.#{$color_name}.#{$color_type} {
         &:hover {
-          background-color: lighten($color_value, 13%);
+          background-color: lighten($color_value, 13%) !important;
         }
 
         span.ripple {
-          background-color: rgba(white, 0.7);
+          background-color: rgba(white, 0.7) !important;
         }
       }
     }
@@ -519,27 +519,27 @@ $colors: map-deep-merge(
       }
 
       .btn.#{$color_name}:hover {
-        background-color: darken($color_value, 13%);
+        background-color: darken($color_value, 13%) !important;
       }
 
       .btn.#{$color_name} span.ripple {
-        background-color: rgba(black, 0.3);
+        background-color: rgba(black, 0.3) !important;
       }
 
       .btn.texte.#{$color_name}--text {
         &:hover {
-          background-color: rgba($color_value, 0.1);
+          background-color: rgba($color_value, 0.1) !important;
         }
 
         span.ripple {
-          background-color: rgba($color_value, 0.7);
+          background-color: rgba($color_value, 0.7) !important;
         }
       }
 
       @include tester-luminosité($color_name, $color_value, $color_type);
     } @else if ($color_type != "shades") {
       .#{$color_name}.#{$color_type} {
-        color: black;
+        color: black !important;
         @include background-color($color_value);
       }
 
@@ -548,16 +548,16 @@ $colors: map-deep-merge(
       }
 
       .btn.#{$color_name}.#{$color_type}:hover {
-        background-color: darken($color_value, 13%);
+        background-color: darken($color_value, 13%) !important;
       }
 
       .btn.texte.#{$color_name}--text.#{$color_type} {
         &:hover {
-          background-color: rgba($color_value, 0.1);
+          background-color: rgba($color_value, 0.1) !important;
         }
 
         span.ripple {
-          background-color: rgba($color_value, 0.7);
+          background-color: rgba($color_value, 0.7) !important;
         }
       }
 
