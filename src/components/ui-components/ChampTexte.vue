@@ -8,46 +8,123 @@
       champRequisVide: champRequisVide,
       valide: estValide,
       invalide: !estValide,
+      'd-block': block,
     }"
   >
-    <label :for="idInput" v-if="label" ref="label">{{ label }}</label>
-    <input
-      :type="typeInput"
-      :id="idInput"
-      :data-placeholder="placeholder"
-      :required="requis"
-      ref="input"
-      v-model="valeurInput"
-      @focus="gérerFocus()"
-      @blur="gérerBlur()"
-    />
-    <div class="ligne" ref="ligne"></div>
-    <div class="indices">
-      <!-- Utilisation de v-html pour que le contenu de la balise 'div' soit interprété -->
-      <!-- comme du code HTML et non comme du texte pur -->
-      <div class="messages" v-html="message"></div>
-      <!-- Le compteur n'est affiché que si une longueur maximale est renseignée -->
-      <div class="compteur" v-if="longueurMax">{{ nbCaractères }} / {{ longueurMax }}</div>
+    <div class="avant-champ-texte" v-if="icôneDevant">
+      <span class="material-icons icône-devant" @click="$emit('icône-devant:clic')">{{
+        icôneDevant
+      }}</span>
+    </div>
+    <div class="contenu">
+      <label :for="idInput" v-if="label" ref="label">{{ label }}</label>
+      <input
+        :type="typeInput"
+        :id="idInput"
+        :data-placeholder="placeholder"
+        :required="requis"
+        ref="input"
+        v-model="valeurInput"
+        @focus="gérerFocus()"
+        @blur="gérerBlur()"
+      />
+      <div class="ligne" ref="ligne"></div>
+      <div class="indices">
+        <!-- Utilisation de v-html pour que le contenu de la balise 'div' soit interprété -->
+        <!-- comme du code HTML et non comme du texte pur -->
+        <div class="messages" v-html="message"></div>
+        <!-- Le compteur n'est affiché que si une longueur maximale est renseignée -->
+        <div class="compteur" v-if="longueurMax">{{ nbCaractères }} / {{ longueurMax }}</div>
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="scss">
+@mixin changerThème($couleur-thème) {
+  input {
+    caret-color: $couleur-thème;
+    border-color: $couleur-thème;
+  }
+
+  .icône-devant,
+  label {
+    color: $couleur-thème;
+  }
+
+  .ligne {
+    background-color: $couleur-thème;
+  }
+
+  .messages {
+    color: $couleur-thème;
+  }
+
+  .compteur {
+    color: $couleur-thème;
+  }
+
+  &:hover {
+    input {
+      border-color: darken($couleur-thème, 10%);
+    }
+
+    .ligne {
+      background-color: darken($couleur-thème, 10%);
+    }
+
+    .icône-devant,
+    label {
+      color: darken($couleur-thème, 10%);
+    }
+
+    .messages {
+      color: darken($couleur-thème, 10%);
+    }
+
+    .compteur {
+      color: darken($couleur-thème, 10%);
+    }
+  }
+}
 .champ-texte {
   position: relative;
-  display: inline-block;
-  padding: 16px 8px 2px;
-  width: 230px;
+  display: flex;
+  padding: 16px 0 2px;
+  min-width: 230px;
+  font-size: 18px;
+
+  .avant-champ-texte {
+    // Taille fixe pour l'icône (l'icône a la forme d'un carré de 24px de côté)
+    width: 30px; // 24 + 6 = 36px
+    height: 24px;
+    padding: 2px 6px 0 0;
+    // L'icône ne doit pas prendre moins de place, même si le composant rétrécit.
+    flex-shrink: 0;
+
+    .icône-devant {
+      color: rgba(black, 0.6);
+      transition: all 0.3s;
+    }
+  }
+
+  .contenu {
+    flex: 1 1 206px;
+  }
+
+  &.d-block {
+    width: 100%;
+  }
 
   input {
     border: none;
     // La fonction 'rgba', dans ce cas, permet de donner une opacité de 0.6 à la couleur black.
     border-bottom: 1px solid rgba(black, 0.6);
     border-radius: 0;
-    font-size: 16px;
+    font-size: 1em;
     outline: 0;
     width: 100%;
-    padding: 0 0 5px;
+    padding: 1px 0 5px;
     transition: border-color 0.3s linear;
 
     &::placeholder {
@@ -56,9 +133,9 @@
   }
 
   label {
-    font-size: 16px;
+    font-size: 1em;
     position: absolute;
-    top: 16px;
+    top: 17px;
     cursor: text;
     color: rgba(black, 0.6);
     // Transition pour les propriétés 'top', 'color' et 'font-size'
@@ -75,56 +152,45 @@
     transition: all 0.3s;
   }
 
-  &:hover input {
-    border-color: rgba(black, 0.9);
+  &:hover {
+    input {
+      border-color: rgba(black, 0.9);
+    }
+
+    .ligne {
+      background-color: rgba(black, 0.9);
+    }
+
+    .icône-devant,
+    label {
+      color: rgba(black, 0.9);
+    }
+
+    .compteur {
+      color: rgba(black, 0.9);
+    }
   }
 
   &.actif {
     label {
       top: 0px;
-      font-size: 12px;
+      font-size: 0.78em;
     }
   }
 
   &.focus {
-    $couleur-champ-focus: #1867c0;
-    input {
-      caret-color: $couleur-champ-focus;
-    }
-
-    label {
-      color: $couleur-champ-focus;
-    }
+    @include changerThème(#1867c0);
 
     .ligne {
-      background-color: $couleur-champ-focus;
       width: 100%;
     }
   }
 
   &.valide:not(.vide) {
-    $couleur-champ-valide: #00c853;
-    label {
-      color: $couleur-champ-valide;
-    }
-
-    input {
-      caret-color: $couleur-champ-valide;
-      border-color: $couleur-champ-valide;
-    }
-
-    .ligne {
-      background-color: $couleur-champ-valide;
-    }
-
-    &:hover input {
-      border-color: darken($couleur-champ-valide, 15%);
-    }
+    @include changerThème(#00c853);
   }
 
   &.invalide {
-    $couleur-champ-invalide: #ff5252;
-
     @keyframes secouer {
       0%,
       100% {
@@ -148,68 +214,30 @@
     }
 
     label {
-      color: $couleur-champ-invalide;
       animation-name: secouer;
       animation-duration: 0.9s;
     }
 
-    input {
-      caret-color: $couleur-champ-invalide;
-      border-color: $couleur-champ-invalide;
-    }
-
-    .ligne {
-      background-color: $couleur-champ-invalide;
-    }
-
-    .messages {
-      color: $couleur-champ-invalide;
-    }
-
-    .compteur {
-      color: $couleur-champ-invalide;
-    }
-
-    &:hover input {
-      border-color: darken($couleur-champ-invalide, 15%);
-    }
+    @include changerThème(#ff5252);
   }
 
   &.champRequisVide {
-    $couleur-champ-vide: #9c27b0;
-    label {
-      color: $couleur-champ-vide;
-    }
-
-    input {
-      caret-color: $couleur-champ-vide;
-      border-color: $couleur-champ-vide;
-    }
-
-    .ligne {
-      background-color: $couleur-champ-vide;
-    }
-
-    &:hover input {
-      border-color: darken($couleur-champ-vide, 15%);
-    }
+    @include changerThème(#ea80fc); // #9c27b0
   }
 
   .indices {
     display: flex;
     height: 15px;
     width: 100%;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .messages {
-    /* font-size: inherit; */
     width: 80%;
     transition: all 0.3s;
   }
 
   .compteur {
-    /* font-size: inherit; */
     display: block;
     width: 20%;
     text-align: right;
@@ -228,8 +256,12 @@ export default Vue.extend({
 
     placeholder: String,
 
+    icôneDevant: String,
+
     // L'attribut 'dense' produit un effet seulement si aucun label n'est présent.
     dense: Boolean,
+
+    block: Boolean,
 
     type: {
       type: String,
