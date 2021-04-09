@@ -4,15 +4,10 @@ import "./registerServiceWorker";
 import router from "./router";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { firebaseInit } from "@/firebase-init";
 import { firestorePlugin } from "vuefire";
 import VueMq from "vue-mq";
 
 Vue.config.productionTip = false;
-
-// Appel de la fonction d'initialisation de Firebase
-// importée du fichier "firebase-init.ts"
-firebaseInit();
 
 // Initialisation de VueFire
 // Documentation : https://vuefire.vuejs.org/
