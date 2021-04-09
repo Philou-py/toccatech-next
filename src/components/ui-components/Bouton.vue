@@ -1,6 +1,7 @@
 <template>
   <button
-    @mousedown="createRipple"
+    @mousedown="createRipple($event)"
+    @click="émettreClicBouton()"
     :class="{ texte: texte, désactivé: désactivé }"
     :disabled="désactivé"
     class="btn"
@@ -88,6 +89,9 @@ export default Vue.extend({
   },
 
   methods: {
+    émettreClicBouton() {
+      this.$emit("click");
+    },
     createRipple(event: MouseEvent) {
       const bouton = event.currentTarget as HTMLButtonElement;
       const cercle = document.createElement("span");

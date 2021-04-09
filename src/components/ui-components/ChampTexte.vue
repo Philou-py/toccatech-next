@@ -27,6 +27,7 @@
         v-model="valeurInput"
         @focus="gérerFocus()"
         @blur="gérerBlur()"
+        @input="émettreValeurInput($event.target.value)"
       />
       <div class="ligne" ref="ligne"></div>
       <div class="indices">
@@ -383,6 +384,9 @@ export default Vue.extend({
   },
 
   methods: {
+    émettreValeurInput(valeurInput: string) {
+      this.$emit("input", valeurInput);
+    },
     gérerFocus() {
       // La référence au champ de texte dans le DOM doit être stockée dans une variable
       // pour pouvoir lui attribuer le type 'HTMLInputElement' afin que TypeScript identife
