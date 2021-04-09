@@ -11,24 +11,27 @@
     0px 1px 5px 0px rgb(0 0 0 / 12%);
   width: var(--largeur);
   max-width: var(--largeur-max);
+  min-width: var(--largeur-min);
   overflow: hidden;
+  font-size: 18px;
 
   .titre-carte {
     color: #212121;
     margin: 0;
     padding: 16px;
+    font-size: 2.5em;
   }
 
   .contenu-carte {
     color: #666666;
-    padding: 0 16px 16px;
+    padding: 0 16px 8px;
     margin: 0;
     text-align: justify;
   }
 
-  .actions {
+  .actions-carte {
     display: flex;
-    padding: 8px 16px;
+    padding: 0px 16px 16px;
 
     .btn {
       margin: 0 5px;
@@ -43,12 +46,14 @@ export default Vue.extend({
   props: {
     largeur: Number,
     largeurMax: Number,
+    largeurMin: Number,
   },
   computed: {
     variablesCSS(): object {
       return {
         "--largeur": this.largeur ? this.largeur + "px" : undefined,
         "--largeur-max": this.largeurMax ? this.largeurMax + "px" : undefined,
+        "--largeur-min": this.largeurMin ? this.largeurMin + "px" : undefined,
       };
     },
   },
