@@ -27,7 +27,7 @@
         v-model="valeurInput"
         @focus="gérerFocus()"
         @blur="gérerBlur()"
-        @input="émettreValeurInput($event.target.value)"
+        @input="émettreEvénements($event.target.value)"
       />
       <div class="ligne" ref="ligne"></div>
       <div class="indices">
@@ -255,6 +255,8 @@ export default Vue.extend({
   props: {
     label: String,
 
+    préfixeIdInput: String,
+
     placeholder: String,
 
     icôneDevant: String,
@@ -309,7 +311,7 @@ export default Vue.extend({
     // Voir la documentation : https://fr.vuejs.org/v2/guide/typescript.html#Annotation-des-types-de-retour
     idInput(): string | undefined {
       if (this.label) {
-        return this.label.toLowerCase().replace(/ /g, "-");
+        return this.préfixeIdInput + "-" + this.label.toLowerCase().replace(/ /g, "-");
       } else {
         return undefined;
       }
@@ -377,15 +379,10 @@ export default Vue.extend({
     },
   },
 
-  watch: {
-    estValide() {
-      BusEvénements.$emit("changement-état-validité");
-    },
-  },
-
   methods: {
-    émettreValeurInput(valeurInput: string) {
+    émettreEvénements(valeurInput: string) {
       this.$emit("input", valeurInput);
+      BusEvénements.$emit("état-validité-à-vérifier");
     },
     gérerFocus() {
       // La référence au champ de texte dans le DOM doit être stockée dans une variable

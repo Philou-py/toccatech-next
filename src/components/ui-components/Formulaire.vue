@@ -27,7 +27,7 @@ export default Vue.extend({
 
   mounted() {
     this.validerFormulaire();
-    BusEvénements.$on("changement-état-validité", this.validerFormulaire);
+    BusEvénements.$on("état-validité-à-vérifier", this.validerFormulaire);
   },
 });
 </script>

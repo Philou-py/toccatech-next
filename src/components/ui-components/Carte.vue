@@ -14,6 +14,7 @@
   min-width: var(--largeur-min);
   overflow: hidden;
   font-size: 18px;
+  margin: 16px;
 
   .titre-carte {
     color: #212121;
@@ -31,6 +32,7 @@
 
   .actions-carte {
     display: flex;
+    align-items: center;
     padding: 0px 16px 16px;
 
     .btn {
