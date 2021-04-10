@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
+import "firebase/auth";
 import "firebase/analytics";
 
 // Configuration Firebase de "Ma Partothèque Web App"
@@ -16,6 +17,13 @@ var firebaseConfig = {
 
 // Initialisation de Firebase
 firebase.initializeApp(firebaseConfig);
+
+// Initialisation de Firebase Authentication
+export const auth = firebase.auth();
+
+// Initialisation de Firestore et obtention d'une instance firestore
+// Documentation : https://firebase.google.com/docs/firestore
+export const db = firebase.firestore();
 
 // Tentative d'activation du mode hors-ligne de firestore
 firebase
@@ -41,10 +49,5 @@ firebase
 // Initialisation de Firebase Analytics
 firebase.analytics();
 
-// Initialisation de Firestore et obtention d'une instance firestore
-// Documentation : https://firebase.google.com/docs/firestore
-export const db = firebase.firestore();
-
 // Exportation de types Firestore
-const { Timestamp, GeoPoint } = firebase.firestore;
-export { Timestamp, GeoPoint };
+export const { Timestamp, GeoPoint } = firebase.firestore;
