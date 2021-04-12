@@ -17,15 +17,15 @@
           {{ nomIconeNav }}
         </BoutonIcone>
         <router-link :to="{ name: 'Accueil' }">
-          <h2 class="titre">
+          <h4 class="titre">
             <slot name="titre"></slot>
-          </h2>
+          </h4>
         </router-link>
       </div>
       <ul class="menu-nav" v-if="['md', 'lg', 'xl'].includes($mq)">
         <slot name="menu-nav"></slot>
       </ul>
-      <div class="avatar-container" v-if="cheminAvatar && ['md', 'lg', 'xl'].includes($mq)">
+      <div class="container-avatar" v-if="cheminAvatar && ['md', 'lg', 'xl'].includes($mq)">
         <img :src="cheminAvatar" alt="Avatar de l'utilisateur" />
       </div>
     </Container>
@@ -102,7 +102,7 @@
     }
   }
 
-  .avatar-container {
+  .container-avatar {
     height: 100%;
     margin-left: 10px;
     display: flex;
