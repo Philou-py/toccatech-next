@@ -13,31 +13,34 @@
   max-width: var(--largeur-max);
   min-width: var(--largeur-min);
   overflow: hidden;
-  font-size: 18px;
-  margin: 16px;
+  margin: 2%;
+  padding-left: 16px;
+  padding-right: 16px;
+  color: #666666;
 
   .titre-carte {
     color: #212121;
-    margin: 0;
-    padding: 16px;
-    font-size: 2.5em;
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    &.centrer {
+      text-align: center;
+    }
   }
 
   .contenu-carte {
-    color: #666666;
-    padding: 0 16px 8px;
-    margin: 0;
-    text-align: justify;
+    margin-top: 0;
+    margin-bottom: 8px;
   }
 
   .actions-carte {
     display: flex;
     align-items: center;
-    padding: 0px 16px 16px;
+    margin: 0px 16px 16px;
 
-    .btn {
-      margin: 0 5px;
-    }
+    /* .btn { */
+    /*   margin: 0 5px; */
+    /* } */
   }
 }
 </style>
@@ -50,6 +53,7 @@ export default Vue.extend({
     largeurMax: Number,
     largeurMin: Number,
   },
+
   computed: {
     variablesCSS(): object {
       return {
