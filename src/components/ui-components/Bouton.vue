@@ -38,6 +38,10 @@ button.btn {
     background-color: rgba(black, 0.1);
   }
 
+  .texte-bouton {
+    font-size: inherit;
+  }
+
   span.ripple {
     position: absolute;
     border-radius: 50%;
@@ -98,8 +102,8 @@ export default Vue.extend({
       const diamètre = Math.max(bouton.clientWidth, bouton.clientHeight);
       const rayon = diamètre / 2;
       cercle.style.width = cercle.style.height = `${diamètre}px`;
-      cercle.style.left = `${event.clientX - bouton.offsetLeft - rayon}px`;
-      cercle.style.top = `${event.clientY - bouton.offsetTop - rayon}px`;
+      cercle.style.left = `${event.pageX - bouton.offsetLeft - rayon}px`;
+      cercle.style.top = `${event.pageY - bouton.offsetTop - rayon}px`;
       cercle.style.backgroundColor = this.couleurRipple;
       cercle.classList.add("ripple");
       bouton.appendChild(cercle);
