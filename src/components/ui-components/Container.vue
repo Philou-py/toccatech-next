@@ -18,12 +18,9 @@
     margin: 0 13%;
   }
 
-  &.lg {
-    margin: 0 20%;
-  }
-
+  &.lg,
   &.xl {
-    margin: 0 30%;
+    margin: 0 20%;
   }
 }
 </style>
