@@ -11,16 +11,19 @@
   }
 
   &.sm {
-    margin: 0 7%;
+    margin: 0 5%;
   }
 
   &.md {
+    margin: 0 10%;
+  }
+
+  &.lg {
     margin: 0 13%;
   }
 
-  &.lg,
   &.xl {
-    margin: 0 20%;
+    margin: 0 18%;
   }
 }
 </style>

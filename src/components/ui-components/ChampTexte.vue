@@ -2,12 +2,13 @@
   <div
     class="champ-texte"
     :class="{
+      désactivé: désactivé,
       focus: focus,
       actif: actif,
-      vide: vide,
+      champVide: champVide,
       champRequisVide: champRequisVide,
-      valide: estValide,
-      invalide: !estValide,
+      valide: champValide,
+      invalide: !champValide,
       'd-block': block,
     }"
   >
@@ -19,16 +20,32 @@
     <div class="contenu">
       <label :for="idInput" v-if="label" ref="label">{{ label }}</label>
       <input
+        v-if="!(typeInput == 'textarea')"
         :type="typeInput"
+        :disabled="désactivé"
         :id="idInput"
         :data-placeholder="placeholder"
         :required="requis"
         ref="input"
-        v-model="valeurInput"
+        :value="valeurInput"
         @focus="gérerFocus()"
-        @blur="gérerBlur()"
+        @blur="gérerBlur($event.target.value)"
         @input="émettreEvénements($event.target.value)"
       />
+      <textarea
+        v-else
+        :disabled="désactivé"
+        :id="idInput"
+        :required="requis"
+        ref="input"
+        :value="valeurInput"
+        @focus="gérerFocus()"
+        @blur="gérerBlur($event.target.value)"
+        @input="
+          émettreEvénements($event.target.value);
+          redimensionnerInput();
+        "
+      ></textarea>
       <div class="ligne" ref="ligne"></div>
       <div class="indices">
         <!-- Utilisation de v-html pour que le contenu de la balise 'div' soit interprété -->
@@ -43,7 +60,8 @@
 
 <style lang="scss">
 @mixin changerThème($couleur-thème) {
-  input {
+  input,
+  textarea {
     caret-color: $couleur-thème;
     border-color: $couleur-thème;
   }
@@ -66,7 +84,8 @@
   }
 
   &:hover {
-    input {
+    input,
+    textarea {
       border-color: darken($couleur-thème, 10%);
     }
 
@@ -88,6 +107,7 @@
     }
   }
 }
+
 .champ-texte {
   position: relative;
   display: flex;
@@ -117,7 +137,8 @@
     width: 100%;
   }
 
-  input {
+  input,
+  textarea {
     border: none;
     // La fonction 'rgba', dans ce cas, permet de donner une opacité de 0.6 à la couleur black.
     border-bottom: 1px solid rgba(black, 0.6);
@@ -131,6 +152,19 @@
     &::placeholder {
       color: rgba(black, 0.5);
     }
+  }
+
+  input[type="file"] {
+    visibility: hidden;
+  }
+
+  textarea {
+    resize: vertical;
+    /* overflow: hidden; */
+  }
+
+  textarea ~ .ligne {
+    bottom: 6px;
   }
 
   label {
@@ -154,7 +188,8 @@
   }
 
   &:hover {
-    input {
+    input,
+    textarea {
       border-color: rgba(black, 0.9);
     }
 
@@ -187,7 +222,12 @@
     }
   }
 
-  &.valide:not(.vide) {
+  &.désactivé input,
+  &.désactivé textarea {
+    background-color: rgba(#1867c0, 0.2);
+  }
+
+  &.valide:not(.champVide) {
     @include changerThème(#00c853);
   }
 
@@ -252,8 +292,40 @@ import Vue, { PropType } from "vue";
 import { BusEvénements } from "@/BusEvénements";
 
 export default Vue.extend({
+  model: {
+    prop: "valeurInput",
+    event: "input",
+  },
+
   props: {
     label: String,
+
+    désactivé: {
+      type: Boolean,
+      default: false,
+    },
+
+    valeurInput: {
+      type: String,
+      default: "",
+    },
+
+    invalide: {
+      type: Boolean,
+      default: false,
+    },
+
+    vide: {
+      type: Boolean,
+      default: false,
+    },
+
+    requisEtVide: {
+      type: Boolean,
+      default: false,
+    },
+
+    hauteur: String,
 
     préfixeIdInput: String,
 
@@ -271,8 +343,8 @@ export default Vue.extend({
       default: "texte",
       // Ce validateur permet de restreindre les valeurs possibles pour la variable 'type'
       // aux types de champs de texte pris en charge par ce composant.
-      validator(value: string) {
-        return ["texte", "mot-de-passe", "email"].includes(value);
+      validator(valeur: string) {
+        return ["texte", "mot-de-passe", "email", "date", "textarea"].includes(valeur);
       },
     },
 
@@ -295,31 +367,58 @@ export default Vue.extend({
     // Cette propriété permet au composant 'Formulaire' de déterminer si le composant doit être pris en
     // compte à la validation de tout le formulaire.
     élémentFormulaire: true,
-    valeurInput: "",
     actif: false,
     focus: false,
-    vide: false,
+    champVide: false,
     champRequisVide: false,
     // Initialisation de message avec un espace insécable pour éviter un changement
     // de position du champ de texte à l'apparition d'un message
     message: "&nbsp;",
   }),
 
+  watch: {
+    // Ce watcher permet d'enlever et d'ajouter l'état 'actif' si la valeur de l'input a été changé
+    // dans le composant parent, c'est-à-dire à travers 'v-model' qui change la prop
+    // 'valeurInput' sans déclencher l'événement 'blur' ou 'focus'.
+    valeurInput: function (nouvelleValeur) {
+      if (nouvelleValeur) {
+        this.actif = true;
+      } else if (!this.focus && this.typeInput != "date") {
+        this.actif = false;
+      }
+      this.émettreEvénements(nouvelleValeur);
+    },
+  },
+
   computed: {
     // Les fonctions de l'objet 'computed' doivent être annotées avec le type
     // de retour de la fonction pour que TypeScript ne donne pas d'erreur.
     // Voir la documentation : https://fr.vuejs.org/v2/guide/typescript.html#Annotation-des-types-de-retour
-    idInput(): string | undefined {
-      if (this.label) {
-        return this.préfixeIdInput + "-" + this.label.toLowerCase().replace(/ /g, "-");
+    idInput(): string {
+      if (this.préfixeIdInput) {
+        if (this.label) {
+          return this.préfixeIdInput + "-" + this.label.toLowerCase().replace(/ /g, "-");
+        } else if (this.placeholder) {
+          return this.préfixeIdInput + "-" + this.placeholder.toLowerCase().replace(/ /g, "-");
+        } else {
+          return this.préfixeIdInput;
+        }
       } else {
-        return undefined;
+        if (this.label) {
+          return this.label.toLowerCase().replace(/ /g, "-");
+        } else if (this.placeholder) {
+          return this.placeholder.toLowerCase().replace(/ /g, "-");
+        } else {
+          return "champ-texte";
+        }
       }
     },
 
     typeInput(): string {
       if (this.type == "email") return "email";
-      if (this.type == "mot-de-passe") return "password";
+      else if (this.type == "mot-de-passe") return "password";
+      else if (this.type == "date") return "date";
+      else if (this.type == "textarea") return "textarea";
       else return "text";
     },
 
@@ -327,10 +426,21 @@ export default Vue.extend({
       return this.valeurInput.length;
     },
 
-    estValide(): boolean {
+    champValide(): boolean {
+      // Application de la validation prioritaire venant du composant parent
+      if (this.invalide) {
+        if (this.vide) {
+          this.champVide = true;
+          if (this.requisEtVide) {
+            this.champRequisVide = true;
+          }
+        }
+        return false;
+      }
+
       // Tests de la longueur
       if (!this.valeurInput) {
-        this.vide = true;
+        this.champVide = true;
         this.message = "&nbsp;";
         if (this.requis) {
           this.champRequisVide = true;
@@ -338,7 +448,7 @@ export default Vue.extend({
         }
         return true;
       } else {
-        this.vide = false;
+        this.champVide = false;
         this.champRequisVide = false;
         if (this.longueurMin && this.nbCaractères < this.longueurMin) {
           this.message = `Longueur min : ${this.longueurMin}`;
@@ -346,7 +456,7 @@ export default Vue.extend({
         } else if (this.longueurMax && this.nbCaractères > this.longueurMax) {
           this.message = `Longueur max : ${this.longueurMax}`;
           return false;
-        } else if (this.nbCaractères > 100) {
+        } else if (!this.longueurMax && this.typeInput != "textarea" && this.nbCaractères > 100) {
           // Limite du nombre de caractères à 100 pour éviter les abus
           this.message = "Longueur max : 100";
           return false;
@@ -384,6 +494,7 @@ export default Vue.extend({
       this.$emit("input", valeurInput);
       BusEvénements.$emit("état-validité-à-vérifier");
     },
+
     gérerFocus() {
       // La référence au champ de texte dans le DOM doit être stockée dans une variable
       // pour pouvoir lui attribuer le type 'HTMLInputElement' afin que TypeScript identife
@@ -398,9 +509,9 @@ export default Vue.extend({
 
     // L'événement 'blur' est le contraire de 'focus' : il se produit lorsque l'utilisateur
     // sort du champ de texte en cliquant autre part, par exemple.
-    gérerBlur() {
+    gérerBlur(valeurInput: string) {
       const input = this.$refs.input as HTMLInputElement;
-      if (!this.valeurInput) {
+      if (!valeurInput && this.typeInput != "date") {
         this.actif = false;
         this.focus = false;
         if (input.getAttribute("data-placeholder") && this.label) {
@@ -410,13 +521,17 @@ export default Vue.extend({
         this.focus = false;
       }
     },
+
+    redimensionnerInput() {
+      const input = this.$refs.input as HTMLInputElement;
+      input.style.height = "auto";
+      // Ajout de 2 pixels pour qu'une scrollbar n'apparaisse pas par défaut
+      input.style.height = input.scrollHeight + 2 + "px";
+    },
   },
 
   mounted() {
-    // Ce test permet de passer les champs de texte en mode 'actif'
-    // si le navigateur a complété ces champs automatiquement au
-    // chargement de la page.
-    if (this.valeurInput) {
+    if (this.typeInput == "date") {
       this.actif = true;
     }
 
@@ -431,6 +546,10 @@ export default Vue.extend({
       if (this.dense) {
         input.style.paddingTop = "5px";
       }
+    }
+
+    if (this.typeInput == "textarea") {
+      input.style.height = this.hauteur;
     }
   },
 });
