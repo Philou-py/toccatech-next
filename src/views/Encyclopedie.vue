@@ -1,7 +1,12 @@
 <template>
-  <div class="encyclopédie">
-    <h1 class="centrer-texte titre-page" :class="$mq">Encyclopédie</h1>
-    <div class="container-cartes">
+  <div class="encyclopédie petit-container">
+    <div class="nom-bouton-compositeur" :class="$mq">
+      <h1 class="centrer-texte titre-page" :class="$mq">Encyclopédie</h1>
+      <router-link :to="{ name: 'NouveauCompositeur' }"
+        ><Bouton class="blue darken-3">Nouveau Compositeur</Bouton></router-link
+      >
+    </div>
+    <div class="container-cartes" v-if="chargementTerminé">
       <Carte
         v-for="compositeur in compositeurs"
         :key="compositeur.id"
@@ -26,12 +31,17 @@
               <li>Styles musicaux : {{ compositeur.styles_musicaux }}</li>
             </ul>
           </div>
-          <Bouton texte class="cyan mt-3">En savoir plus...</Bouton>
+          <router-link :to="{ name: 'DétailsCompositeur', params: { id: compositeur.id } }"
+            ><Bouton texte class="cyan mt-3">En savoir plus...</Bouton></router-link
+          >
         </div>
         <div class="container-photo">
           <img :src="compositeur.photo" alt="Image" class="photo-compositeur" />
         </div>
       </Carte>
+    </div>
+    <div v-else>
+      <p>Chargement...</p>
     </div>
   </div>
 </template>
@@ -50,6 +60,7 @@ export default Vue.extend({
 
   data: () => ({
     compositeurs: [],
+    chargementTerminé: false,
   }),
 
   mounted() {
@@ -57,41 +68,61 @@ export default Vue.extend({
 
     // Récupération des données des compositeurs depuis
     // la base de données Firebase Firestore
-    db.collection("compositeurs").onSnapshot(
-      (snapShot) => {
-        let résultat: any = [];
-        snapShot.docs.forEach((document) => {
-          let données = document.data();
-          if (données.date_décès) {
-            données.est_mort = true;
-            let âge =
-              (données.date_décès.toDate().getTime() - données.date_naissance.toDate().getTime()) /
-              une_année_en_millisecondes;
-            données.âge = Math.floor(âge);
-          } else {
-            données.est_mort = false;
-            let maintenant = new Date();
-            let âge =
-              (maintenant.getTime() - données.date_naissance.toDate().getTime()) /
-              une_année_en_millisecondes;
-            données.âge = Math.floor(âge);
-          }
-          résultat.push({ ...données, id: document.id });
-        });
-        this.compositeurs = résultat;
-      },
-      (erreur) => {
-        console.log(erreur);
-      }
-    );
+    db.collection("compositeurs")
+      .orderBy("nom")
+      .onSnapshot(
+        (snapShot) => {
+          let résultat: any = [];
+          snapShot.docs.forEach((document) => {
+            let données = document.data();
+            if (données.date_décès) {
+              données.est_mort = true;
+              let âge =
+                (données.date_décès.toDate().getTime() -
+                  données.date_naissance.toDate().getTime()) /
+                une_année_en_millisecondes;
+              données.âge = Math.floor(âge);
+            } else {
+              données.est_mort = false;
+              let maintenant = new Date();
+              let âge =
+                (maintenant.getTime() - données.date_naissance.toDate().getTime()) /
+                une_année_en_millisecondes;
+              données.âge = Math.floor(âge);
+            }
+            résultat.push({ ...données, id: document.id });
+          });
+          this.compositeurs = résultat;
+          this.chargementTerminé = true;
+        },
+        (erreur) => {
+          console.log(erreur);
+        }
+      );
   },
 });
 </script>
 
 <style lang="scss">
-.titre-page.xs,
-.titre-page.sm {
-  font-size: 3rem;
+.encyclopédie {
+  .nom-bouton-compositeur {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    justify-content: center;
+
+    &.xs {
+      flex-direction: column;
+
+      h1 {
+        order: 2;
+      }
+    }
+
+    a {
+      margin-left: 5%;
+    }
+  }
 }
 .container-cartes {
   display: flex;
@@ -169,6 +200,10 @@ export default Vue.extend({
       .container-photo {
         width: 30%;
       }
+    }
+
+    .btn {
+      width: 100%;
     }
 
     .infos-compositeur {

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav>
-      <ToolBar
+      <NavBar
         nomIconeNav="menu"
         styleIconeNav="color: white"
         couleurRippleIconeNav="#8765ef"
@@ -11,12 +11,10 @@
         <template v-slot:titre>Ma Partothèque</template>
         <template v-slot:menu-nav>
           <li>
-            <router-link :to="{ name: 'Accueil' }">Ma Partothèque</router-link>
+            <router-link :to="{ name: 'Encyclopédie' }">Encyclopédie</router-link>
           </li>
-          <li><a href="https://toccatech.com/">Contact</a></li>
-          <li><a href="https://toccatech.com/">Mon Compte</a></li>
         </template>
-      </ToolBar>
+      </NavBar>
     </nav>
     <router-view />
   </div>
@@ -24,19 +22,31 @@
 
 <script lang="ts">
 import Vue from "vue";
-import ToolBar from "@/components/ui-components/ToolBar.vue";
+import { auth } from "@/firebase";
+import NavBar from "@/components/ui-components/NavBar.vue";
 import Carte from "@/components/ui-components/Carte.vue";
 import Container from "@/components/ui-components/Container.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
 import Espacement from "@/components/ui-components/Espacement.vue";
+import FormulaireInscription from "@/components/layouts/accounts/FormulaireInscription.vue";
+import FormulaireConnexion from "@/components/layouts/accounts/FormulaireConnexion.vue";
 
 export default Vue.extend({
   components: {
-    ToolBar,
+    NavBar,
     Carte,
     Container,
     Bouton,
     Espacement,
+    FormulaireInscription,
+    FormulaireConnexion,
+  },
+
+  mounted() {
+    var user = auth.currentUser;
+    if (user) {
+      console.log(`Bienvenue, ${user.displayName} !`);
+    }
   },
 });
 </script>
@@ -51,10 +61,12 @@ export default Vue.extend({
 @import "~@fontsource/eb-garamond/400.css"; // Regular 400
 // @import "~@fontsource/eb-garamond/400-italic.css"; // Regular 400 italic
 @import "~@fontsource/eb-garamond/500.css";
+@import "~@fontsource/eb-garamond/600.css";
 @import "~@fontsource/eb-garamond/700.css"; // Bold 700
 // @import "~@fontsource/eb-garamond/700-italic.css"; // Bold 700 italic
 
 @import "@/assets/styles/colors.scss";
+@import "@/assets/styles/typographie.scss";
 
 * {
   font-family: "EB Garamond", serif;
@@ -68,8 +80,35 @@ html {
   --couleur-primaire: #1867c0;
 }
 
+.petit-container {
+  margin: 0 20px;
+}
+
+.titre-page {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.couleur-primaire {
+  &--texte {
+    color: var(--couleur-primaire);
+  }
+
+  &--fond {
+    background-color: var(--couleur-primaire);
+  }
+}
+
 body {
   margin: 0;
+}
+
+a {
+  color: #0000ee;
+}
+
+.centrer-texte {
+  text-align: center;
 }
 
 .ml,

@@ -1,5 +1,5 @@
 <template>
-  <Carte :largeur-max="400" class="carte-inscription">
+  <Carte class="carte-inscription">
     <h1 class="titre-carte">Créer un compte</h1>
     <div class="contenu-carte">
       <Formulaire v-model="formulaireValide" class="formulaire-inscription">
@@ -113,9 +113,6 @@ export default Vue.extend({
 
 <style lang="scss">
 .carte-inscription {
-  margin-left: auto;
-  margin-right: auto;
-
   .titre-carte {
     text-align: center;
   }

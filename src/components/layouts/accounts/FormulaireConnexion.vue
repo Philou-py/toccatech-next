@@ -1,5 +1,5 @@
 <template>
-  <Carte :largeur-max="400" class="carte-connexion">
+  <Carte class="carte-connexion">
     <h1 class="titre-carte">Connexion</h1>
     <div class="contenu-carte">
       <Formulaire v-model="formulaireValide" class="formulaire-connexion">
@@ -95,9 +95,6 @@ export default Vue.extend({
 
 <style lang="scss">
 .carte-connexion {
-  margin-left: auto;
-  margin-right: auto;
-
   .titre-carte {
     text-align: center;
   }
