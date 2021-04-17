@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
+import "firebase/storage";
 import "firebase/analytics";
 
 // Configuration Firebase de "Ma Partothèque Web App"
@@ -24,6 +25,8 @@ export const auth = firebase.auth();
 // Initialisation de Firestore et obtention d'une instance firestore
 // Documentation : https://firebase.google.com/docs/firestore
 export const db = firebase.firestore();
+
+export const storage = firebase.storage();
 
 // Tentative d'activation du mode hors-ligne de firestore
 firebase
