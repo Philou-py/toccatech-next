@@ -2,14 +2,12 @@
   <button
     @mousedown="createRipple($event)"
     @click="émettreClicBouton()"
-    :class="{ texte: texte, désactivé: désactivé }"
+    :class="{ texte: texte, désactivé: désactivé, grand: grand }"
     :disabled="désactivé"
     class="btn"
     id="btn"
   >
-    <div class="texte-bouton">
-      <slot></slot>
-    </div>
+    <slot></slot>
   </button>
 </template>
 
@@ -38,8 +36,11 @@ button.btn {
     background-color: rgba(black, 0.1);
   }
 
-  .texte-bouton {
-    font-size: inherit;
+  &.grand {
+    height: 55px;
+    padding: 0 34px;
+    min-width: 94px;
+    font-size: 1.1em;
   }
 
   span.ripple {
@@ -82,14 +83,25 @@ button.btn {
 </style>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   props: {
     couleur: String,
-    couleurRipple: String,
+    couleurRipple: {
+      type: String,
+      default: "white",
+    },
     texte: Boolean,
     désactivé: Boolean,
+    grand: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  mounted() {
+    console.log(this.grand);
   },
 
   methods: {
@@ -102,8 +114,8 @@ export default Vue.extend({
       const diamètre = Math.max(bouton.clientWidth, bouton.clientHeight);
       const rayon = diamètre / 2;
       cercle.style.width = cercle.style.height = `${diamètre}px`;
-      cercle.style.left = `${event.pageX - bouton.offsetLeft - rayon}px`;
-      cercle.style.top = `${event.pageY - bouton.offsetTop - rayon}px`;
+      cercle.style.left = `${event.pageX - bouton.getBoundingClientRect().left - rayon}px`;
+      cercle.style.top = `${event.pageY - bouton.getBoundingClientRect().top - rayon}px`;
       cercle.style.backgroundColor = this.couleurRipple;
       cercle.classList.add("ripple");
       bouton.appendChild(cercle);

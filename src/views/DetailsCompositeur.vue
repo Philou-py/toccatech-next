@@ -2,8 +2,8 @@
   <Container>
     <div v-if="existant && chargementTerminé">
       <Carte class="carte-détails-compositeur">
-        <div class="nom-image-compositeur" :class="$mq">
-          <h1 class="centrer-texte" :class="$mq">{{ compositeur.nom }}</h1>
+        <div class="nom-image-compositeur" :class="$grid.breakpoint">
+          <h1 class="centrer-texte" :class="$grid.breakpoint">{{ compositeur.nom }}</h1>
           <div class="container-img">
             <img
               ref="imgPrévisualisation"
@@ -13,7 +13,7 @@
             />
           </div>
         </div>
-        <div class="détails-compositeur" :class="$mq">
+        <div class="détails-compositeur" :class="$grid.breakpoint">
           <div>
             <h3>Carte d'identité</h3>
             <ul>
@@ -55,8 +55,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { db } from "@/firebase";
+import { defineComponent } from "vue";
+import { db } from "@/firebase/config";
 import Container from "@/components/ui-components/Container.vue";
 import ChampTexte from "@/components/ui-components/ChampTexte.vue";
 import Formulaire from "@/components/ui-components/Formulaire.vue";
@@ -65,7 +65,7 @@ import Bouton from "@/components/ui-components/Bouton.vue";
 import Espacement from "@/components/ui-components/Espacement.vue";
 import Accueil from "./Accueil.vue";
 
-export default Vue.extend({
+export default defineComponent({
   components: {
     Container,
     ChampTexte,

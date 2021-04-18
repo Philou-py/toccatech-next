@@ -41,15 +41,15 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { auth, db } from "@/firebase";
+import { defineComponent } from "vue";
+import { auth, db } from "@/firebase/config";
 import Carte from "@/components/ui-components/Carte.vue";
 import ChampTexte from "@/components/ui-components/ChampTexte.vue";
 import Formulaire from "@/components/ui-components/Formulaire.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
 import Espacement from "@/components/ui-components/Espacement.vue";
 
-export default Vue.extend({
+export default defineComponent({
   components: {
     Carte,
     ChampTexte,

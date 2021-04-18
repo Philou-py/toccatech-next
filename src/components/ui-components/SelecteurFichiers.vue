@@ -18,12 +18,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import ChampTexte from "@/components/ui-components/ChampTexte.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
-import { BusEvénements } from "@/BusEvénements";
+// import { BusEvénements } from "@/BusEvénements";
 
-export default Vue.extend({
+export default defineComponent({
   components: {
     ChampTexte,
     Bouton,
@@ -45,11 +45,11 @@ export default Vue.extend({
     fichier: "",
   }),
 
-  computed: {
-    champValide(): boolean {
-      return (this.$children[0] as any).champValide;
-    },
-  },
+  // computed: {
+  //   champValide(): boolean {
+  //     return (this.$children[0] as any).champValide;
+  //   },
+  // },
 
   methods: {
     afficherNomFichier(inputFichiers: any) {
@@ -60,7 +60,7 @@ export default Vue.extend({
         this.fichier = "";
         this.$emit("input", "");
       }
-      BusEvénements.$emit("état-validité-à-vérifier");
+      // BusEvénements.$emit("état-validité-à-vérifier");
     },
   },
 });

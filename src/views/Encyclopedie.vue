@@ -1,7 +1,7 @@
 <template>
   <div class="encyclopédie petit-container">
-    <div class="nom-bouton-compositeur" :class="$mq">
-      <h1 class="centrer-texte titre-page" :class="$mq">Encyclopédie</h1>
+    <div class="nom-bouton-compositeur" :class="$grid.breakpoint">
+      <h1 class="centrer-texte titre-page" :class="$grid.breakpoint">Encyclopédie</h1>
       <router-link :to="{ name: 'NouveauCompositeur' }"
         ><Bouton class="blue darken-3">Nouveau Compositeur</Bouton></router-link
       >
@@ -11,7 +11,7 @@
         v-for="compositeur in compositeurs"
         :key="compositeur.id"
         class="carte-compositeur"
-        :class="$mq"
+        :class="$grid.breakpoint"
       >
         <div class="infos-compositeur contenu-carte">
           <h5 class="titre-carte nom-compositeur" :title="compositeur.nom">
@@ -47,12 +47,12 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { db } from "@/firebase";
+import { defineComponent } from "vue";
+import { db } from "@/firebase/config";
 import Carte from "@/components/ui-components/Carte.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
 
-export default Vue.extend({
+export default defineComponent({
   components: {
     Carte,
     Bouton,

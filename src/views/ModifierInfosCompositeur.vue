@@ -1,8 +1,8 @@
 <template>
   <div>
     <Container v-show="existant && chargementTerminé" class="modification-infos-compositeur mb-3">
-      <div class="nom-image-compositeur" :class="$mq">
-        <h1 class="centrer-texte" :class="$mq">
+      <div class="nom-image-compositeur" :class="$grid.breakpoint">
+        <h1 class="centrer-texte" :class="$grid.breakpoint">
           {{ compositeur.nom }}<span v-if="compositeur.nom"> - </span
           ><span v-if="id">Contribuer</span><span v-else>Nouveau compositeur</span>
         </h1>
@@ -120,9 +120,9 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { db, storage, Timestamp } from "@/firebase";
-import { BusEvénements } from "@/BusEvénements";
+import { defineComponent } from "vue";
+import { db, storage, Timestamp } from "@/firebase/config";
+// import { BusEvénements } from "@/BusEvénements";
 import Container from "@/components/ui-components/Container.vue";
 import ChampTexte from "@/components/ui-components/ChampTexte.vue";
 import Formulaire from "@/components/ui-components/Formulaire.vue";
@@ -132,7 +132,7 @@ import Espacement from "@/components/ui-components/Espacement.vue";
 import SelecteurFichiers from "@/components/ui-components/SelecteurFichiers.vue";
 import Accueil from "./Accueil.vue";
 
-export default Vue.extend({
+export default defineComponent({
   props: {
     id: String,
   },
@@ -183,13 +183,13 @@ export default Vue.extend({
 
   methods: {
     émettreEvénement() {
-      BusEvénements.$emit("état-validité-à-vérifier");
+      // BusEvénements.$emit("état-validité-à-vérifier");
     },
 
     prévisualiserFichierImage() {
       var imgPrévisualisation = this.$refs.imgPrévisualisation as HTMLImageElement;
       if (this.fichierPhoto) {
-        this.$set(this.compositeur, "photo", "");
+        this.compositeur.photo = "";
         var lecteur = new FileReader();
         lecteur.addEventListener("load", () => {
           imgPrévisualisation.src = lecteur.result as any;
@@ -239,7 +239,7 @@ export default Vue.extend({
       var refImage = storage.ref(`photos_compositeurs/${this.fichierPhoto.name}`);
       refImage.put(this.fichierPhoto, { cacheControl: "public,max-age: 432000" }).then((res) => {
         res.ref.getDownloadURL().then((url) => {
-          this.$set(this.compositeur, "photo", url);
+          this.compositeur.photo = url;
           this.émettreEvénement();
           this.uploadTerminé = true;
         });
@@ -248,7 +248,7 @@ export default Vue.extend({
 
     supprimerImage() {
       var refImage = storage.ref(`photos_compositeurs/${this.fichierPhoto.name}`);
-      this.$set(this.compositeur, "photo", "");
+      this.compositeur.photo = "";
       refImage.delete().then(() => {
         console.log("Photo supprimée !");
       });
@@ -298,31 +298,36 @@ export default Vue.extend({
             var compositeur = document.data()!;
             // Toutes les propriétés de l'objet 'this.compositeur' doivent être déclarées
             // et faites réactives grâce à la méthode 'this.$set(objet, clé, valeur)'.
-            for (var clé in compositeur) {
-              this.$set(this.compositeur, clé, compositeur[clé]);
-            }
+            // for (var clé in compositeur) {
+            //   this.$set(this.compositeur, clé, compositeur[clé]);
+            // }
+            this.compositeur = compositeur;
             var naissance = this.compositeur.date_naissance.toDate();
-            this.$set(
-              this.compositeur,
-              "date_naissance_string",
-              naissance.toISOString().slice(0, 10)
-            );
+            // this.$set(
+            //   this.compositeur,
+            //   "date_naissance_string",
+            //   naissance.toISOString().slice(0, 10)
+            // );
+            this.compositeur.date_naissance_string = naissance.toISOString().slice(0, 10);
             if (this.compositeur.date_décès) {
               var décès = this.compositeur.date_décès.toDate();
-              this.$set(this.compositeur, "date_décès_string", décès.toISOString().slice(0, 10));
+              // this.$set(this.compositeur, "date_décès_string", décès.toISOString().slice(0, 10));
+              this.compositeur.date_décès_string = décès.toISOString().slice(0, 10);
               if (!this.compositeur.âge) {
                 var âge =
                   (this.compositeur.date_décès.toDate().getTime() -
                     this.compositeur.date_naissance.toDate().getTime()) /
                   une_année_en_millisecondes;
-                this.$set(this.compositeur, "âge", Math.floor(âge));
+                // this.$set(this.compositeur, "âge", Math.floor(âge));
+                this.compositeur.âge = Math.floor(âge);
               }
             } else {
               let maintenant = new Date();
               var âge =
                 (maintenant.getTime() - this.compositeur.date_naissance.toDate().getTime()) /
                 une_année_en_millisecondes;
-              this.$set(this.compositeur, "âge", Math.floor(âge));
+              // this.$set(this.compositeur, "âge", Math.floor(âge));
+              this.compositeur.âge = Math.floor(âge);
             }
             this.chargementTerminé = true;
           } else {

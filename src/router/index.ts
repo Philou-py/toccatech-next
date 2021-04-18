@@ -1,14 +1,27 @@
-import Vue from "vue";
-import VueRouter, { RouteConfig } from "vue-router";
+import {
+  createRouter,
+  createWebHistory,
+  RouteRecordRaw,
+  RouteLocationRaw,
+  RouteLocationNormalized,
+} from "vue-router";
 import Accueil from "@/views/Accueil.vue";
 import Encyclopedie from "@/views/Encyclopedie.vue";
 import DetailsCompositeur from "@/views/DetailsCompositeur.vue";
 import ModifierInfosCompositeur from "@/views/ModifierInfosCompositeur.vue";
 import NonTrouve from "@/views/NonTrouve.vue";
+import { auth } from "@/firebase/config";
 
-Vue.use(VueRouter);
+const exigerAuth = (vers: RouteLocationNormalized, de: RouteLocationNormalized) => {
+  let utilisateur = auth.currentUser;
+  if (!utilisateur) {
+    let prochaineRoute: RouteLocationRaw = { name: "Accueil" };
+    return prochaineRoute;
+  }
+  return true;
+};
 
-const routes: Array<RouteConfig> = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "Accueil",
@@ -30,6 +43,7 @@ const routes: Array<RouteConfig> = [
     name: "ModifierInfosCompositeur",
     component: ModifierInfosCompositeur,
     props: true,
+    beforeEnter: exigerAuth,
   },
   {
     path: "/nouveau-compositeur",
@@ -43,9 +57,8 @@ const routes: Array<RouteConfig> = [
   },
 ];
 
-const router = new VueRouter({
-  mode: "history",
-  base: process.env.BASE_URL,
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
   routes,
 });
 

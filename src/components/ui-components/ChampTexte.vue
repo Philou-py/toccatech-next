@@ -288,10 +288,10 @@
 </style>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
-import { BusEvénements } from "@/BusEvénements";
+import { defineComponent, PropType } from "vue";
+// import { BusEvénements } from "@/BusEvénements";
 
-export default Vue.extend({
+export default defineComponent({
   model: {
     prop: "valeurInput",
     event: "input",
@@ -492,7 +492,7 @@ export default Vue.extend({
   methods: {
     émettreEvénements(valeurInput: string) {
       this.$emit("input", valeurInput);
-      BusEvénements.$emit("état-validité-à-vérifier");
+      // BusEvénements.$emit("état-validité-à-vérifier");
     },
 
     gérerFocus() {
@@ -548,7 +548,7 @@ export default Vue.extend({
       }
     }
 
-    if (this.typeInput == "textarea") {
+    if (this.typeInput == "textarea" && this.hauteur) {
       input.style.height = this.hauteur;
     }
   },

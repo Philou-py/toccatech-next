@@ -8,7 +8,7 @@
         centrerTitrePetitsEcran
         cheminAvatar="https://toccatech.com/media/avatars/Philippe_Google_carre.jpg"
       >
-        <template v-slot:titre>Ma Partothèque</template>
+        <template v-slot:titre>Toccatech</template>
         <template v-slot:menu-nav>
           <li>
             <router-link :to="{ name: 'Encyclopédie' }">Encyclopédie</router-link>
@@ -21,27 +21,26 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { auth } from "@/firebase";
+import { defineComponent } from "vue";
+import { auth } from "@/firebase/config";
 import NavBar from "@/components/ui-components/NavBar.vue";
-import Carte from "@/components/ui-components/Carte.vue";
-import Container from "@/components/ui-components/Container.vue";
-import Bouton from "@/components/ui-components/Bouton.vue";
-import Espacement from "@/components/ui-components/Espacement.vue";
-import FormulaireInscription from "@/components/layouts/accounts/FormulaireInscription.vue";
-import FormulaireConnexion from "@/components/layouts/accounts/FormulaireConnexion.vue";
+// import Carte from "@/components/ui-components/Carte.vue";
+// import Container from "@/components/ui-components/Container.vue";
+// import Bouton from "@/components/ui-components/Bouton.vue";
+// import Espacement from "@/components/ui-components/Espacement.vue";
+// import FormulaireInscription from "@/components/layouts/accounts/FormulaireInscription.vue";
+// import FormulaireConnexion from "@/components/layouts/accounts/FormulaireConnexion.vue";
 
-export default Vue.extend({
+export default defineComponent({
   components: {
     NavBar,
-    Carte,
-    Container,
-    Bouton,
-    Espacement,
-    FormulaireInscription,
-    FormulaireConnexion,
+    // Carte,
+    // Container,
+    // Bouton,
+    // Espacement,
+    // FormulaireInscription,
+    // FormulaireConnexion,
   },
-
   mounted() {
     var user = auth.currentUser;
     if (user) {

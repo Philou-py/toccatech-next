@@ -4,7 +4,7 @@
       <div
         class="presentation"
         :class="{
-          centrer: ['xs', 'sm'].includes($mq) && centrerTitrePetitsEcran,
+          centrer: ['xs', 'sm'].includes($grid.breakpoint) && centrerTitrePetitsEcran,
         }"
       >
         <!-- Les classes ml-2, mr-4 et my-auto permettent d'ajouter
@@ -12,7 +12,7 @@
         <BoutonIcone
           :styleIcone="styleIconeNav"
           :couleurRipple="couleurRippleIconeNav"
-          v-if="['xs', 'sm'].includes($mq)"
+          v-if="['xs', 'sm'].includes($grid.breakpoint)"
         >
           {{ nomIconeNav }}
         </BoutonIcone>
@@ -22,10 +22,13 @@
           </h4>
         </router-link>
       </div>
-      <ul class="menu-nav" v-if="['md', 'lg', 'xl'].includes($mq)">
+      <ul class="menu-nav" v-if="['md', 'lg', 'xl'].includes($grid.breakpoint)">
         <slot name="menu-nav"></slot>
       </ul>
-      <div class="container-avatar" v-if="cheminAvatar && ['md', 'lg', 'xl'].includes($mq)">
+      <div
+        class="container-avatar"
+        v-if="cheminAvatar && ['md', 'lg', 'xl'].includes($grid.breakpoint)"
+      >
         <img :src="cheminAvatar" alt="Avatar de l'utilisateur" />
       </div>
     </Container>
@@ -121,11 +124,11 @@
 </style>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import BoutonIcone from "@/components/ui-components/BoutonIcone.vue";
 import Container from "@/components/ui-components/Container.vue";
 
-export default Vue.extend({
+export default defineComponent({
   components: {
     BoutonIcone,
     Container,

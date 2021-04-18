@@ -1,4 +1,4 @@
-# ma-partotheque
+# toccatech
 
 ## Project setup
 ```

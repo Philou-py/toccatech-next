@@ -471,7 +471,7 @@ $colors: map-deep-merge(
 
       .btn.#{$color_name} {
         &:hover {
-          background-color: lighten($color_value, 13%) !important;
+          background-color: lighten($color_value, 10%) !important;
         }
 
         span.ripple {
@@ -485,7 +485,7 @@ $colors: map-deep-merge(
 
       .btn.#{$color_name}.#{$color_type} {
         &:hover {
-          background-color: lighten($color_value, 13%) !important;
+          background-color: lighten($color_value, 10%) !important;
         }
 
         span.ripple {
@@ -519,7 +519,7 @@ $colors: map-deep-merge(
       }
 
       .btn.#{$color_name}:hover {
-        background-color: darken($color_value, 13%) !important;
+        background-color: darken($color_value, 10%) !important;
       }
 
       .btn.#{$color_name} span.ripple {
@@ -548,7 +548,7 @@ $colors: map-deep-merge(
       }
 
       .btn.#{$color_name}.#{$color_type}:hover {
-        background-color: darken($color_value, 13%) !important;
+        background-color: darken($color_value, 10%) !important;
       }
 
       .btn.texte.#{$color_name}--text.#{$color_type} {

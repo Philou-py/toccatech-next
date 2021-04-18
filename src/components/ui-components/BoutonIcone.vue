@@ -44,11 +44,14 @@
 </style>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   props: {
     styleIcone: String,
-    couleurRipple: String,
+    couleurRipple: {
+      type: String,
+      default: "white",
+    },
   },
   methods: {
     createRipple(event: MouseEvent) {
