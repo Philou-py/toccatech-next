@@ -1,6 +1,6 @@
 <template>
-  <Container>
-    <div v-if="existant && chargementTerminé">
+  <Container class="overflow-hidden">
+    <div v-if="existant && chargementCompositeurTerminé && chargementOeuvresTerminé">
       <Carte class="carte-détails-compositeur">
         <div class="nom-image-compositeur" :class="$mq">
           <h1 class="centrer-texte" :class="$mq">{{ compositeur.nom }}</h1>
@@ -36,12 +36,22 @@
         <div class="actions-carte mt-4">
           <Espacement />
           <router-link :to="{ name: 'ModifierInfosCompositeur', params: { id: compositeur.id } }">
-            <Bouton class="teal accent-2" texte>Envie de contribuer ?</Bouton>
+            <Bouton :désactivé="!estConnecté" class="teal accent-2" texte
+              >Envie de contribuer ?</Bouton
+            >
           </router-link>
+        </div>
+        <!-- <div style="background-color: darkgrey; height: 2px"></div> -->
+        <div v-if="oeuvresCompositeur.length">
+          <hr />
+          <h3>Ses œuvres jouées par la communauté</h3>
+          <ul v-for="oeuvre in oeuvresCompositeur" :key="oeuvre.id">
+            <li>{{ oeuvre.titre }}</li>
+          </ul>
         </div>
       </Carte>
     </div>
-    <div v-else-if="!chargementTerminé">
+    <div v-else-if="!(chargementCompositeurTerminé && chargementOeuvresTerminé)">
       <p>Chargement...</p>
     </div>
     <div v-else>
@@ -56,7 +66,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { db } from "@/firebase";
+import { db, auth } from "@/firebase";
 import Container from "@/components/ui-components/Container.vue";
 import ChampTexte from "@/components/ui-components/ChampTexte.vue";
 import Formulaire from "@/components/ui-components/Formulaire.vue";
@@ -82,10 +92,15 @@ export default Vue.extend({
 
   data: () => ({
     compositeur: {},
+    oeuvresCompositeur: [] as any[],
     existant: true,
-    chargementTerminé: false,
+    chargementCompositeurTerminé: false,
+    chargementOeuvresTerminé: false,
+    enleverEcouteurOeuvres: () => {},
+    enleverEcouteurCompositeur: () => {},
     nom: "",
     biographie: "",
+    estConnecté: false,
   }),
 
   mounted() {
@@ -93,45 +108,74 @@ export default Vue.extend({
 
     // Récupération des données du compositeur voulu depuis
     // la base de données Firebase Firestore
-    db.collection("compositeurs")
-      .doc(this.id)
-      .onSnapshot(
-        (document) => {
-          if (document.exists) {
-            let données = document.data()!;
-            if (données.date_décès) {
-              données.est_mort = true;
-              let âge =
-                (données.date_décès.toDate().getTime() -
-                  données.date_naissance.toDate().getTime()) /
-                une_année_en_millisecondes;
-              données.âge = Math.floor(âge);
-            } else {
-              données.est_mort = false;
-              let maintenant = new Date();
-              let âge =
-                (maintenant.getTime() - données.date_naissance.toDate().getTime()) /
-                une_année_en_millisecondes;
-              données.âge = Math.floor(âge);
-            }
-            this.compositeur = { ...données, id: document.id };
-            this.chargementTerminé = true;
+    var refCompositeur = db.collection("compositeurs").doc(this.id);
+    this.enleverEcouteurCompositeur = refCompositeur.onSnapshot(
+      (document) => {
+        if (document.exists) {
+          let données = document.data()!;
+          if (données.date_décès) {
+            données.est_mort = true;
+            let âge =
+              (données.date_décès.toDate().getTime() - données.date_naissance.toDate().getTime()) /
+              une_année_en_millisecondes;
+            données.âge = Math.floor(âge);
           } else {
-            // Le document n'existe pas
-            this.chargementTerminé = true;
-            this.existant = false;
+            données.est_mort = false;
+            let maintenant = new Date();
+            let âge =
+              (maintenant.getTime() - données.date_naissance.toDate().getTime()) /
+              une_année_en_millisecondes;
+            données.âge = Math.floor(âge);
           }
-        },
-        (erreur) => {
-          // Une erreur est survenue lors de la récupération des données
-          console.log(erreur);
+          this.compositeur = { ...données, id: document.id };
+          this.chargementCompositeurTerminé = true;
+        } else {
+          // Le document n'existe pas
+          this.existant = false;
+          this.chargementCompositeurTerminé = true;
         }
-      );
+      },
+      (erreur) => {
+        // Une erreur est survenue lors de la récupération des données
+        console.log(erreur);
+      }
+    );
+
+    this.enleverEcouteurOeuvres = refCompositeur.collection("oeuvres").onSnapshot(
+      (snapshot) => {
+        this.oeuvresCompositeur = [];
+        snapshot.forEach((document) => {
+          this.oeuvresCompositeur.push(document.data());
+        });
+        this.chargementOeuvresTerminé = true;
+      },
+      (erreur) => {
+        console.log(erreur);
+        this.chargementOeuvresTerminé = true;
+      }
+    );
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.estConnecté = true;
+      } else {
+        this.estConnecté = false;
+      }
+    });
+  },
+
+  destroyed() {
+    this.enleverEcouteurCompositeur();
+    this.enleverEcouteurOeuvres();
   },
 });
 </script>
 
 <style lang="scss">
+.overflow-hidden {
+  overflow: hidden;
+}
+
 .carte-détails-compositeur {
   color: initial;
   padding: 15px;
@@ -159,6 +203,17 @@ export default Vue.extend({
       max-height: 150px;
       width: auto;
       border-radius: 10px;
+    }
+  }
+
+  .tableau-partothèque {
+    width: 100%;
+    border-collapse: collapse;
+    tr,
+    td,
+    th {
+      padding: 5px 10px;
+      border: 1px solid darkgrey;
     }
   }
 }

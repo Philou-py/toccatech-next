@@ -1,5 +1,5 @@
 <template>
-  <div class="encyclopédie petit-container">
+  <Container petit class="encyclopédie">
     <div class="nom-bouton-compositeur" :class="$mq">
       <h1 class="centrer-texte titre-page" :class="$mq">Encyclopédie</h1>
       <router-link :to="{ name: 'NouveauCompositeur' }"
@@ -43,7 +43,7 @@
     <div v-else>
       <p>Chargement...</p>
     </div>
-  </div>
+  </Container>
 </template>
 
 <script lang="ts">
@@ -51,10 +51,12 @@ import Vue from "vue";
 import { db } from "@/firebase";
 import Carte from "@/components/ui-components/Carte.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
+import Container from "@/components/ui-components/Container.vue";
 
 export default Vue.extend({
   components: {
     Carte,
+    Container,
     Bouton,
   },
 
@@ -105,6 +107,8 @@ export default Vue.extend({
 
 <style lang="scss">
 .encyclopédie {
+  background-color: #ffd40024;
+  overflow: hidden;
   .nom-bouton-compositeur {
     display: flex;
     align-items: center;

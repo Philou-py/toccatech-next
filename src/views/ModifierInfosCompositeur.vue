@@ -55,6 +55,7 @@
           />
           <span>OU</span>
           <SelecteurFichiers
+            label="Sélectionner une photo..."
             accepter="image/*"
             icôneDevant="image"
             v-model="fichierPhoto"
@@ -237,13 +238,15 @@ export default Vue.extend({
     uploaderImage() {
       this.uploadTerminé = false;
       var refImage = storage.ref(`photos_compositeurs/${this.fichierPhoto.name}`);
-      refImage.put(this.fichierPhoto, { cacheControl: "public,max-age: 432000" }).then((res) => {
-        res.ref.getDownloadURL().then((url) => {
-          this.$set(this.compositeur, "photo", url);
-          this.émettreEvénement();
-          this.uploadTerminé = true;
+      refImage
+        .put(this.fichierPhoto, { cacheControl: "public,max-age: 432000" })
+        .then((réponse) => {
+          réponse.ref.getDownloadURL().then((url) => {
+            this.$set(this.compositeur, "photo", url);
+            this.émettreEvénement();
+            this.uploadTerminé = true;
+          });
         });
-      });
     },
 
     supprimerImage() {
@@ -358,6 +361,8 @@ export default Vue.extend({
 
 <style lang="scss">
 .modification-infos-compositeur {
+  overflow: hidden;
+
   .row {
     display: flex;
     margin-bottom: 20px;
