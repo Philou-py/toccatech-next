@@ -1,5 +1,5 @@
 <template>
-  <div class="sélecteur-fichiers-test">
+  <div class="sélecteur-fichiers">
     <input
       type="file"
       :accept="accepter"
@@ -9,7 +9,7 @@
     <ChampTexte
       :icôneDevant="icôneDevant"
       class="affichage-fichiers"
-      label="Sélectionnez un fichier..."
+      :label="label"
       :valeurInput="fichier"
       :désactivé="désactivé"
       :requis="requis"
@@ -30,6 +30,7 @@ export default Vue.extend({
   },
 
   props: {
+    label: String,
     accepter: String,
     invalide: Boolean,
     icôneDevant: String,
@@ -49,6 +50,9 @@ export default Vue.extend({
     champValide(): boolean {
       return (this.$children[0] as any).champValide;
     },
+    champRequisVide(): boolean {
+      return this.requis && !this.fichier;
+    },
   },
 
   methods: {
@@ -67,9 +71,10 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-.sélecteur-fichiers-test {
+.sélecteur-fichiers {
   position: relative;
   display: flex;
+  width: 100%;
 
   .affichage-fichiers {
     width: 100%;
@@ -77,7 +82,7 @@ export default Vue.extend({
 
   input[type="file"] {
     position: absolute;
-    z-index: 1;
+    z-index: 99;
     top: 0;
     right: 0;
     left: 0;

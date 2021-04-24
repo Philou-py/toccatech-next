@@ -18,8 +18,11 @@ export default Vue.extend({
         // Ce commentaire permet d'ignorer l'erreur de TypeScript à cause des
         // propriétés inconnues 'champValide' et 'champRequisVide' sur les composants enfants.
         // @ts-ignore
-        if (!(child.élémentFormulaire && child.champValide && !child.champRequisVide)) {
-          valide = false;
+        if (child.élémentFormulaire) {
+          // @ts-ignore
+          if (!child.champValide || child.champRequisVide) {
+            valide = false;
+          }
         }
       });
       this.$emit("input", valide);

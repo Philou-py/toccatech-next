@@ -9,18 +9,25 @@
       champRequisVide: champRequisVide,
       valide: champValide,
       invalide: !champValide,
-      'd-block': block,
+      sélectionnable: typeInput == 'select',
     }"
+    ref="champTexte"
   >
     <div class="avant-champ-texte" v-if="icôneDevant">
       <span class="material-icons icône-devant" @click="$emit('icône-devant:clic')">{{
         icôneDevant
       }}</span>
     </div>
+    <label
+      :for="idInput"
+      v-if="label"
+      :class="{ 'label-à-gauche': typeInput == 'textarea' }"
+      ref="label"
+      >{{ label }}</label
+    >
     <div class="contenu">
-      <label :for="idInput" v-if="label" ref="label">{{ label }}</label>
       <input
-        v-if="!(typeInput == 'textarea')"
+        v-if="typeInput != 'textarea' && typeInput != 'select'"
         :type="typeInput"
         :disabled="désactivé"
         :id="idInput"
@@ -32,8 +39,22 @@
         @blur="gérerBlur($event.target.value)"
         @input="émettreEvénements($event.target.value)"
       />
+      <div v-if="typeInput == 'select'" class="container-sélecteur">
+        <div class="container-sélection">
+          <div v-if="actif">{{ valeurInput }}</div>
+        </div>
+        <div class="container-svg"></div>
+        <span class="container-flèche material-icons">arrow_drop_down</span>
+        <transition name="fade">
+          <ul v-if="selectActif" class="menu-déroulant">
+            <li v-for="item in items" :key="item" @click="émettreEvénements(item)">
+              {{ item }}
+            </li>
+          </ul>
+        </transition>
+      </div>
       <textarea
-        v-else
+        v-if="typeInput == 'textarea'"
         :disabled="désactivé"
         :id="idInput"
         :required="requis"
@@ -61,7 +82,8 @@
 <style lang="scss">
 @mixin changerThème($couleur-thème) {
   input,
-  textarea {
+  textarea,
+  .container-sélection {
     caret-color: $couleur-thème;
     border-color: $couleur-thème;
   }
@@ -108,11 +130,15 @@
   }
 }
 
+.sélectionnable * {
+  cursor: pointer !important;
+}
+
 .champ-texte {
   position: relative;
   display: flex;
   padding: 16px 0 2px;
-  min-width: 230px;
+  width: 100%;
   font-size: 18px;
 
   .avant-champ-texte {
@@ -130,11 +156,8 @@
   }
 
   .contenu {
-    flex: 1 1 206px;
-  }
-
-  &.d-block {
-    width: 100%;
+    flex-grow: 1;
+    position: relative;
   }
 
   input,
@@ -154,23 +177,21 @@
     }
   }
 
-  input[type="file"] {
-    visibility: hidden;
-  }
-
   textarea {
     resize: vertical;
     /* overflow: hidden; */
   }
 
   textarea ~ .ligne {
-    bottom: 6px;
+    bottom: 20px;
   }
 
   label {
     font-size: 1em;
     position: absolute;
+    z-index: 1;
     top: 17px;
+    left: 30px;
     cursor: text;
     color: rgba(black, 0.6);
     // Transition pour les propriétés 'top', 'color' et 'font-size'
@@ -178,13 +199,63 @@
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
   }
 
+  .label-à-gauche {
+    left: 0;
+  }
+
   .ligne {
     height: 2px;
     width: 0;
-    position: relative;
-    bottom: 2px;
+    position: absolute;
+    bottom: 15px;
     background-color: rgba(black, 0.6);
     transition: all 0.3s;
+  }
+
+  .container-sélecteur {
+    position: relative;
+  }
+
+  .container-sélection {
+    border: none;
+    border-bottom: 1px solid rgba(black, 0.6);
+    width: 100%;
+    padding: 1px 0 5px;
+    height: 30px;
+  }
+
+  .container-flèche {
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    height: 24px;
+    width: 24px;
+  }
+
+  .menu-déroulant {
+    position: absolute;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    // box-shadow: 0 0 5px 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    max-height: 200px;
+    overflow: auto;
+
+    li {
+      background-color: white;
+      padding: 6px 10px;
+      transition: all 300ms;
+
+      &:hover {
+        background-color: lightgrey;
+      }
+    }
   }
 
   &:hover {
@@ -284,6 +355,15 @@
     text-align: right;
     transition: all 0.3s;
   }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s;
+  }
+  .fade-enter,
+  .fade-leave-to {
+    opacity: 0;
+  }
 }
 </style>
 
@@ -336,7 +416,11 @@ export default Vue.extend({
     // L'attribut 'dense' produit un effet seulement si aucun label n'est présent.
     dense: Boolean,
 
-    block: Boolean,
+    items: {
+      type: Array as PropType<Array<string>>,
+    },
+
+    sélectionDéfaut: Number,
 
     type: {
       type: String,
@@ -344,7 +428,7 @@ export default Vue.extend({
       // Ce validateur permet de restreindre les valeurs possibles pour la variable 'type'
       // aux types de champs de texte pris en charge par ce composant.
       validator(valeur: string) {
-        return ["texte", "mot-de-passe", "email", "date", "textarea"].includes(valeur);
+        return ["texte", "mot-de-passe", "email", "date", "textarea", "sélecteur"].includes(valeur);
       },
     },
 
@@ -374,6 +458,7 @@ export default Vue.extend({
     // Initialisation de message avec un espace insécable pour éviter un changement
     // de position du champ de texte à l'apparition d'un message
     message: "&nbsp;",
+    selectActif: false,
   }),
 
   watch: {
@@ -419,6 +504,7 @@ export default Vue.extend({
       else if (this.type == "mot-de-passe") return "password";
       else if (this.type == "date") return "date";
       else if (this.type == "textarea") return "textarea";
+      else if (this.type == "sélecteur") return "select";
       else return "text";
     },
 
@@ -528,6 +614,22 @@ export default Vue.extend({
       // Ajout de 2 pixels pour qu'une scrollbar n'apparaisse pas par défaut
       input.style.height = input.scrollHeight + 2 + "px";
     },
+
+    gérerClicBody(événement: MouseEvent) {
+      let champTexte = this.$refs.champTexte as HTMLDivElement;
+      let élémentCliqué = événement.target as HTMLElement;
+      if (champTexte.contains(élémentCliqué) && !this.selectActif) {
+        this.selectActif = true;
+        this.actif = true;
+        this.focus = true;
+      } else {
+        this.selectActif = false;
+        this.focus = false;
+        if (!this.valeurInput) {
+          this.actif = false;
+        }
+      }
+    },
   },
 
   mounted() {
@@ -550,6 +652,19 @@ export default Vue.extend({
 
     if (this.typeInput == "textarea") {
       input.style.height = this.hauteur;
+    }
+
+    if (this.typeInput == "select") {
+      if (this.sélectionDéfaut) {
+        this.émettreEvénements(this.items[this.sélectionDéfaut]);
+      }
+      document.addEventListener("click", this.gérerClicBody);
+    }
+  },
+
+  destroyed() {
+    if (this.typeInput == "select") {
+      document.removeEventListener("click", this.gérerClicBody);
     }
   },
 });

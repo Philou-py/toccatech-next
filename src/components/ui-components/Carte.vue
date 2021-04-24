@@ -17,6 +17,7 @@
   padding-left: 16px;
   padding-right: 16px;
   color: #666666;
+  background-color: white;
 
   .titre-carte {
     color: #212121;

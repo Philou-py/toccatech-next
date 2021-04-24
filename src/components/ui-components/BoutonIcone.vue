@@ -20,7 +20,8 @@
     overflow: hidden;
     cursor: pointer;
     transition: background-color 300ms;
-
+    width: 38px;
+    height: 38px;
     &:hover {
       background-color: #c19eff;
     }
@@ -50,6 +51,7 @@ export default Vue.extend({
     styleIcone: String,
     couleurRipple: String,
   },
+
   methods: {
     createRipple(event: MouseEvent) {
       const button = event.currentTarget as HTMLButtonElement;

@@ -1,5 +1,5 @@
 <template>
-  <div class="toolbar">
+  <div class="navbar">
     <Container>
       <div
         class="presentation"
@@ -33,7 +33,7 @@
 </template>
 
 <style lang="scss">
-.toolbar {
+.navbar {
   background-color: #b388ff;
   color: white;
 
@@ -94,10 +94,15 @@
       text-decoration: none;
       text-align: center;
       color: white;
+      cursor: pointer;
       transition: background-color 400ms;
 
       &:hover {
         background-color: #8765ef;
+      }
+
+      &.désactivé:hover {
+        cursor: not-allowed;
       }
     }
   }
