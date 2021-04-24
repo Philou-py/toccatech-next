@@ -471,7 +471,7 @@ $colors: map-deep-merge(
 
       .btn.#{$color_name} {
         &:hover {
-          background-color: lighten($color_value, 13%) !important;
+          background-color: lighten($color_value, 10%) !important;
         }
 
         span.ripple {
@@ -485,7 +485,7 @@ $colors: map-deep-merge(
 
       .btn.#{$color_name}.#{$color_type} {
         &:hover {
-          background-color: lighten($color_value, 13%) !important;
+          background-color: lighten($color_value, 10%) !important;
         }
 
         span.ripple {
@@ -519,7 +519,7 @@ $colors: map-deep-merge(
       }
 
       .btn.#{$color_name}:hover {
-        background-color: darken($color_value, 13%) !important;
+        background-color: darken($color_value, 10%) !important;
       }
 
       .btn.#{$color_name} span.ripple {
@@ -548,7 +548,7 @@ $colors: map-deep-merge(
       }
 
       .btn.#{$color_name}.#{$color_type}:hover {
-        background-color: darken($color_value, 13%) !important;
+        background-color: darken($color_value, 10%) !important;
       }
 
       .btn.texte.#{$color_name}--text.#{$color_type} {
@@ -564,4 +564,47 @@ $colors: map-deep-merge(
       @include tester-luminosité($color_name, $color_value, $color_type);
     }
   }
+}
+
+
+// Couleurs du thème personnalisé pour Toccatech
+.toccatech-theme-c5, .w3-theme-l5 {color:#000 !important; background-color:#f0f7fd !important}
+.toccatech-theme-c4, .w3-theme-l4 {color:#000 !important; background-color:#cee3f9 !important}
+.toccatech-theme-c3, .w3-theme-l3 {color:#000 !important; background-color:#9cc8f3 !important}
+.toccatech-theme-c2, .w3-theme-l2 {color:#fff !important; background-color:#6bacee !important}
+.toccatech-theme-c1, .w3-theme-l1 {color:#fff !important; background-color:#3a91e8 !important}
+.toccatech-theme-s1, .w3-theme-d1 {color:#fff !important; background-color:#166abd !important}
+.toccatech-theme-s2, .w3-theme-d2 {color:#fff !important; background-color:#145ea8 !important}
+.toccatech-theme-s3, .w3-theme-d3 {color:#fff !important; background-color:#115293 !important}
+.toccatech-theme-s4, .w3-theme-d4 {color:#fff !important; background-color:#0f467e !important}
+.toccatech-theme-s5, .w3-theme-d5 {color:#fff !important; background-color:#0c3b69 !important}
+
+.toccatech-theme-clair, .w3-theme-light {color:#000 !important; background-color:#f0f7fd !important}
+.toccatech-theme-sombre, .w3-theme-dark {color:#fff !important; background-color:#0c3b69 !important}
+.toccatech-theme-action, .w3-theme-action {color:#fff !important; background-color:#0c3b69 !important}
+
+.toccatech-theme, .w3-theme {color:#fff !important; background-color:#1976d2 !important}
+.toccatech-theme-texte, .w3-text-theme {color:#1976d2 !important}
+.toccatech-theme-bordure, .w3-border-theme {border-color:#1976d2 !important}
+
+.toccatech-theme-hover:hover, .w3-hover-theme:hover {color:#fff !important; background-color:#1976d2 !important}
+.toccatech-theme-texte-hover:hover, .w3-hover-text-theme:hover {color:#1976d2 !important}
+.toccatech-theme-bordure-hover:hover, .w3-hover-border-theme:hover {border-color:#1976d2 !important}
+
+// Taille des Material icons
+
+.material-icons.taille-18 {
+  font-size: 18px;
+}
+
+.material-icons.taille-24 {
+  font-size: 24px;
+}
+
+.material-icons.taille-36 {
+  font-size: 36px;
+}
+
+.material-icons.taille-48 {
+  font-size: 48px;
 }
