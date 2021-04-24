@@ -8,7 +8,9 @@
       />
       <Container grand>
         <h1 class="titre">Votre boîte à outils musicale... découvrez la vite !</h1>
-        <a href="#connexion-inscription"><Bouton class="teal" grand>C'est parti !</Bouton></a>
+        <a href="#connexion-inscription">
+          <Bouton class="blue-grey" grand>C'est parti !</Bouton>
+        </a>
       </Container>
     </div>
     <Container class="description-fonctionnalités">
@@ -122,8 +124,7 @@ export default Vue.extend({
 .accueil {
   .titre {
     font-size: 63px;
-    // color: #4db6ac;
-    color: #5d4037;
+    color: var(--couleur-fg-titre-page-accueil);
     font-weight: 500;
     margin-bottom: 30px;
     line-height: 1;
@@ -135,6 +136,15 @@ export default Vue.extend({
     height: 500px;
     overflow: hidden;
     position: relative;
+
+    // Appliquer 'position: relative' au texte au dessus des images
+    // permet de faire en sorte qu'il reste au dessus, car un élément
+    // avec une position non statique est positionné au dessus d'un
+    // élément avec une position statique.
+    .container,
+    h2 {
+      position: relative;
+    }
 
     &.xs,
     &.sm {
@@ -154,7 +164,6 @@ export default Vue.extend({
       left: 0;
       height: auto;
       width: 100%;
-      z-index: -1;
     }
   }
 
@@ -201,7 +210,7 @@ export default Vue.extend({
     margin-bottom: 40px;
 
     div.material-icons {
-      color: #795548;
+      color: var(--couleur-fg-icones-description-page-accueil);
     }
 
     h4 {

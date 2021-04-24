@@ -1,6 +1,6 @@
 <template>
   <Carte class="carte-connexion" :largeur="400">
-    <h1 class="titre-carte">Connexion</h1>
+    <h3 class="titre-carte">Connexion</h3>
     <div class="contenu-carte">
       <Formulaire v-model="formulaireValide" class="formulaire-connexion">
         <ChampTexte
@@ -24,7 +24,9 @@
       </Formulaire>
     </div>
     <div class="actions-carte">
-      <a class="lien" @click="changerComposant('FormulaireInscription')">Pas de compte ?</a>
+      <a v-if="changerComposant" class="lien" @click="changerComposant('FormulaireInscription')">
+        Pas de compte ?
+      </a>
       <Espacement />
       <Bouton
         class="blue darken-3"

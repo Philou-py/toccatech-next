@@ -3,8 +3,8 @@
     <nav>
       <NavBar
         nomIconeNav="menu"
-        styleIconeNav="color: white"
-        couleurRippleIconeNav="#8765ef"
+        styleIconeNav="color: var(--couleur-fg-icone-nav)"
+        couleurRippleIconeNav="var(--couleur-ripple-icone-nav)"
         centrerTitrePetitsEcran
         cheminAvatar="https://toccatech.com/media/avatars/Philippe_Google_carre.jpg"
         class="barre-navigation"
@@ -38,7 +38,7 @@
       <router-view />
     </div>
     <footer>
-      <p>Réalisé par Philippe Schoenhenz</p>
+      <p>Réalisé par Philippe Schoenhenz — 2021</p>
     </footer>
   </div>
 </template>
@@ -118,23 +118,30 @@ export default Vue.extend({
 }
 
 html {
-  --couleur-primaire: #1867c0;
+  // --toccatech-theme-primaire: #1867c0;
+  // --toccatech-theme-secondaire: #1867c0;
+  --couleur-ripple-icone-nav: #343148;
+  --couleur-fg-icone-nav: white;
+  --couleur-bg-hover-bouton-icone-nav: #755139;
+  --couleur-bg-hover-item-menu-nav: #755139;
+  --couleur-fg-titre-page-accueil: #black; //615550
+  --couleur-fg-icones-description-page-accueil: #795548;
+  --couleur-bg-navbar: #9e1030;
+  --couleur-bg-app: #fde8ed;
+  --couleur-bg-footer: #d69c2f;
+  --couleur-ripple-icone-telecharger-partotheque: #ffe5e5;
+  --couleur-fg-nom-site: white;
+
   scroll-behavior: smooth;
+}
+
+#app {
+  background-color: var(--couleur-bg-app);
 }
 
 .titre-page {
   margin-top: 20px;
   margin-bottom: 20px;
-}
-
-.couleur-primaire {
-  &--texte {
-    color: var(--couleur-primaire);
-  }
-
-  &--fond {
-    background-color: var(--couleur-primaire);
-  }
 }
 
 body {
@@ -156,7 +163,6 @@ a {
 
 .contenu-app {
   margin-top: 60px;
-  /* overflow: hidden; */
 }
 
 .barre-navigation {
@@ -168,10 +174,10 @@ a {
 }
 
 footer {
+  background-color: var(--couleur-bg-footer);
   padding: 10px 0;
   text-align: center;
-  background-color: #a1887f;
-  color: rgba(white, 0.8);
+  color: white;
 }
 
 .ml,

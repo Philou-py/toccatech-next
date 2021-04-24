@@ -1,111 +1,120 @@
 <template>
   <div>
-    <Container v-show="existant && chargementTerminé" class="modification-infos-compositeur mb-3">
-      <div class="nom-image-compositeur" :class="$mq">
-        <h1 class="centrer-texte" :class="$mq">
-          {{ compositeur.nom }}<span v-if="compositeur.nom"> - </span
-          ><span v-if="id">Contribuer</span><span v-else>Nouveau compositeur</span>
-        </h1>
-        <div class="container-img">
-          <img
-            ref="imgPrévisualisation"
-            src=""
-            class="img-prévisualisation"
-            alt="Prévisualisation de l'image..."
-          />
-        </div>
-      </div>
-      <Formulaire v-model="formulaireValide" class="row">
-        <div class="col">
-          <ChampTexte
-            icôneDevant="face"
-            label="Nom du compositeur"
-            v-model="compositeur.nom"
-            requis
-          />
-          <ChampTexte
-            type="date"
-            icôneDevant="today"
-            label="Date de naissance"
-            v-model="compositeur.date_naissance_string"
-            requis
-          />
-          <ChampTexte
-            type="date"
-            icôneDevant="event"
-            label="Date de décès (si le compositeur est décédé)"
-            v-model="compositeur.date_décès_string"
-          />
-          <ChampTexte
-            icôneDevant="music_note"
-            label="Styles musicaux"
-            v-model="compositeur.styles_musicaux"
-            requis
-          />
-        </div>
-        <div class="séparateur-vertical"></div>
-        <div class="col">
-          <ChampTexte
-            icôneDevant="link"
-            label="Photo du compositeur (URL)"
-            v-model="compositeur.photo"
-            :longueur-max="500"
-            :invalide="!URLValide"
-            :désactivé="sélectionPhotoFinie"
-          />
-          <span>OU</span>
-          <SelecteurFichiers
-            label="Sélectionner une photo..."
-            accepter="image/*"
-            icôneDevant="image"
-            v-model="fichierPhoto"
-            @input="prévisualiserFichierImage()"
-            :désactivé="sélectionPhotoFinie"
-          />
-          <div style="display: flex; justify-content: flex-end; margin-bottom: 30px">
-            <label for="finirSélectionPhoto">Valider sélection photo</label
-            ><input
-              id="finirSélectionPhoto"
-              type="checkbox"
-              v-model="sélectionPhotoFinie"
-              @change="
-                émettreEvénement();
-                if (sélectionPhotoFinie) {
-                  if (fichierPhoto) {
-                    uploaderImage();
-                  }
-                } else {
-                  if (fichierPhoto) {
-                    supprimerImage();
-                  }
-                }
-              "
+    <Container v-show="existant && chargementTerminé" class="overflow-hidden">
+      <Carte class="carte-modification-infos-compositeur">
+        <div class="nom-image-compositeur" :class="$mq">
+          <h1 class="centrer-texte" :class="$mq">
+            {{ compositeur.nom }}<span v-if="compositeur.nom"> - </span
+            ><span v-if="id">Contribuer</span><span v-else>Nouveau compositeur</span>
+          </h1>
+          <div class="container-img">
+            <img
+              ref="imgPrévisualisation"
+              src=""
+              class="img-prévisualisation"
+              alt="Prévisualisation de l'image..."
             />
           </div>
-          <ChampTexte
-            type="textarea"
-            label="Biographie du compositeur"
-            v-model="compositeur.biographie"
-            hauteur="200px"
-            :longueur-max="2000"
-            requis
-          />
         </div>
-      </Formulaire>
-      <div style="display: flex; justify-content: center" class="mt-3">
-        <router-link v-if="id" :to="{ name: 'DétailsCompositeur', params: { id: id } }"
-          ><Bouton class="red mr-3">Annuler</Bouton></router-link
-        >
-        <router-link v-else :to="{ name: 'Encyclopédie' }"
-          ><Bouton class="red mr-3">Annuler</Bouton></router-link
-        >
-        <Bouton
-          :désactivé="!formulaireValide || !sélectionPhotoValide || !uploadTerminé"
-          class="purple"
-          @click="contribuer()"
-          >Valider</Bouton
-        >
-      </div>
+        <Formulaire v-model="formulaireValide" class="row">
+          <div class="col">
+            <ChampTexte
+              icôneDevant="face"
+              label="Nom du compositeur"
+              v-model="compositeur.nom"
+              requis
+            />
+            <ChampTexte
+              type="date"
+              icôneDevant="today"
+              label="Date de naissance"
+              v-model="compositeur.date_naissance_string"
+              requis
+            />
+            <ChampTexte
+              type="date"
+              icôneDevant="event"
+              label="Date de décès (si le compositeur est décédé)"
+              v-model="compositeur.date_décès_string"
+            />
+            <ChampTexte
+              icôneDevant="music_note"
+              label="Styles musicaux"
+              v-model="compositeur.styles_musicaux"
+              requis
+            />
+          </div>
+          <div class="séparateur-vertical"></div>
+          <div class="col">
+            <ChampTexte
+              icôneDevant="link"
+              label="Photo du compositeur (URL)"
+              v-model="compositeur.photo"
+              :longueur-max="500"
+              :invalide="!URLValide"
+              :désactivé="sélectionPhotoFinie"
+            />
+            <span>OU</span>
+            <SelecteurFichiers
+              label="Sélectionner une photo..."
+              accepter="image/*"
+              icôneDevant="image"
+              v-model="fichierPhoto"
+              @input="prévisualiserFichierImage()"
+              :désactivé="sélectionPhotoFinie"
+            />
+            <div
+              style="
+                display: flex;
+                justify-content: flex-end;
+                margin-bottom: 30px;
+                position: relative;
+              "
+            >
+              <label for="finirSélectionPhoto">Valider sélection photo</label
+              ><input
+                id="finirSélectionPhoto"
+                type="checkbox"
+                v-model="sélectionPhotoFinie"
+                @change="
+                  émettreEvénement();
+                  if (sélectionPhotoFinie) {
+                    if (fichierPhoto) {
+                      uploaderImage();
+                    }
+                  } else {
+                    if (fichierPhoto) {
+                      supprimerImage();
+                    }
+                  }
+                "
+              />
+            </div>
+            <ChampTexte
+              type="textarea"
+              label="Biographie du compositeur"
+              v-model="compositeur.biographie"
+              hauteur="200px"
+              :longueur-max="2000"
+              requis
+            />
+          </div>
+        </Formulaire>
+        <div style="display: flex; justify-content: center" class="my-4">
+          <router-link v-if="id" :to="{ name: 'DétailsCompositeur', params: { id: id } }"
+            ><Bouton class="red mr-3">Annuler</Bouton></router-link
+          >
+          <router-link v-else :to="{ name: 'Encyclopédie' }"
+            ><Bouton class="red mr-3">Annuler</Bouton></router-link
+          >
+          <Bouton
+            :désactivé="!formulaireValide || !sélectionPhotoValide || !uploadTerminé"
+            class="purple"
+            @click="contribuer()"
+            >Valider</Bouton
+          >
+        </div>
+      </Carte>
     </Container>
     <div v-show="!chargementTerminé">
       <p>Chargement...</p>
@@ -360,8 +369,32 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-.modification-infos-compositeur {
+.overflow-hidden {
   overflow: hidden;
+}
+
+.carte-modification-infos-compositeur {
+  position: relative;
+
+  &::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    opacity: 0.08;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("https://img.over-blog-kiwi.com/1/43/53/80/20190113/ob_36e25c_sticker-notes-de-musique.jpg");
+    background-size: 25%;
+  }
+
+  * {
+    // Les éléments positionnés explicitement sont toujours au dessus des autres !
+    // La ligne ci-dessous permet donc de positionner le contenu du tableau au dessus
+    // de l'image d'arrière plan qui a elle une position 'absolute'.
+    position: relative;
+  }
 
   .row {
     display: flex;
@@ -403,6 +436,7 @@ export default Vue.extend({
 }
 
 .nom-image-compositeur {
+  color: black;
   display: flex;
   align-items: center;
   margin: 20px 0;

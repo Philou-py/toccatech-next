@@ -36,9 +36,9 @@
         <div class="actions-carte mt-4">
           <Espacement />
           <router-link :to="{ name: 'ModifierInfosCompositeur', params: { id: compositeur.id } }">
-            <Bouton :désactivé="!estConnecté" class="teal accent-2" texte
-              >Envie de contribuer ?</Bouton
-            >
+            <Bouton :désactivé="!estConnecté" class="indigo darken-1" texte>
+              Envie de contribuer ?
+            </Bouton>
           </router-link>
         </div>
         <!-- <div style="background-color: darkgrey; height: 2px"></div> -->
@@ -179,6 +179,27 @@ export default Vue.extend({
 .carte-détails-compositeur {
   color: initial;
   padding: 15px;
+  position: relative;
+
+  * {
+    // Les éléments positionnés explicitement sont toujours au dessus des autres !
+    // La ligne ci-dessous permet donc de positionner le contenu du tableau au dessus
+    // de l'image d'arrière plan qui a elle une position 'absolute'.
+    position: relative;
+  }
+
+  &::before {
+    content: "";
+    display: block;
+    position: absolute;
+    opacity: 0.08;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("~@/assets/images/image-fond-détails-compositeur.jpg");
+    background-size: 25%;
+  }
 
   .nom-image-compositeur {
     display: flex;

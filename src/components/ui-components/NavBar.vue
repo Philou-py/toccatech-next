@@ -34,8 +34,7 @@
 
 <style lang="scss">
 .navbar {
-  background-color: #b388ff;
-  color: white;
+  background-color: var(--couleur-bg-navbar);
 
   .container {
     display: flex;
@@ -48,6 +47,10 @@
 
     .bouton-icone {
       margin: 0 16px 0 8px;
+
+      button:hover {
+        background-color: var(--couleur-bg-hover-bouton-icone-nav);
+      }
     }
 
     a {
@@ -71,6 +74,7 @@
   .titre {
     margin: 0;
     margin: auto 0;
+    color: var(--couleur-fg-nom-site);
   }
 
   ul.menu-nav {
@@ -95,10 +99,10 @@
       text-align: center;
       color: white;
       cursor: pointer;
-      transition: background-color 400ms;
+      transition: background-color 400ms ease;
 
       &:hover {
-        background-color: #8765ef;
+        background-color: var(--couleur-bg-hover-item-menu-nav);
       }
 
       &.désactivé:hover {

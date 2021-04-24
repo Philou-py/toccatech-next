@@ -22,9 +22,6 @@
     transition: background-color 300ms;
     width: 38px;
     height: 38px;
-    &:hover {
-      background-color: #c19eff;
-    }
   }
 
   span.ripple {

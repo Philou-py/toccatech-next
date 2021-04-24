@@ -16,7 +16,7 @@
               <BoutonIcone
                 class="icône_télécharger"
                 :class="{ 'aucun-fichier': !oeuvre.url_partition }"
-                couleur-ripple="#ffe5e5"
+                couleur-ripple="var(--couleur-ripple-icone-telecharger-partotheque)"
               >
                 file_download
               </BoutonIcone>
@@ -27,7 +27,7 @@
 
       <div class="centrer-texte" style="margin: 30px 0">
         <Bouton
-          class="blue darken-2"
+          class="blue-grey"
           @click="
             montrerFormulaire = !montrerFormulaire;
             réinitialiserValeursChamps();
@@ -213,11 +213,32 @@ export default Vue.extend({
   .tableau-partothèque {
     width: 100%;
     border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+    position: relative;
+
+    &::before {
+      content: "";
+      display: block;
+      position: absolute;
+      opacity: 0.08;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("~@/assets/images/image-fond-partothèque.png");
+      background-size: 30%;
+    }
+
     tr,
     td,
     th {
       padding: 5px 10px;
       border: 1px solid darkgrey;
+      // Les éléments positionnés explicitement sont toujours au dessus des autres !
+      // La ligne ci-dessous permet donc de positionner le contenu du tableau au dessus
+      // de l'image d'arrière plan qui a elle une position 'absolute'.
+      position: relative;
     }
 
     .cellule-télécharger {

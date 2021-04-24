@@ -3,7 +3,7 @@
     <div class="nom-bouton-compositeur" :class="$mq">
       <h1 class="centrer-texte titre-page" :class="$mq">Encyclopédie</h1>
       <router-link :to="{ name: 'NouveauCompositeur' }"
-        ><Bouton class="blue darken-3">Nouveau Compositeur</Bouton></router-link
+        ><Bouton class="blue-grey">Nouveau Compositeur</Bouton></router-link
       >
     </div>
     <div class="container-cartes" v-if="chargementTerminé">
@@ -32,7 +32,7 @@
             </ul>
           </div>
           <router-link :to="{ name: 'DétailsCompositeur', params: { id: compositeur.id } }"
-            ><Bouton texte class="cyan mt-3">En savoir plus...</Bouton></router-link
+            ><Bouton texte class="indigo darken-1 mt-3">En savoir plus...</Bouton></router-link
           >
         </div>
         <div class="container-photo">
@@ -107,7 +107,6 @@ export default Vue.extend({
 
 <style lang="scss">
 .encyclopédie {
-  background-color: #ffd40024;
   overflow: hidden;
   .nom-bouton-compositeur {
     display: flex;

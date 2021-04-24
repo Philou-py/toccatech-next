@@ -163,6 +163,7 @@
   input,
   textarea {
     border: none;
+    background-color: transparent;
     // La fonction 'rgba', dans ce cas, permet de donner une opacité de 0.6 à la couleur black.
     border-bottom: 1px solid rgba(black, 0.6);
     border-radius: 0;
@@ -334,7 +335,7 @@
   }
 
   &.champRequisVide {
-    @include changerThème(#ea80fc); // #9c27b0
+    @include changerThème(#9e1030); // #9c27b0
   }
 
   .indices {

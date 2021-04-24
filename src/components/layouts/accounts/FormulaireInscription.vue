@@ -1,6 +1,6 @@
 <template>
   <Carte class="carte-inscription" :largeur="450">
-    <h1 class="titre-carte">Créer un compte</h1>
+    <h3 class="titre-carte">Créer un compte</h3>
     <div class="contenu-carte">
       <Formulaire v-model="formulaireValide" class="formulaire-inscription">
         <ChampTexte label="Nom" icône-devant="face" requis v-model="nom" />
@@ -25,7 +25,9 @@
       </Formulaire>
     </div>
     <div class="actions-carte">
-      <a class="lien" @click="changerComposant('FormulaireConnexion')">Déjà un compte ?</a>
+      <a v-if="changerComposant" class="lien" @click="changerComposant('FormulaireConnexion')"
+        >Déjà un compte ?</a
+      >
       <Espacement />
       <Bouton
         class="blue darken-3"
