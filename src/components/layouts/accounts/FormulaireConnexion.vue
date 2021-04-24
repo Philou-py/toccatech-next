@@ -1,5 +1,5 @@
 <template>
-  <Carte class="carte-connexion">
+  <Carte class="carte-connexion" :largeur="400">
     <h1 class="titre-carte">Connexion</h1>
     <div class="contenu-carte">
       <Formulaire v-model="formulaireValide" class="formulaire-connexion">
@@ -10,7 +10,6 @@
           placeholder="vous@domaine.tld"
           type="email"
           requis
-          block
           v-model="email"
         />
         <ChampTexte
@@ -20,13 +19,12 @@
           type="mot-de-passe"
           :longueur-min="4"
           requis
-          block
           v-model="motDePasse"
         />
       </Formulaire>
     </div>
     <div class="actions-carte">
-      <router-link :to="{ name: 'Accueil' }">Pas de compte ?</router-link>
+      <a class="lien" @click="changerComposant('FormulaireInscription')">Pas de compte ?</a>
       <Espacement />
       <Bouton
         class="blue darken-3"
@@ -42,7 +40,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { auth, db } from "@/firebase";
+import { auth } from "@/firebase";
 import Carte from "@/components/ui-components/Carte.vue";
 import ChampTexte from "@/components/ui-components/ChampTexte.vue";
 import Formulaire from "@/components/ui-components/Formulaire.vue";
@@ -50,6 +48,10 @@ import Bouton from "@/components/ui-components/Bouton.vue";
 import Espacement from "@/components/ui-components/Espacement.vue";
 
 export default Vue.extend({
+  props: {
+    changerComposant: Function,
+  },
+
   components: {
     Carte,
     ChampTexte,

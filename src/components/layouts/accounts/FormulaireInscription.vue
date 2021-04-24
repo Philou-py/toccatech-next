@@ -1,9 +1,9 @@
 <template>
-  <Carte class="carte-inscription">
+  <Carte class="carte-inscription" :largeur="450">
     <h1 class="titre-carte">Créer un compte</h1>
     <div class="contenu-carte">
       <Formulaire v-model="formulaireValide" class="formulaire-inscription">
-        <ChampTexte label="Nom" icône-devant="face" requis block v-model="nom" />
+        <ChampTexte label="Nom" icône-devant="face" requis v-model="nom" />
         <ChampTexte
           label="Adresse mail"
           préfixeIdInput="inscription"
@@ -11,7 +11,6 @@
           placeholder="vous@domaine.tld"
           type="email"
           requis
-          block
           v-model="email"
         />
         <ChampTexte
@@ -21,13 +20,12 @@
           type="mot-de-passe"
           :longueur-min="4"
           requis
-          block
           v-model="motDePasse"
         />
       </Formulaire>
     </div>
     <div class="actions-carte">
-      <router-link :to="{ name: 'Accueil' }">Déjà un compte ?</router-link>
+      <a class="lien" @click="changerComposant('FormulaireConnexion')">Déjà un compte ?</a>
       <Espacement />
       <Bouton
         class="blue darken-3"
@@ -57,6 +55,10 @@ export default Vue.extend({
     Formulaire,
     Bouton,
     Espacement,
+  },
+
+  props: {
+    changerComposant: Function,
   },
 
   data: () => ({
