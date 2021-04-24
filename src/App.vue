@@ -7,16 +7,39 @@
         couleurRippleIconeNav="#8765ef"
         centrerTitrePetitsEcran
         cheminAvatar="https://toccatech.com/media/avatars/Philippe_Google_carre.jpg"
+        class="barre-navigation"
       >
-        <template v-slot:titre>Ma Partothèque</template>
+        <template v-slot:titre>Toccatech</template>
         <template v-slot:menu-nav>
           <li>
             <router-link :to="{ name: 'Encyclopédie' }">Encyclopédie</router-link>
           </li>
+          <li v-if="estConnecté">
+            <router-link :to="{ name: 'MaPartothèque' }">Ma Partothèque</router-link>
+          </li>
+          <li v-if="!estConnecté" title="Connectez-vous pour accéder à votre partothèque !">
+            <a class="désactivé">Ma Partothèque</a>
+          </li>
+          <li v-if="!estConnecté">
+            <a @click="montrerModalConnexionInscription = !montrerModalConnexionInscription">
+              Connexion / Inscription
+            </a>
+          </li>
         </template>
       </NavBar>
     </nav>
-    <router-view />
+    <Modal
+      v-if="montrerModalConnexionInscription"
+      @fermetureModal="montrerModalConnexionInscription = !montrerModalConnexionInscription"
+    >
+      <div :is="composantConnexionInscription" :changerComposant="basculerComposant"></div>
+    </Modal>
+    <div class="contenu-app">
+      <router-view />
+    </div>
+    <footer>
+      <p>Réalisé par Philippe Schoenhenz</p>
+    </footer>
   </div>
 </template>
 
@@ -28,6 +51,7 @@ import Carte from "@/components/ui-components/Carte.vue";
 import Container from "@/components/ui-components/Container.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
 import Espacement from "@/components/ui-components/Espacement.vue";
+import Modal from "@/components/ui-components/Modal.vue";
 import FormulaireInscription from "@/components/layouts/accounts/FormulaireInscription.vue";
 import FormulaireConnexion from "@/components/layouts/accounts/FormulaireConnexion.vue";
 
@@ -38,15 +62,32 @@ export default Vue.extend({
     Container,
     Bouton,
     Espacement,
+    Modal,
     FormulaireInscription,
     FormulaireConnexion,
   },
 
+  data: () => ({
+    estConnecté: true,
+    montrerModalConnexionInscription: false,
+    composantConnexionInscription: "FormulaireConnexion",
+  }),
+
+  methods: {
+    basculerComposant(composant: any) {
+      this.composantConnexionInscription = composant;
+    },
+  },
+
   mounted() {
-    var user = auth.currentUser;
-    if (user) {
-      console.log(`Bienvenue, ${user.displayName} !`);
-    }
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log(`Bienvenue, ${user.displayName} !`);
+        this.estConnecté = true;
+      } else {
+        this.estConnecté = false;
+      }
+    });
   },
 });
 </script>
@@ -78,10 +119,7 @@ export default Vue.extend({
 
 html {
   --couleur-primaire: #1867c0;
-}
-
-.petit-container {
-  margin: 0 20px;
+  scroll-behavior: smooth;
 }
 
 .titre-page {
@@ -107,8 +145,33 @@ a {
   color: #0000ee;
 }
 
+.lien {
+  text-decoration: underline solid;
+  cursor: pointer;
+}
+
 .centrer-texte {
   text-align: center;
+}
+
+.contenu-app {
+  margin-top: 60px;
+  /* overflow: hidden; */
+}
+
+.barre-navigation {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 9999;
+  box-shadow: 0 2px 4px 0 darkgrey;
+}
+
+footer {
+  padding: 10px 0;
+  text-align: center;
+  background-color: #a1887f;
+  color: rgba(white, 0.8);
 }
 
 .ml,
