@@ -31,12 +31,14 @@
       <Espacement />
       <Bouton
         class="blue darken-3"
-        :désactivé="!formulaireValide"
+        v-if="!formulaireValide"
+        désactivé
+        titre="Le formulaire n'est pas valide !"
         texte
-        @click="validerInscription()"
       >
         Valider
       </Bouton>
+      <Bouton v-else class="blue darken-3" texte @click="validerInscription()"> Valider </Bouton>
     </div>
   </Carte>
 </template>
@@ -95,8 +97,6 @@ export default Vue.extend({
               console.log(erreur);
             });
           this.$emit("connexionInscriptionRéussie", "Votre compte a été créé avec succès !");
-          console.log("Votre compte a été créé avec succès !");
-          // this.$router.push({ name: this.nextRouteName });
         })
         .catch((error) => {
           this.chargement = false;

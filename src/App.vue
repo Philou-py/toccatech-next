@@ -131,7 +131,6 @@ export default Vue.extend({
   mounted() {
     this.enleverEcouteurAuth = auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log(`Bienvenue, ${user.displayName} !`);
         this.estConnecté = true;
       } else {
         this.estConnecté = false;
@@ -141,6 +140,21 @@ export default Vue.extend({
 
   destroyed() {
     this.enleverEcouteurAuth();
+  },
+
+  metaInfo: {
+    // Titre de la page
+    title: "Page d'Accueil",
+    titleTemplate: "%s | Toccatech",
+    meta: [
+      {
+        name: "description",
+        // Phrase à rajouter après la création du suivi de l'entraînement :
+        // Il permet d'enregistrer son temps de pratique instrumentale et de suivre ses progrès et son atteinte de l'objectif.
+        content:
+          "Toccatech fournit aux musiciens des outils simples et pratiques. Il permet de créer et de gérer une partothèque personnelle en lien avec une encyclopédie musicale collaborative. Il permet également d'y déposer ses propres partitions.",
+      },
+    ],
   },
 });
 </script>

@@ -67,11 +67,21 @@
             />
             <Bouton
               class="green"
+              v-if="!formulaireValide"
+              désactivé
+              titre="Le formulaire n'est pas valide !"
+              texte
+            >
+              Valider
+            </Bouton>
+            <Bouton
+              v-else
+              class="green"
+              texte
               @click="
                 montrerFormulaire = !montrerFormulaire;
                 nouvelleOeuvre();
               "
-              :désactivé="!formulaireValide"
             >
               Valider
             </Bouton>
@@ -198,6 +208,10 @@ export default Vue.extend({
   destroyed() {
     this.enleverEcouteurPartothèque();
     this.enleverEcouteurCompositeurs();
+  },
+
+  metaInfo: {
+    title: "Ma Partothèque",
   },
 });
 </script>

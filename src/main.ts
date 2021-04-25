@@ -5,8 +5,11 @@ import router from "./router";
 import firebase from "firebase/app";
 import "firebase/auth";
 import VueMq from "vue-mq";
+import Meta from "vue-meta";
 
 Vue.config.productionTip = false;
+
+Vue.use(Meta);
 
 // Initialisation de Vue MQ avec des breakpoints personnalisés
 // L'objet dans lequel sont stockés les breakpoints contiennent leur

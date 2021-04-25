@@ -30,12 +30,14 @@
       <Espacement />
       <Bouton
         class="blue darken-3"
-        :désactivé="!formulaireValide"
+        v-if="!formulaireValide"
+        désactivé
+        titre="Le formulaire n'est pas valide !"
         texte
-        @click="validerConnexion()"
       >
         Valider
       </Bouton>
+      <Bouton v-else class="blue darken-3" texte @click="validerConnexion()"> Valider </Bouton>
     </div>
   </Carte>
 </template>

@@ -176,6 +176,10 @@ export default Vue.extend({
     this.enleverEcouteurCompositeur();
     this.enleverEcouteurOeuvres();
   },
+
+  metaInfo: {
+    title: "Détails du compositeur",
+  },
 });
 </script>
 

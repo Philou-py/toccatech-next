@@ -108,11 +108,15 @@
             ><Bouton class="red mr-3">Annuler</Bouton></router-link
           >
           <Bouton
-            :désactivé="!formulaireValide || !sélectionPhotoValide || !uploadTerminé"
             class="purple"
-            @click="contribuer()"
-            >Valider</Bouton
+            v-if="!formulaireValide || !sélectionPhotoValide || !uploadTerminé"
+            désactivé
+            titre="Le formulaire n'est pas valide !"
+            texte
           >
+            Valider
+          </Bouton>
+          <Bouton v-else class="purple" texte @click="contribuer()">Valider</Bouton>
         </div>
       </Carte>
     </Container>
@@ -364,6 +368,10 @@ export default Vue.extend({
       }
       this.chargementTerminé = true;
     }
+  },
+
+  metaInfo: {
+    title: "Contribuer à l'encyclopédie",
   },
 });
 </script>

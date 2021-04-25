@@ -108,6 +108,10 @@ export default Vue.extend({
   destroyed() {
     this.enleverEcouteur();
   },
+
+  metaInfo: {
+    title: "Encyclopédie",
+  },
 });
 </script>
 
@@ -171,7 +175,7 @@ export default Vue.extend({
 
     &.md {
       width: 46%;
-      max-height: 250px;
+      max-height: 280px;
 
       .infos-compositeur {
         width: 60%;

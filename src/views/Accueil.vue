@@ -145,7 +145,6 @@ export default Vue.extend({
   mounted() {
     this.enleverEcouteurAuth = auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log(`Bienvenue, ${user.displayName} !`);
         this.estConnecté = true;
       } else {
         this.estConnecté = false;
@@ -155,6 +154,10 @@ export default Vue.extend({
 
   destroyed() {
     this.enleverEcouteurAuth();
+  },
+
+  metaInfo: {
+    title: "Page d'Accueil",
   },
 });
 </script>
