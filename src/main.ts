@@ -4,14 +4,9 @@ import "./registerServiceWorker";
 import router from "./router";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { firestorePlugin } from "vuefire";
 import VueMq from "vue-mq";
 
 Vue.config.productionTip = false;
-
-// Initialisation de VueFire
-// Documentation : https://vuefire.vuejs.org/
-Vue.use(firestorePlugin);
 
 // Initialisation de Vue MQ avec des breakpoints personnalisés
 // L'objet dans lequel sont stockés les breakpoints contiennent leur

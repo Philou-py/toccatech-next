@@ -55,7 +55,7 @@
     <footer :class="$mq">
       <p>Réalisé par Philippe Schoenhenz — Avril 2021</p>
       <p>
-        Ce site est open-source ! Son code source est disponible sur
+        Ce site est open-source ! Son code est disponible sur
         <a href="https://github.com/Philou-py/toccatech-next" target="_blank">GitHub</a>.
       </p>
     </footer>

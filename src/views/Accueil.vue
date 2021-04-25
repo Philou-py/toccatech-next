@@ -7,7 +7,7 @@
         class="image-fond-café"
       />
       <Container grand>
-        <h1 class="titre">Votre boîte à outils musicale... découvrez la vite !</h1>
+        <h1 class="titre" :class="$mq">Votre boîte à outils musicale... découvrez la vite !</h1>
         <a href="#connexion-inscription" v-if="!estConnecté">
           <Bouton class="blue-grey" grand>C'est parti !</Bouton>
         </a>
@@ -167,6 +167,10 @@ export default Vue.extend({
     font-weight: 500;
     margin-bottom: 30px;
     line-height: 1;
+
+    &.xs {
+      font-size: 55px;
+    }
   }
 
   .div-image-fond-café,
