@@ -9,6 +9,9 @@
         cheminAvatar="https://toccatech.com/media/avatars/Philippe_Google_carre.jpg"
         class="barre-navigation"
       >
+        <template v-slot:logo>
+          <img src="@/assets/logo.png" alt="Logo Toccatech" />
+        </template>
         <template v-slot:titre>Toccatech</template>
         <template v-slot:menu-nav>
           <li>
@@ -16,6 +19,9 @@
           </li>
           <li v-if="estConnecté">
             <router-link :to="{ name: 'MaPartothèque' }">Ma Partothèque</router-link>
+          </li>
+          <li v-if="estConnecté">
+            <a @click="déconnexion()"> Déconnexion </a>
           </li>
           <li v-if="!estConnecté" title="Connectez-vous pour accéder à votre partothèque !">
             <a class="désactivé">Ma Partothèque</a>
@@ -32,13 +38,26 @@
       v-if="montrerModalConnexionInscription"
       @fermetureModal="montrerModalConnexionInscription = !montrerModalConnexionInscription"
     >
-      <div :is="composantConnexionInscription" :changerComposant="basculerComposant"></div>
+      <div
+        :is="composantConnexionInscription"
+        :changerComposant="basculerComposant"
+        @connexionInscriptionRéussie="
+          (message) => {
+            validerConnexionInscription(message);
+          }
+        "
+      ></div>
     </Modal>
     <div class="contenu-app">
       <router-view />
+      <BarreMessages :montrerSnackBar="montrerSnackBar">{{ texteSnackBar }}</BarreMessages>
     </div>
-    <footer>
-      <p>Réalisé par Philippe Schoenhenz — 2021</p>
+    <footer :class="$mq">
+      <p>Réalisé par Philippe Schoenhenz — Avril 2021</p>
+      <p>
+        Ce site est open-source ! Son code source est disponible sur
+        <a href="https://github.com/Philou-py/toccatech-next" target="_blank">GitHub</a>.
+      </p>
     </footer>
   </div>
 </template>
@@ -52,6 +71,7 @@ import Container from "@/components/ui-components/Container.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
 import Espacement from "@/components/ui-components/Espacement.vue";
 import Modal from "@/components/ui-components/Modal.vue";
+import BarreMessages from "@/components/ui-components/BarreMessages.vue";
 import FormulaireInscription from "@/components/layouts/accounts/FormulaireInscription.vue";
 import FormulaireConnexion from "@/components/layouts/accounts/FormulaireConnexion.vue";
 
@@ -65,22 +85,51 @@ export default Vue.extend({
     Modal,
     FormulaireInscription,
     FormulaireConnexion,
+    BarreMessages,
   },
 
   data: () => ({
     estConnecté: true,
     montrerModalConnexionInscription: false,
     composantConnexionInscription: "FormulaireConnexion",
+    texteSnackBar: "",
+    montrerSnackBar: false,
+    enleverEcouteurAuth: () => {},
   }),
 
   methods: {
     basculerComposant(composant: any) {
       this.composantConnexionInscription = composant;
     },
+
+    déconnexion() {
+      auth
+        .signOut()
+        .then(() => {
+          this.texteSnackBar = "Vous êtes à présent déconnecté !";
+          this.montrerSnackBar = true;
+          setTimeout(() => {
+            this.montrerSnackBar = false;
+          }, 4000);
+        })
+        .catch((erreur) => {
+          console.log(erreur);
+        });
+    },
+
+    validerConnexionInscription(message: string) {
+      console.log(message);
+      this.montrerModalConnexionInscription = false;
+      this.texteSnackBar = message;
+      this.montrerSnackBar = true;
+      setTimeout(() => {
+        this.montrerSnackBar = false;
+      }, 4000);
+    },
   },
 
   mounted() {
-    auth.onAuthStateChanged((user) => {
+    this.enleverEcouteurAuth = auth.onAuthStateChanged((user) => {
       if (user) {
         console.log(`Bienvenue, ${user.displayName} !`);
         this.estConnecté = true;
@@ -88,6 +137,10 @@ export default Vue.extend({
         this.estConnecté = false;
       }
     });
+  },
+
+  destroyed() {
+    this.enleverEcouteurAuth();
   },
 });
 </script>
@@ -178,6 +231,18 @@ footer {
   padding: 10px 0;
   text-align: center;
   color: white;
+  display: flex;
+  justify-content: space-between;
+
+  p {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
+  &.xs,
+  &.sm {
+    flex-direction: column;
+  }
 }
 
 .ml,

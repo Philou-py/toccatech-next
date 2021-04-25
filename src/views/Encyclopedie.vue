@@ -63,6 +63,7 @@ export default Vue.extend({
   data: () => ({
     compositeurs: [],
     chargementTerminé: false,
+    enleverEcouteur: () => {},
   }),
 
   mounted() {
@@ -70,7 +71,8 @@ export default Vue.extend({
 
     // Récupération des données des compositeurs depuis
     // la base de données Firebase Firestore
-    db.collection("compositeurs")
+    this.enleverEcouteur = db
+      .collection("compositeurs")
       .orderBy("nom")
       .onSnapshot(
         (snapShot) => {
@@ -101,6 +103,10 @@ export default Vue.extend({
           console.log(erreur);
         }
       );
+  },
+
+  destroyed() {
+    this.enleverEcouteur();
   },
 });
 </script>

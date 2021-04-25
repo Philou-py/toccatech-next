@@ -94,6 +94,7 @@ export default Vue.extend({
             .catch((erreur) => {
               console.log(erreur);
             });
+          this.$emit("connexionInscriptionRéussie", "Votre compte a été créé avec succès !");
           console.log("Votre compte a été créé avec succès !");
           // this.$router.push({ name: this.nextRouteName });
         })

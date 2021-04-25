@@ -17,6 +17,9 @@
           {{ nomIconeNav }}
         </BoutonIcone>
         <router-link :to="{ name: 'Accueil' }">
+          <div class="container-logo">
+            <slot name="logo"></slot>
+          </div>
           <h4 class="titre">
             <slot name="titre"></slot>
           </h4>
@@ -42,6 +45,7 @@
   }
 
   .presentation {
+    height: 100%;
     display: flex;
     align-items: center;
 
@@ -56,6 +60,20 @@
     a {
       text-decoration: none;
       color: inherit;
+      display: flex;
+      height: 100%;
+    }
+
+    .container-logo {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      margin-right: 5px;
+
+      img {
+        height: 85%;
+        width: auto;
+      }
     }
 
     &.centrer {

@@ -8,9 +8,12 @@
       />
       <Container grand>
         <h1 class="titre">Votre boîte à outils musicale... découvrez la vite !</h1>
-        <a href="#connexion-inscription">
+        <a href="#connexion-inscription" v-if="!estConnecté">
           <Bouton class="blue-grey" grand>C'est parti !</Bouton>
         </a>
+        <router-link v-else :to="{ name: 'MaPartothèque' }">
+          <Bouton class="blue-grey" grand>C'est parti !</Bouton>
+        </router-link>
       </Container>
     </div>
     <Container class="description-fonctionnalités">
@@ -68,7 +71,12 @@
         </p>
       </Container>
     </div>
-    <div class="div-image-fond-arsenal" :class="$mq">
+    <a
+      href="https://www.citemusicale-metz.fr/la-cite-musicale/les-salles/larsenal"
+      target="_blank"
+      class="div-image-fond-arsenal"
+      :class="$mq"
+    >
       <img
         src="@/assets/images/fond-arsenal.jpg"
         alt="Image Fond Arsenal Toccatech"
@@ -77,25 +85,35 @@
       <Container>
         <h2>Art, culture et nouvelles technologies !</h2>
       </Container>
+    </a>
+    <div id="connexion-inscription" class="connexion-inscription" :class="$mq" v-if="!estConnecté">
+      <FormulaireConnexion
+        @connexionInscriptionRéussie="
+          (message) => {
+            validerConnexionInscription(message);
+          }
+        "
+      />
+      <FormulaireInscription
+        @connexionInscriptionRéussie="
+          (message) => {
+            validerConnexionInscription(message);
+          }
+        "
+      />
     </div>
-    <div
-      ref="connexionInscription"
-      id="connexion-inscription"
-      class="connexion-inscription"
-      :class="$mq"
-    >
-      <FormulaireConnexion />
-      <FormulaireInscription />
-    </div>
+    <BarreMessages :montrerSnackBar="montrerSnackBar">{{ texteSnackBar }}</BarreMessages>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+import { auth } from "@/firebase";
 import FormulaireConnexion from "@/components/layouts/accounts/FormulaireConnexion.vue";
 import FormulaireInscription from "@/components/layouts/accounts/FormulaireInscription.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
 import Container from "@/components/ui-components/Container.vue";
+import BarreMessages from "@/components/ui-components/BarreMessages.vue";
 
 export default Vue.extend({
   components: {
@@ -103,20 +121,41 @@ export default Vue.extend({
     FormulaireInscription,
     Bouton,
     Container,
+    BarreMessages,
   },
 
-  // watch: {
-  //   "$route.query.suivant": {
-  //     handler: function (suivant) {
-  //       console.log(suivant);
-  //       let divConnexionInscription = this.$refs.connexionInscription as HTMLDivElement;
-  //       console.log(divConnexionInscription);
-  //       divConnexionInscription.scrollIntoView({ behavior: "smooth" });
-  //     },
-  //     deep: true,
-  //     // immediate: true,
-  //   },
-  // },
+  data: () => ({
+    estConnecté: true,
+    enleverEcouteurAuth: () => {},
+    texteSnackBar: "",
+    montrerSnackBar: false,
+  }),
+
+  methods: {
+    validerConnexionInscription(message: string) {
+      console.log(message);
+      this.texteSnackBar = message;
+      this.montrerSnackBar = true;
+      setTimeout(() => {
+        this.montrerSnackBar = false;
+      }, 4000);
+    },
+  },
+
+  mounted() {
+    this.enleverEcouteurAuth = auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log(`Bienvenue, ${user.displayName} !`);
+        this.estConnecté = true;
+      } else {
+        this.estConnecté = false;
+      }
+    });
+  },
+
+  destroyed() {
+    this.enleverEcouteurAuth();
+  },
 });
 </script>
 
@@ -196,6 +235,8 @@ export default Vue.extend({
   }
 
   .div-image-fond-arsenal {
+    display: block;
+    text-decoration: none;
     padding-top: 200px;
 
     h2 {
@@ -225,6 +266,11 @@ export default Vue.extend({
 
     &.xs {
       flex-direction: column;
+
+      & > div {
+        margin: 0;
+        width: 100%;
+      }
     }
   }
 

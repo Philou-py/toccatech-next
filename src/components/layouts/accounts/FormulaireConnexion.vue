@@ -76,6 +76,10 @@ export default Vue.extend({
       auth
         .signInWithEmailAndPassword(this.email, this.motDePasse)
         .then((userCredential) => {
+          this.$emit(
+            "connexionInscriptionRéussie",
+            `Bonjour, ${userCredential.user!.displayName} !`
+          );
           console.log(`Bonjour, ${userCredential.user!.displayName} !`);
         })
         .catch((erreur) => {

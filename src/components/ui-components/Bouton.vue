@@ -71,7 +71,7 @@ button.btn {
   &.désactivé#btn {
     background-color: rgba(black, 0.12) !important;
     color: rgba(black, 0.26) !important;
-    cursor: default !important;
+    cursor: not-allowed !important;
   }
 }
 

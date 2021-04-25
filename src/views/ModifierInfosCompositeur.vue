@@ -385,7 +385,7 @@ export default Vue.extend({
     top: 0;
     width: 100%;
     height: 100%;
-    background-image: url("https://img.over-blog-kiwi.com/1/43/53/80/20190113/ob_36e25c_sticker-notes-de-musique.jpg");
+    background-image: url("~@/assets/images/image-fond-détails-compositeur.jpg");
     background-size: 25%;
   }
 

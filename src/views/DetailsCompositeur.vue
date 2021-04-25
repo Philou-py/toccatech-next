@@ -36,7 +36,12 @@
         <div class="actions-carte mt-4">
           <Espacement />
           <router-link :to="{ name: 'ModifierInfosCompositeur', params: { id: compositeur.id } }">
-            <Bouton :désactivé="!estConnecté" class="indigo darken-1" texte>
+            <Bouton
+              :désactivé="!estConnecté"
+              :titre="messageNonConnecté"
+              class="indigo darken-1"
+              texte
+            >
               Envie de contribuer ?
             </Bouton>
           </router-link>
@@ -101,6 +106,7 @@ export default Vue.extend({
     nom: "",
     biographie: "",
     estConnecté: false,
+    messageNonConnecté: "",
   }),
 
   mounted() {
@@ -158,8 +164,10 @@ export default Vue.extend({
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.estConnecté = true;
+        this.messageNonConnecté = "";
       } else {
         this.estConnecté = false;
+        this.messageNonConnecté = "Connectez-vous pour contribuer !";
       }
     });
   },
