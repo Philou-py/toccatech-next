@@ -103,6 +103,14 @@ export default Vue.extend({
 
   metaInfo: {
     title: "Encyclopédie",
+
+    meta: [
+      {
+        name: "description",
+        content:
+          "L'encyclopédie Toccatech, constamment enrichie par la communauté, regroupe des informations sur de nombreux compositeurs de différents styles musicaux.",
+      },
+    ],
   },
 });
 </script>

@@ -173,6 +173,16 @@ export default Vue.extend({
 
   metaInfo: {
     title: "Page d'Accueil",
+
+    meta: [
+      {
+        name: "description",
+        // Phrase à rajouter après la création du suivi de l'entraînement :
+        // Il permet d'enregistrer son temps de pratique instrumentale et de suivre ses progrès et son atteinte de l'objectif.
+        content:
+          "Toccatech fournit aux musiciens des outils simples et pratiques. Il permet de créer et de gérer une partothèque personnelle en lien avec une encyclopédie musicale collaborative. Il permet également d'y déposer ses propres partitions.",
+      },
+    ],
   },
 });
 </script>

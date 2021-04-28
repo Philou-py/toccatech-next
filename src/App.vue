@@ -167,8 +167,9 @@ export default Vue.extend({
 
   metaInfo: {
     // Titre de la page
-    title: "Page d'Accueil",
+    title: "Toccatech",
     titleTemplate: "%s | Toccatech",
+
     meta: [
       {
         name: "description",

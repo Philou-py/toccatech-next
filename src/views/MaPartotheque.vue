@@ -249,6 +249,14 @@ export default Vue.extend({
 
   metaInfo: {
     title: "Ma Partothèque",
+
+    meta: [
+      {
+        name: "description",
+        content:
+          "Construisez votre partothèque personnelle et sauvegardez vos partitions pour garder une trace de chaque morceau que vous jouez.",
+      },
+    ],
   },
 });
 </script>
