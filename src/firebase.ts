@@ -2,18 +2,17 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
 import "firebase/storage";
-import "firebase/analytics";
+// import "firebase/analytics";
 
 // Configuration Firebase de "Ma Partothèque Web App"
 // Pour Firebase JS SDK v7.20.0 et plus récent, measurementId est optionnel.
-var firebaseConfig = {
-  apiKey: "AIzaSyDMFv7oim1fdKPFDcS2UWlkGWuWbJB2o7Y",
-  authDomain: "ma-partotheque.firebaseapp.com",
-  projectId: "ma-partotheque",
-  storageBucket: "ma-partotheque.appspot.com",
-  messagingSenderId: "927607267863",
-  appId: "1:927607267863:web:3bf5e5473fb613b3167252",
-  measurementId: "G-6Z426JCVZB",
+const firebaseConfig = {
+  apiKey: "AIzaSyD8wBizXwyRkwiwKSv67LE4TbKJMsTZvoo",
+  authDomain: "toccatech-f8369.firebaseapp.com",
+  projectId: "toccatech-f8369",
+  storageBucket: "toccatech-f8369.appspot.com",
+  messagingSenderId: "1025761438117",
+  appId: "1:1025761438117:web:cdaa7d3df9a14127cc204c",
 };
 
 // Initialisation de Firebase
@@ -26,6 +25,7 @@ export const auth = firebase.auth();
 // Documentation : https://firebase.google.com/docs/firestore
 export const db = firebase.firestore();
 
+// Initialisation de Firebase Storage et obtention d'une instance storage
 export const storage = firebase.storage();
 
 // Tentative d'activation du mode hors-ligne de firestore
@@ -50,7 +50,7 @@ firebase
   });
 
 // Initialisation de Firebase Analytics
-firebase.analytics();
+// firebase.analytics();
 
 // Exportation de types Firestore
 export const { Timestamp, GeoPoint } = firebase.firestore;

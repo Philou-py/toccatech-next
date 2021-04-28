@@ -1,15 +1,17 @@
 <template>
+  <!-- Ce 'div' contient toute l'application -->
   <div id="app">
     <nav>
       <NavBar
         nomIconeNav="menu"
-        styleIconeNav="color: var(--couleur-fg-icone-nav)"
-        couleurRippleIconeNav="var(--couleur-ripple-icone-nav)"
+        styleIconeNav="color: white"
+        couleurRippleIconeNav="#343148"
         centrerTitrePetitsEcran
         cheminAvatar="https://toccatech.com/media/avatars/Philippe_Google_carre.jpg"
         class="barre-navigation"
       >
         <template v-slot:logo>
+          <!-- Le symbole '@' est un alias du dossier 'src' -->
           <img src="@/assets/logo.png" alt="Logo Toccatech" />
         </template>
         <template v-slot:titre>Toccatech</template>
@@ -17,14 +19,17 @@
           <li>
             <router-link :to="{ name: 'Encyclopédie' }">Encyclopédie</router-link>
           </li>
+          <!-- Le lien vers la page 'Ma Partothèque' n'est affiché que si l'utilisateur est connecté -->
           <li v-if="estConnecté">
             <router-link :to="{ name: 'MaPartothèque' }">Ma Partothèque</router-link>
           </li>
-          <li v-if="estConnecté">
-            <a @click="déconnexion()"> Déconnexion </a>
-          </li>
           <li v-if="!estConnecté" title="Connectez-vous pour accéder à votre partothèque !">
-            <a class="désactivé">Ma Partothèque</a>
+            <a class="désactivé"> Ma Partothèque </a>
+          </li>
+
+          <!-- Le bouton de déconnexion n'est affiché que si l'utilisateur est connecté -->
+          <li v-if="estConnecté">
+            <a @click="déconnexion()">Déconnexion</a>
           </li>
           <li v-if="!estConnecté">
             <a @click="montrerModalConnexionInscription = !montrerModalConnexionInscription">
@@ -35,35 +40,47 @@
       </NavBar>
     </nav>
     <Modal
-      v-if="montrerModalConnexionInscription"
+      :montrerModal="montrerModalConnexionInscription"
       @fermetureModal="montrerModalConnexionInscription = !montrerModalConnexionInscription"
     >
       <div
         :is="composantConnexionInscription"
         :changerComposant="basculerComposant"
-        @connexionInscriptionRéussie="
+        @messageConnexionInscription="
           (message) => {
-            validerConnexionInscription(message);
+            afficherMessageConnexionInscription(message);
           }
         "
       ></div>
     </Modal>
-    <div class="contenu-app">
-      <router-view />
-      <BarreMessages :montrerSnackBar="montrerSnackBar">{{ texteSnackBar }}</BarreMessages>
+    <div>
+      <div class="contenu-app">
+        <!-- La propriété 'mode' avec la valeur 'out-in' permet d'indiquer à la transition d'effectuer 
+        d'abord la transition de sortie de la route actuelle, puis celle d'entrée de la nouvelle route
+        (et non les deux en même temps, ce qui est le comportement par défaut) -->
+        <transition name="fade" mode="out-in">
+          <router-view />
+        </transition>
+        <BarreMessages :montrerSnackBar="montrerSnackBar" :typeSnackBar="typeSnackBar">
+          {{ texteSnackBar }}
+        </BarreMessages>
+      </div>
+      <footer :class="$mq">
+        <p>Réalisé par Philippe Schoenhenz — Avril 2021</p>
+        <p>
+          Ce site est open-source ! Son code est disponible sur
+          <a href="https://github.com/Philou-py/toccatech-next" rel="noopener" target="_blank"
+            >GitHub</a
+          >.
+        </p>
+      </footer>
     </div>
-    <footer :class="$mq">
-      <p>Réalisé par Philippe Schoenhenz — Avril 2021</p>
-      <p>
-        Ce site est open-source ! Son code est disponible sur
-        <a href="https://github.com/Philou-py/toccatech-next" target="_blank">GitHub</a>.
-      </p>
-    </footer>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+// Le symbole '@' est un alias du dossier 'src'
 import { auth } from "@/firebase";
 import NavBar from "@/components/ui-components/NavBar.vue";
 import Carte from "@/components/ui-components/Carte.vue";
@@ -94,6 +111,7 @@ export default Vue.extend({
     composantConnexionInscription: "FormulaireConnexion",
     texteSnackBar: "",
     montrerSnackBar: false,
+    typeSnackBar: "",
     enleverEcouteurAuth: () => {},
   }),
 
@@ -106,7 +124,11 @@ export default Vue.extend({
       auth
         .signOut()
         .then(() => {
+          if (this.$route.name != "Accueil") {
+            this.$router.push({ name: "Accueil" });
+          }
           this.texteSnackBar = "Vous êtes à présent déconnecté !";
+          this.typeSnackBar = "succès";
           this.montrerSnackBar = true;
           setTimeout(() => {
             this.montrerSnackBar = false;
@@ -117,11 +139,12 @@ export default Vue.extend({
         });
     },
 
-    validerConnexionInscription(message: string) {
+    afficherMessageConnexionInscription(message: { valeur: string; succès: boolean }) {
       console.log(message);
-      this.montrerModalConnexionInscription = false;
-      this.texteSnackBar = message;
+      if (message.succès) this.montrerModalConnexionInscription = false;
+      this.texteSnackBar = message.valeur;
       this.montrerSnackBar = true;
+      this.typeSnackBar = message.succès ? "succès" : "erreur";
       setTimeout(() => {
         this.montrerSnackBar = false;
       }, 4000);
@@ -162,9 +185,9 @@ export default Vue.extend({
 <style lang="scss">
 // Import de la famille EB Garamond (grâce au paquet npm fontsource) avec les styles suivants :
 //    - Regular 400
-//    - Regular 400 italic
+//    - Regular 500
+//    - Bold 600
 //    - Bold 700
-//    - Bold 700 italic
 // Lien vers le dépôt sur GitHub : https://github.com/fontsource/fontsource/tree/master/packages/eb-garamond
 @import "~@fontsource/eb-garamond/400.css"; // Regular 400
 // @import "~@fontsource/eb-garamond/400-italic.css"; // Regular 400 italic
@@ -173,37 +196,26 @@ export default Vue.extend({
 @import "~@fontsource/eb-garamond/700.css"; // Bold 700
 // @import "~@fontsource/eb-garamond/700-italic.css"; // Bold 700 italic
 
+// Import des classes de couleurs Material Design
 @import "@/assets/styles/colors.scss";
+// Import des styles de typographie de l'application
 @import "@/assets/styles/typographie.scss";
 
 * {
-  font-family: "EB Garamond", serif;
   box-sizing: border-box;
+
   // Enlever l'arrière-plan bleu lors d'un clic sur un bouton sur mobiles :
   // https://stackoverflow.com/questions/45049873/how-to-remove-the-blue-background-of-button-on-mobile
   -webkit-tap-highlight-color: transparent;
 }
 
 html {
-  // --toccatech-theme-primaire: #1867c0;
-  // --toccatech-theme-secondaire: #1867c0;
-  --couleur-ripple-icone-nav: #343148;
-  --couleur-fg-icone-nav: white;
-  --couleur-bg-hover-bouton-icone-nav: #755139;
-  --couleur-bg-hover-item-menu-nav: #755139;
-  --couleur-fg-titre-page-accueil: #black; //615550
-  --couleur-fg-icones-description-page-accueil: #795548;
-  --couleur-bg-navbar: #9e1030;
-  --couleur-bg-app: #fde8ed;
-  --couleur-bg-footer: #d69c2f;
-  --couleur-ripple-icone-telecharger-partotheque: #ffe5e5;
-  --couleur-fg-nom-site: white;
-
+  // Cette propriété permet de rendre le scrolling doux lors du clic sur un lien faisant référence à une autre endroit dans la page grâce à un id
   scroll-behavior: smooth;
 }
 
 #app {
-  background-color: var(--couleur-bg-app);
+  background-color: #fde8ed;
 }
 
 .titre-page {
@@ -236,12 +248,41 @@ a {
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 9999;
+  z-index: 9000;
   box-shadow: 0 2px 4px 0 darkgrey;
 }
 
+// .fade {
+//   &-enter-active,
+//   &-leave-active {
+//     transition: opacity 3s ease-in;
+//   }
+
+//   &-enter,
+//   &-leave-to {
+//     opacity: 0;
+//   }
+// }
+
+.fade {
+  &-enter,
+  &-leave-to {
+    opacity: 0;
+  }
+
+  &-enter-to,
+  &-leave {
+    opacity: 1;
+  }
+
+  &-enter-active,
+  &-leave-active {
+    transition: all 0.3s ease;
+  }
+}
+
 footer {
-  background-color: var(--couleur-bg-footer);
+  background-color: #d69c2f;
   padding: 10px 0;
   text-align: center;
   color: white;
@@ -259,6 +300,7 @@ footer {
   }
 }
 
+// Ces classes permettent d'appliquer de la marge plus facilement
 .ml,
 .mx {
   &-0 {

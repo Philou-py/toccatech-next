@@ -9,14 +9,25 @@
           <th><span class="material-icons">cloud_download</span></th>
         </tr>
         <tr v-for="oeuvre in oeuvres" :key="oeuvre.id">
-          <td>{{ oeuvre.compositeur }}</td>
+          <td>
+            <div class="td-compositeur" :class="$mq">
+              <div class="container-vignette-img">
+                <img
+                  v-if="oeuvre.photo_compositeur"
+                  :src="oeuvre.photo_compositeur"
+                  alt="Photo d'un compositeur"
+                />
+              </div>
+              {{ oeuvre.compositeur }}
+            </div>
+          </td>
           <td>{{ oeuvre.titre }}</td>
           <td class="cellule-télécharger">
             <a class="aucun-style" rel="noopener" target="_blank" :href="oeuvre.url_partition">
               <BoutonIcone
                 class="icône_télécharger"
                 :class="{ 'aucun-fichier': !oeuvre.url_partition }"
-                couleur-ripple="var(--couleur-ripple-icone-telecharger-partotheque)"
+                couleur-ripple="#ffe5e5"
               >
                 file_download
               </BoutonIcone>
@@ -67,23 +78,12 @@
             />
             <Bouton
               class="green"
-              v-if="!formulaireValide"
-              désactivé
-              titre="Le formulaire n'est pas valide !"
+              :désactivé="!formulaireValide || chargement"
+              :titre="messageTitre"
+              @click="nouvelleOeuvre()"
               texte
             >
-              Valider
-            </Bouton>
-            <Bouton
-              v-else
-              class="green"
-              texte
-              @click="
-                montrerFormulaire = !montrerFormulaire;
-                nouvelleOeuvre();
-              "
-            >
-              Valider
+              {{ messageBouton }}
             </Bouton>
           </div>
         </Formulaire>
@@ -123,14 +123,30 @@ export default Vue.extend({
     enleverEcouteurPartothèque: () => {},
     enleverEcouteurCompositeurs: () => {},
     formulaireValide: false,
+    chargement: false,
   }),
+
+  computed: {
+    messageBouton(): string {
+      if (this.chargement) {
+        return "Chargement...";
+      }
+      return "Valider";
+    },
+
+    messageTitre(): string | undefined {
+      if (!this.formulaireValide) {
+        return "Le formulaire n'est pas valide !";
+      }
+    },
+  },
 
   methods: {
     réinitialiserValeursChamps() {
       this.titreOeuvre = this.compositeur = this.partition = "";
     },
 
-    enregistrerOeuvre(url: string) {
+    enregistrerOeuvre(url?: string) {
       db.collection("compositeurs")
         .where("nom", "==", this.compositeur)
         .get()
@@ -139,38 +155,59 @@ export default Vue.extend({
           // doit être unique dans la base de données.
           snapshot.forEach((document) => {
             let idCompositeur = document.id;
+            let photo_compositeur = document.data().photo;
+            let données = url
+              ? {
+                  compositeur: this.compositeur,
+                  titre: this.titreOeuvre,
+                  url_partition: url,
+                  uid_utilisateur: auth.currentUser!.uid,
+                  photo_compositeur,
+                }
+              : {
+                  compositeur: this.compositeur,
+                  titre: this.titreOeuvre,
+                  uid_utilisateur: auth.currentUser!.uid,
+                  photo_compositeur,
+                };
             db.collection("compositeurs")
               .doc(idCompositeur)
               .collection("oeuvres")
-              .add({
-                compositeur: this.compositeur,
-                titre: this.titreOeuvre,
-                url_partition: url,
-                uid_utilisateur: auth.currentUser!.uid,
-              })
+              .add(données)
               .then(() => {
                 console.log("L'oeuvre a bien été enregistrée dans la base de données !");
+                this.montrerFormulaire = false;
                 this.réinitialiserValeursChamps();
+                this.chargement = false;
               });
           });
         });
     },
 
     nouvelleOeuvre() {
-      let refPartition = storage.ref(`partitions_utilisateurs/${this.partition.name}`);
-      refPartition
-        .put(this.partition, { cacheControl: "public,max-age: 432000" })
-        .then((réponse) => {
-          réponse.ref.getDownloadURL().then((url) => this.enregistrerOeuvre(url));
-        });
+      this.chargement = true;
+      if (this.partition) {
+        let refPartition = storage.ref(
+          `partitions_utilisateurs/${auth.currentUser!.uid}/${this.partition.name}`
+        );
+        refPartition
+          .put(this.partition, { cacheControl: "public,max-age: 432000" })
+          .then((réponse) => {
+            réponse.ref.getDownloadURL().then((url) => this.enregistrerOeuvre(url));
+          });
+      } else {
+        this.enregistrerOeuvre();
+      }
       console.log("Nouvelle oeuvre !");
     },
 
     récupérerDonnées() {
+      console.log("Données récupérées !");
       // Récupération de la partothèque de l'utilisateur depuis Firebase Firestore
       var refPartothèqueUtilisateur = db
         .collectionGroup("oeuvres")
-        .where("uid_utilisateur", "==", auth.currentUser!.uid);
+        .where("uid_utilisateur", "==", auth.currentUser!.uid)
+        .orderBy("titre");
 
       // La fonction 'onSnapshot' renvoie une fonction qui, lors de son invocation,
       // enlève l'écouteur en temps réel.
@@ -253,6 +290,32 @@ export default Vue.extend({
       // La ligne ci-dessous permet donc de positionner le contenu du tableau au dessus
       // de l'image d'arrière plan qui a elle une position 'absolute'.
       position: relative;
+    }
+
+    .td-compositeur {
+      display: flex;
+      align-items: center;
+
+      &.xs,
+      &.sm {
+        flex-direction: column;
+        text-align: center;
+
+        img {
+          margin-right: 0;
+        }
+      }
+
+      .container-vignette-img {
+        height: 48px;
+        // max-width: 100px;
+
+        img {
+          height: 100%;
+          width: auto;
+          margin-right: 15px;
+        }
+      }
     }
 
     .cellule-télécharger {

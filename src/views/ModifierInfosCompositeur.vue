@@ -120,10 +120,10 @@
         </div>
       </Carte>
     </Container>
-    <div v-show="!chargementTerminé">
+    <div v-if="!chargementTerminé">
       <p>Chargement...</p>
     </div>
-    <div v-show="!existant">
+    <div v-if="!existant">
       <h3>Ce compositeur n'existe pas !</h3>
       <h5>
         Retournez donc sur
@@ -163,7 +163,7 @@ export default Vue.extend({
   },
 
   data: () => ({
-    nom: "",
+    nomOriginal: "",
     compositeur: <any>{},
     fichierPhoto: <any>null,
     URLValide: true,
@@ -171,7 +171,7 @@ export default Vue.extend({
     existant: true,
     hauteurInput: "",
     formulaireValide: false,
-    sélectionPhotoFinie: false,
+    sélectionPhotoFinie: true,
     uploadTerminé: true,
   }),
 
@@ -219,8 +219,12 @@ export default Vue.extend({
     prévisualiserURLImage() {
       var imgPrévisualisation = this.$refs.imgPrévisualisation as HTMLImageElement;
       if (this.compositeur.photo) {
-        var estUneURL = /^(ftp|http|https):\/\/[^ "]+$/.test(this.compositeur.photo);
+        // Test de l'url entrée par l'utilisateur grâce à une expression régulière pour savoir
+        // si elle est syntaxiquement valide.
+        var estUneURL = /^(http|https):\/\/[^ "]+$/.test(this.compositeur.photo);
         if (estUneURL) {
+          // Effectuer une requête GET avec l'url entrée permet de savoir si elle revoie une réponse
+          // de succès ou d'erreur.
           fetch(this.compositeur.photo)
             .then((réponse) => {
               if (réponse.status == 200) {
@@ -271,37 +275,57 @@ export default Vue.extend({
     },
 
     contribuer() {
+      let données = {
+        biographie: this.compositeur.biographie,
+        nom: this.compositeur.nom,
+        photo: this.compositeur.photo,
+        styles_musicaux: this.compositeur.styles_musicaux,
+        âge: 0,
+        date_naissance: "",
+        date_décès: "",
+        est_mort: false,
+      };
+
       var date_naissance = new Date(this.compositeur.date_naissance_string);
-      date_naissance.setMinutes(0);
-      date_naissance.setSeconds(0);
-      date_naissance.setHours(0);
-      this.compositeur.date_naissance = Timestamp.fromDate(date_naissance);
+      données.date_naissance = this.compositeur.date_naissance_string;
 
       if (this.compositeur.date_décès_string) {
-        var décès = new Date(this.compositeur.date_décès_string);
-        décès.setMinutes(0);
-        décès.setSeconds(0);
-        décès.setHours(0);
-        this.compositeur.date_décès = Timestamp.fromDate(décès);
+        données.est_mort = true;
+        var date_décès = new Date(this.compositeur.date_décès_string);
+        données.date_décès = this.compositeur.date_décès_string;
 
         var une_année_en_millisecondes = 1000 * 60 * 60 * 24 * 365;
-        var âge = (décès.getTime() - date_naissance.getTime()) / une_année_en_millisecondes;
-        this.compositeur.âge = Math.floor(âge);
+        var âge = (date_décès.getTime() - date_naissance.getTime()) / une_année_en_millisecondes;
+        données.âge = Math.floor(âge);
       }
 
-      delete this.compositeur.date_naissance_string;
-      delete this.compositeur.date_décès_string;
       if (this.id) {
-        db.collection("compositeurs").doc(this.id).set(this.compositeur);
+        db.collection("compositeurs").doc(this.id).set(données);
+        let refOeuvres = db.collection("compositeurs").doc(this.id).collection("oeuvres");
+        refOeuvres
+          .where("compositeur", "==", this.nomOriginal)
+          .get()
+          .then((snapshot) => {
+            snapshot.forEach((document) => {
+              refOeuvres
+                .doc(document.id)
+                .set(
+                  { compositeur: données.nom, photo_compositeur: données.photo },
+                  { merge: true }
+                );
+            });
+          });
         this.$router.push({ name: "DétailsCompositeur", params: { id: this.id } });
       } else {
-        db.collection("compositeurs").add(this.compositeur);
+        db.collection("compositeurs").add(données);
         this.$router.push({ name: "Encyclopédie" });
       }
     },
   },
   mounted() {
-    var une_année_en_millisecondes = 1000 * 60 * 60 * 24 * 365;
+    // Calcul du nombre de millisecondes en une année pour ensuite calculer l'âge
+    // du compositeur
+    let une_année_en_millisecondes = 1000 * 60 * 60 * 24 * 365;
 
     if (this.id) {
       // Récupération des données du compositeur voulu depuis
@@ -317,26 +341,27 @@ export default Vue.extend({
             for (var clé in compositeur) {
               this.$set(this.compositeur, clé, compositeur[clé]);
             }
-            var naissance = this.compositeur.date_naissance.toDate();
+            this.nomOriginal = this.compositeur.nom;
+            this.$set(this.compositeur, "date_naissance_string", this.compositeur.date_naissance);
             this.$set(
               this.compositeur,
-              "date_naissance_string",
-              naissance.toISOString().slice(0, 10)
+              "date_naissance",
+              new Date(this.compositeur.date_naissance)
             );
             if (this.compositeur.date_décès) {
-              var décès = this.compositeur.date_décès.toDate();
-              this.$set(this.compositeur, "date_décès_string", décès.toISOString().slice(0, 10));
+              this.$set(this.compositeur, "date_décès_string", this.compositeur.date_décès);
+              this.$set(this.compositeur, "date_décès", new Date(this.compositeur.date_décès));
               if (!this.compositeur.âge) {
                 var âge =
-                  (this.compositeur.date_décès.toDate().getTime() -
-                    this.compositeur.date_naissance.toDate().getTime()) /
+                  (this.compositeur.date_décès.getTime() -
+                    this.compositeur.date_naissance.getTime()) /
                   une_année_en_millisecondes;
                 this.$set(this.compositeur, "âge", Math.floor(âge));
               }
             } else {
               let maintenant = new Date();
               var âge =
-                (maintenant.getTime() - this.compositeur.date_naissance.toDate().getTime()) /
+                (maintenant.getTime() - this.compositeur.date_naissance.getTime()) /
                 une_année_en_millisecondes;
               this.$set(this.compositeur, "âge", Math.floor(âge));
             }
@@ -378,6 +403,9 @@ export default Vue.extend({
 
 <style lang="scss">
 .overflow-hidden {
+  // La propriété 'overflow: hidden' permet de cacher le contenu qui irait en dehors de l'élément
+  // et donc de faire en sorte que la marge appliquée aux éléments enfants soient contenue dans
+  // cet élément et non qu'elle dépasse à l'extérieur.
   overflow: hidden;
 }
 
@@ -385,7 +413,7 @@ export default Vue.extend({
   position: relative;
 
   &::before {
-    content: " ";
+    content: "";
     display: block;
     position: absolute;
     opacity: 0.08;
@@ -414,6 +442,7 @@ export default Vue.extend({
     &:first-child {
       margin-right: 15px;
     }
+
     &:last-child {
       margin-left: 15px;
     }

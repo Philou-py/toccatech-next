@@ -5,7 +5,7 @@
       <Formulaire v-model="formulaireValide" class="formulaire-connexion">
         <ChampTexte
           label="Adresse mail"
-          préfixeIdInput="connexion"
+          :préfixeIdInput="préfixeIdInput"
           icône-devant="account_circle"
           placeholder="vous@domaine.tld"
           type="email"
@@ -14,7 +14,7 @@
         />
         <ChampTexte
           label="Mot de passe"
-          préfixeIdInput="connexion"
+          :préfixeIdInput="préfixeIdInput"
           icône-devant="lock"
           type="mot-de-passe"
           :longueur-min="4"
@@ -30,14 +30,13 @@
       <Espacement />
       <Bouton
         class="blue darken-3"
-        v-if="!formulaireValide"
-        désactivé
-        titre="Le formulaire n'est pas valide !"
+        :désactivé="!formulaireValide || chargement"
+        :titre="titreBouton"
+        @click="validerConnexion()"
         texte
       >
-        Valider
+        {{ messageBouton }}
       </Bouton>
-      <Bouton v-else class="blue darken-3" texte @click="validerConnexion()"> Valider </Bouton>
     </div>
   </Carte>
 </template>
@@ -54,6 +53,10 @@ import Espacement from "@/components/ui-components/Espacement.vue";
 export default Vue.extend({
   props: {
     changerComposant: Function,
+    préfixeIdInput: {
+      type: String,
+      default: "connexion",
+    },
   },
 
   components: {
@@ -67,36 +70,50 @@ export default Vue.extend({
   data: () => ({
     formulaireValide: false,
     chargement: false,
-    messageRésultat: "",
     afficherMessage: false,
     email: "",
     motDePasse: "",
   }),
 
+  computed: {
+    messageBouton(): string {
+      if (this.chargement) return "Chargement...";
+      else return "Valider";
+    },
+
+    titreBouton(): string | undefined {
+      if (!this.formulaireValide) return "Le formulaire n'est pas valide !";
+      else return undefined;
+    },
+  },
+
   methods: {
     validerConnexion() {
+      this.chargement = true;
       auth
         .signInWithEmailAndPassword(this.email, this.motDePasse)
         .then((userCredential) => {
-          this.$emit(
-            "connexionInscriptionRéussie",
-            `Bonjour, ${userCredential.user!.displayName} !`
-          );
-          console.log(`Bonjour, ${userCredential.user!.displayName} !`);
+          this.chargement = false;
+          this.$emit("messageConnexionInscription", {
+            valeur: `Bonjour, ${userCredential.user!.displayName} !`,
+            succès: true,
+          });
         })
         .catch((erreur) => {
+          this.chargement = false;
+          let messageErreur = "";
           if (erreur.code == "auth/wrong-password") {
-            this.messageRésultat = "Erreur : le mot de passe est erroné.";
+            messageErreur = "Erreur : le mot de passe est erroné.";
           } else if (erreur.code == "auth/user-not-found") {
-            this.messageRésultat =
+            messageErreur =
               "Erreur : l'adresse email ne correspond à aucun utilisateur enregistré.";
           } else if (erreur.code == "auth/network-request-failed") {
-            this.messageRésultat =
+            messageErreur =
               "Erreur : vous devez disposer d'une connection Internet pour effectuer cette action.";
           } else {
-            this.messageRésultat = erreur; // Utiliser error.message pour avoir seulement le message
+            messageErreur = erreur; // Utiliser error.message pour avoir seulement le message
           }
-          console.log(this.messageRésultat);
+          this.$emit("messageConnexionInscription", { valeur: messageErreur, succès: false });
         });
     },
   },

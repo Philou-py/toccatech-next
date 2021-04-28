@@ -17,11 +17,9 @@
           <div>
             <h3>Carte d'identité</h3>
             <ul>
-              <li>
-                Date de naissance : {{ compositeur.date_naissance.toDate().toLocaleDateString() }}
-              </li>
+              <li>Date de naissance : {{ compositeur.date_naissance.toLocaleDateString() }}</li>
               <li v-if="compositeur.est_mort">
-                Date de décès : {{ compositeur.date_décès.toDate().toLocaleDateString() }} (mort à
+                Date de décès : {{ compositeur.date_décès.toLocaleDateString() }} (mort à
                 {{ compositeur.âge }} ans)
               </li>
               <li v-else>Âge : {{ compositeur.âge }}</li>
@@ -119,17 +117,12 @@ export default Vue.extend({
       (document) => {
         if (document.exists) {
           let données = document.data()!;
-          if (données.date_décès) {
-            données.est_mort = true;
-            let âge =
-              (données.date_décès.toDate().getTime() - données.date_naissance.toDate().getTime()) /
-              une_année_en_millisecondes;
-            données.âge = Math.floor(âge);
-          } else {
-            données.est_mort = false;
+          données.date_décès = new Date(données.date_décès);
+          données.date_naissance = new Date(données.date_naissance);
+          if (!données.est_mort) {
             let maintenant = new Date();
             let âge =
-              (maintenant.getTime() - données.date_naissance.toDate().getTime()) /
+              (maintenant.getTime() - données.date_naissance.getTime()) /
               une_année_en_millisecondes;
             données.âge = Math.floor(âge);
           }

@@ -74,6 +74,7 @@
     <a
       href="https://www.citemusicale-metz.fr/la-cite-musicale/les-salles/larsenal"
       target="_blank"
+      rel="noopener"
       class="div-image-fond-arsenal"
       :class="$mq"
     >
@@ -86,23 +87,35 @@
         <h2>Art, culture et nouvelles technologies !</h2>
       </Container>
     </a>
-    <div id="connexion-inscription" class="connexion-inscription" :class="$mq" v-if="!estConnecté">
+
+    <!-- Utiliser v-show et pas v-if permet de montrer la barre de messages même
+    si l'action de connexion ou d'inscription prend du temps  -->
+    <div
+      id="connexion-inscription"
+      class="connexion-inscription"
+      :class="$mq"
+      v-show="!estConnecté"
+    >
       <FormulaireConnexion
-        @connexionInscriptionRéussie="
+        préfixeIdInput="connexion-accueil"
+        @messageConnexionInscription="
           (message) => {
-            validerConnexionInscription(message);
+            afficherMessageConnexionInscription(message);
           }
         "
       />
       <FormulaireInscription
-        @connexionInscriptionRéussie="
+        préfixeIdInput="inscription-accueil"
+        @messageConnexionInscription="
           (message) => {
-            validerConnexionInscription(message);
+            afficherMessageConnexionInscription(message);
           }
         "
       />
     </div>
-    <BarreMessages :montrerSnackBar="montrerSnackBar">{{ texteSnackBar }}</BarreMessages>
+    <BarreMessages :montrerSnackBar="montrerSnackBar" :typeSnackBar="typeSnackBar">
+      {{ texteSnackBar }}
+    </BarreMessages>
   </div>
 </template>
 
@@ -129,13 +142,15 @@ export default Vue.extend({
     enleverEcouteurAuth: () => {},
     texteSnackBar: "",
     montrerSnackBar: false,
+    typeSnackBar: "",
   }),
 
   methods: {
-    validerConnexionInscription(message: string) {
+    afficherMessageConnexionInscription(message: { valeur: string; succès: boolean }) {
       console.log(message);
-      this.texteSnackBar = message;
+      this.texteSnackBar = message.valeur;
       this.montrerSnackBar = true;
+      this.typeSnackBar = message.succès ? "succès" : "erreur";
       setTimeout(() => {
         this.montrerSnackBar = false;
       }, 4000);
@@ -166,7 +181,7 @@ export default Vue.extend({
 .accueil {
   .titre {
     font-size: 63px;
-    color: var(--couleur-fg-titre-page-accueil);
+    color: black;
     font-weight: 500;
     margin-bottom: 30px;
     line-height: 1;
@@ -258,7 +273,7 @@ export default Vue.extend({
     margin-bottom: 40px;
 
     div.material-icons {
-      color: var(--couleur-fg-icones-description-page-accueil);
+      color: #795548;
     }
 
     h4 {

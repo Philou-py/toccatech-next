@@ -1,7 +1,10 @@
 <template>
   <transition name="toast">
     <div class="snackbar-wrapper" v-if="montrerSnackBar">
-      <div class="snackbar">
+      <div
+        class="snackbar"
+        :class="{ green: typeSnackBar == 'succès', red: typeSnackBar == 'erreur' }"
+      >
         <slot></slot>
       </div>
     </div>
@@ -13,6 +16,7 @@ import Vue from "vue";
 export default Vue.extend({
   props: {
     montrerSnackBar: Boolean,
+    typeSnackBar: String,
   },
   methods: {
     ignorerSnackBar() {
@@ -30,6 +34,7 @@ export default Vue.extend({
   width: 100%;
   display: flex;
   justify-content: center;
+  z-index: 10000;
 }
 
 .snackbar {
