@@ -22,12 +22,18 @@
           requis
           v-model="motDePasse"
         />
+        <SelecteurFichiers
+          label="Téléchargez votre avatar"
+          icône-devant="face"
+          accept="image/*"
+          v-model="fichierAvatar"
+        ></SelecteurFichiers>
       </Formulaire>
     </div>
     <div class="actions-carte">
-      <a v-if="changerComposant" class="lien" @click="changerComposant('FormulaireConnexion')"
-        >Déjà un compte ?</a
-      >
+      <a v-if="changerComposant" class="lien" @click="changerComposant('FormulaireConnexion')">
+        Déjà un compte ?
+      </a>
       <Espacement />
       <Bouton
         class="blue darken-3"
@@ -44,12 +50,13 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { auth, db } from "@/firebase";
+import { auth, db, storage } from "@/firebase";
 import Carte from "@/components/ui-components/Carte.vue";
 import ChampTexte from "@/components/ui-components/ChampTexte.vue";
 import Formulaire from "@/components/ui-components/Formulaire.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
 import Espacement from "@/components/ui-components/Espacement.vue";
+import SelecteurFichiers from "@/components/ui-components/SelecteurFichiers.vue";
 
 export default Vue.extend({
   components: {
@@ -58,6 +65,7 @@ export default Vue.extend({
     Formulaire,
     Bouton,
     Espacement,
+    SelecteurFichiers,
   },
 
   props: {
@@ -74,6 +82,7 @@ export default Vue.extend({
     nom: "",
     email: "",
     motDePasse: "",
+    fichierAvatar: null as any,
   }),
 
   computed: {
@@ -98,20 +107,53 @@ export default Vue.extend({
           userCredential.user!.updateProfile({
             displayName: this.nom,
           });
-          db.collection("utilisateurs")
-            .doc(uidUtilisateur)
-            .set({ uid_utilisateur: uidUtilisateur, nom: this.nom, email: this.email })
-            .then(() => {
-              this.chargement = false;
-              this.$emit("messageConnexionInscription", {
-                valeur: "Votre compte a été créé avec succès !",
-                succès: true,
+          if (this.fichierAvatar) {
+            let refAvatar = storage.ref(`avatars_utilisateurs/${this.fichierAvatar.name}`);
+            refAvatar
+              .put(this.fichierAvatar, { cacheControl: "public,max-age: 432000" })
+              .then((réponse) => {
+                réponse.ref.getDownloadURL().then((url) => {
+                  db.collection("utilisateurs")
+                    .doc(uidUtilisateur)
+                    .set({
+                      uid_utilisateur: uidUtilisateur,
+                      nom: this.nom,
+                      email: this.email,
+                      avatar: url,
+                    })
+                    .then(() => {
+                      this.chargement = false;
+                      this.$emit("messageConnexionInscription", {
+                        valeur: "Votre compte a été créé avec succès !",
+                        succès: true,
+                      });
+                    })
+                    .catch((erreur) => {
+                      this.chargement = false;
+                      this.$emit("messageConnexionInscription", { valeur: erreur, succès: false });
+                    });
+                });
               });
-            })
-            .catch((erreur) => {
-              this.chargement = false;
-              this.$emit("messageConnexionInscription", { valeur: erreur, succès: false });
-            });
+          } else {
+            db.collection("utilisateurs")
+              .doc(uidUtilisateur)
+              .set({
+                uid_utilisateur: uidUtilisateur,
+                nom: this.nom,
+                email: this.email,
+              })
+              .then(() => {
+                this.chargement = false;
+                this.$emit("messageConnexionInscription", {
+                  valeur: "Votre compte a été créé avec succès !",
+                  succès: true,
+                });
+              })
+              .catch((erreur) => {
+                this.chargement = false;
+                this.$emit("messageConnexionInscription", { valeur: erreur, succès: false });
+              });
+          }
         })
         .catch((error) => {
           this.chargement = false;

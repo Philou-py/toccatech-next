@@ -7,7 +7,7 @@
         styleIconeNav="color: white"
         couleurRippleIconeNav="#343148"
         centrerTitrePetitsEcran
-        cheminAvatar="https://toccatech.com/media/avatars/Philippe_Google_carre.jpg"
+        :cheminAvatar="avatarUtilisateur"
         class="barre-navigation"
       >
         <template v-slot:logo>
@@ -81,7 +81,7 @@
 <script lang="ts">
 import Vue from "vue";
 // Le symbole '@' est un alias du dossier 'src'
-import { auth } from "@/firebase";
+import { auth, db } from "@/firebase";
 import NavBar from "@/components/ui-components/NavBar.vue";
 import Carte from "@/components/ui-components/Carte.vue";
 import Container from "@/components/ui-components/Container.vue";
@@ -107,6 +107,8 @@ export default Vue.extend({
 
   data: () => ({
     estConnecté: true,
+    avatarUtilisateur: "",
+    enleverEcouteurAvatar: () => {},
     montrerModalConnexionInscription: false,
     composantConnexionInscription: "FormulaireConnexion",
     texteSnackBar: "",
@@ -149,20 +151,39 @@ export default Vue.extend({
         this.montrerSnackBar = false;
       }, 4000);
     },
+
+    récupérerDonnées() {
+      let utilisateurConnecté = auth.currentUser!;
+      this.enleverEcouteurAvatar = db
+        .collection("utilisateurs")
+        .doc(utilisateurConnecté.uid)
+        .onSnapshot((document) => {
+          let data = document.data()!;
+          if (data.avatar) {
+            this.avatarUtilisateur = data.avatar;
+          } else {
+            this.avatarUtilisateur = "";
+          }
+        });
+    },
   },
 
   mounted() {
     this.enleverEcouteurAuth = auth.onAuthStateChanged((user) => {
       if (user) {
         this.estConnecté = true;
+        this.récupérerDonnées();
       } else {
         this.estConnecté = false;
+        this.avatarUtilisateur = "";
+        this.enleverEcouteurAvatar();
       }
     });
   },
 
   destroyed() {
     this.enleverEcouteurAuth();
+    this.enleverEcouteurAvatar();
   },
 
   metaInfo: {

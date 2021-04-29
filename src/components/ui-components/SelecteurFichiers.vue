@@ -34,7 +34,10 @@ export default Vue.extend({
     accepter: String,
     invalide: Boolean,
     icôneDevant: String,
-    requis: Boolean,
+    requis: {
+      type: Boolean,
+      default: false,
+    },
     désactivé: {
       type: Boolean,
       default: false,
