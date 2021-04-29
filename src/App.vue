@@ -159,7 +159,7 @@ export default Vue.extend({
         .doc(utilisateurConnecté.uid)
         .onSnapshot((document) => {
           let data = document.data()!;
-          if (data.avatar) {
+          if ("avatar" in data) {
             this.avatarUtilisateur = data.avatar;
           } else {
             this.avatarUtilisateur = "";
