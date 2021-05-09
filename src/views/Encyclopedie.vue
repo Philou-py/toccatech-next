@@ -2,9 +2,11 @@
   <Container petit class="encyclopédie">
     <div class="nom-bouton-compositeur" :class="$mq">
       <h1 class="centrer-texte titre-page" :class="$mq">Encyclopédie</h1>
-      <router-link :to="{ name: 'NouveauCompositeur' }"
-        ><Bouton class="blue-grey">Nouveau Compositeur</Bouton></router-link
-      >
+      <router-link :to="{ name: 'NouveauCompositeur' }">
+        <Bouton class="blue-grey" :désactivé="!estConnecté" :titre="messageNonConnecté">
+          Nouveau Compositeur
+        </Bouton>
+      </router-link>
     </div>
     <div class="container-cartes" v-if="chargementTerminé">
       <Carte
@@ -46,7 +48,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { db } from "@/firebase";
+import { db, auth } from "@/firebase";
 import Carte from "@/components/ui-components/Carte.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
 import Container from "@/components/ui-components/Container.vue";
@@ -62,9 +64,21 @@ export default Vue.extend({
     compositeurs: [],
     chargementTerminé: false,
     enleverEcouteur: () => {},
+    estConnecté: false,
+    messageNonConnecté: "",
   }),
 
   mounted() {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.estConnecté = true;
+        this.messageNonConnecté = "";
+      } else {
+        this.estConnecté = false;
+        this.messageNonConnecté = "Connectez-vous pour contribuer !";
+      }
+    });
+
     var une_année_en_millisecondes = 1000 * 60 * 60 * 24 * 365;
 
     // Récupération des données des compositeurs depuis

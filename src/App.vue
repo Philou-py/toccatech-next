@@ -190,16 +190,6 @@ export default Vue.extend({
     // Titre de la page
     title: "Toccatech",
     titleTemplate: "%s | Toccatech",
-
-    meta: [
-      {
-        name: "description",
-        // Phrase à rajouter après la création du suivi de l'entraînement :
-        // Il permet d'enregistrer son temps de pratique instrumentale et de suivre ses progrès et son atteinte de l'objectif.
-        content:
-          "Toccatech fournit aux musiciens des outils simples et pratiques. Il permet de créer et de gérer une partothèque personnelle en lien avec une encyclopédie musicale collaborative. Il permet également d'y déposer ses propres partitions.",
-      },
-    ],
   },
 });
 </script>
@@ -219,9 +209,9 @@ export default Vue.extend({
 // @import "~@fontsource/eb-garamond/700-italic.css"; // Bold 700 italic
 
 // Import des classes de couleurs Material Design
-@import "@/assets/styles/colors.scss";
-// Import des styles de typographie de l'application
-@import "@/assets/styles/typographie.scss";
+@import "./assets/styles/colors.scss";
+// Import des styles de typographie du projet
+@import "./assets/styles/typographie.scss";
 
 * {
   box-sizing: border-box;
