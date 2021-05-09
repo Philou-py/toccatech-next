@@ -4,9 +4,19 @@ Toccatech est une application Internet à l'usage des musiciens qui souhaitent d
 
 > Note: Le code de ce dépôt Git correspond à une version totalement réécrite de l'ancienne version de Toccatech (dont le code est basé sur Django côté serveur et Materialize comme librairie CSS). Le code, le design et les fonctionnalités sont différents, mais l'esprit de la boîte à outil musicale à destination des musiciens a été conservé. Il est encore disponible en utilisant l'adresse IP à l'adresse suivante : [89.159.201.89](http://89.159.201.89/), mais comporte de nombreux bogues et les fonctionnalités sont loin d'être complètes.
 
+Je vais à présent vous présenter les fonctionnalités de chaque page de l'application Toccatech.
+
 ## Page d'accueil
 
+Tout d'abord, la page d'accueil Toccatech présente les différents avantages d'utiliser cette application, ainsi que ce qu'elle peut apporter à un musicien. La dernière image, présentant la grande salle de l'Arsenal de Metz, est cliquable et redirige vers le site internet de l'Arsenal pour en savoir plus sur cette salle.
+
+Le bouton `C'est parti` présent en haut de la page fait dérouler la page jusqu'à un formulaire de connexion ou d'inscription si l'utilisateur n'est pas déjà connecté. Celui-ci n'est visible seulement si l'utilisateur n'est pas connecté. Dans le cas contraire, ce bouton redirige vers la page de la partothèque personnelle.
+
 ## Encyclopédie
+
+La page de l'encyclopédie Toccatech liste tous les compositeurs répertoriés dans la base de données Toccatech. Cette base de données peut être enrichie par n'importe quel utilisateur, du moment qu'il est connecté en cliquant sur le bouton "Nouveau Compositeur". Si l'utilisateur n'est pas connecté, ce bouton est désactivé et affiche un message lorsque la souris de l'utilisateur reste un moment immobile au dessus de ce bouton.
+
+Les compositeurs sont présentés sous forme de cartes dans lesquelles un résumé des informations du compositeur est affiché.
 
 ## Ma Partothèque
 
