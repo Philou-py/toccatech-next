@@ -16,9 +16,15 @@ Le bouton `C'est parti` présent en haut de la page fait dérouler la page jusqu
 
 La page de l'encyclopédie Toccatech liste tous les compositeurs répertoriés dans la base de données Toccatech. Cette base de données peut être enrichie par n'importe quel utilisateur, du moment qu'il est connecté en cliquant sur le bouton "Nouveau Compositeur". Si l'utilisateur n'est pas connecté, ce bouton est désactivé et affiche un message lorsque la souris de l'utilisateur reste un moment immobile au dessus de ce bouton.
 
-Les compositeurs sont présentés sous forme de cartes dans lesquelles un résumé des informations du compositeur est affiché.
+Les compositeurs sont présentés sous forme de cartes dans lesquelles un résumé des informations du compositeur est affiché. Les informations complètes sur un compositeur en particulier peuvent être affichées en cliquant sur le bouton "En savoir plus...".
+
+A partir des détails d'un compositeur, on peut également voir la liste des morceaux de ce compositeur joués par les utilisateurs de Toccatech, s'il y en a au moins un. Les partitions associées à chaque morceau ne sont pas affichées, elles restent strictement personnelles.
+
+La page des détails d'un compositeur permet également, pour les utilisateurs connectés, de contribuer et modifier ces informations pour apporter ou corriger des informations.
 
 ## Ma Partothèque
+
+Toccatech met à disposition des utilisateurs de l'application une partothèque personnelle, qui permet d'enregistrer ses morceaux ainsi que de télécharger ses partitions personnelles. Chaque morceau possède un titre qui est associé à un compositeur. Celui-ci doit forcément déjà exister dans la base de données de compositeurs. S'il n'existe pas, il est obligatoire de le créer d'abord à partir de la page de l'encyclopédie. Les morceaux ajoutés dans sa partothèque personnelles sont visibles publiquement dans la page des détails du compositeur associé à chaque morceau.
 
 # Description technique
 
