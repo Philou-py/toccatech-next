@@ -2,13 +2,13 @@
 
 Toccatech est une application Internet à l'usage des musiciens qui souhaitent disposer d'une partothèque numérique et avoir accès à des renseignements sur les principaux compositeurs de la musique classique. Elle est accessible via le lien [toccatech.com](https://toccatech.com). Le contenu public de l'application présente des informations sur les compositeurs, regroupées dans une encyclopédie musicale. Le contenu personnalisé devient accessible après la création d'un compte. L'utilisateur peut référencer les œuvres musicales de son répertoire et a la possibilité de déposer sur le serveur de l'application une copie numérique de ses partitions. Celle-ci restera à l'usage strictement personnel de l'utilisateur dans le respect du droit à la copie.
 
-> Note: Le code de ce dépôt Git correspond à une version totalement réécrite de l'ancienne version de Toccatech (dont le code est basé sur Django côté serveur et Materialize comme librairie CSS). Le code, le design et les fonctionnalités sont différents, mais l'esprit de la boîte à outil musicale à destination des musiciens a été conservé. Il est encore disponible en utilisant l'adresse IP à l'adresse suivante : [89.159.201.89](http://89.159.201.89/), mais comporte de nombreux bogues et les fonctionnalités sont loin d'être complètes.
+> Note: Le code de ce dépôt Git correspond à une version totalement réécrite de l'ancienne version de Toccatech (dont le code est basé sur le framework web python [Django](https://www.djangoproject.com/) côté serveur et [Materialize](https://materializecss.com/) comme librairie CSS). Le code, le design et les fonctionnalités sont différents, mais l'esprit de la boîte à outil musicale à destination des musiciens a été conservé. Il est encore disponible en utilisant l'adresse IP à l'adresse suivante : [89.159.201.89](http://89.159.201.89/), mais comporte de nombreux bugs et les fonctionnalités sont loin d'être complètes.
 
 Je vais à présent vous présenter les fonctionnalités de chaque page de l'application Toccatech.
 
 ## Page d'accueil
 
-Tout d'abord, la page d'accueil Toccatech présente les différents avantages d'utiliser cette application, ainsi que ce qu'elle peut apporter à un musicien. La dernière image, présentant la grande salle de l'Arsenal de Metz, est cliquable et redirige vers le site internet de l'Arsenal pour en savoir plus sur cette salle.
+Tout d'abord, la page d'accueil Toccatech présente les différents avantages d'utiliser cette application, c'est-à-dire ce qu'elle peut apporter à un musicien. La dernière image, présentant la grande salle de l'Arsenal de Metz, est cliquable et redirige vers le site internet de l'Arsenal pour en savoir plus sur cette salle.
 
 Le bouton `C'est parti` présent en haut de la page fait dérouler la page jusqu'à un formulaire de connexion ou d'inscription si l'utilisateur n'est pas déjà connecté. Celui-ci n'est visible seulement si l'utilisateur n'est pas connecté. Dans le cas contraire, ce bouton redirige vers la page de la partothèque personnelle.
 
@@ -16,15 +16,31 @@ Le bouton `C'est parti` présent en haut de la page fait dérouler la page jusqu
 
 La page de l'encyclopédie Toccatech liste tous les compositeurs répertoriés dans la base de données Toccatech. Cette base de données peut être enrichie par n'importe quel utilisateur, du moment qu'il est connecté en cliquant sur le bouton "Nouveau Compositeur". Si l'utilisateur n'est pas connecté, ce bouton est désactivé et affiche un message lorsque la souris de l'utilisateur reste un moment immobile au dessus de ce bouton.
 
-Les compositeurs sont présentés sous forme de cartes dans lesquelles un résumé des informations du compositeur est affiché. Les informations complètes sur un compositeur en particulier peuvent être affichées en cliquant sur le bouton "En savoir plus...".
+Les compositeurs sont présentés sous forme de cartes dans lesquelles un résumé des informations du compositeur est affiché. L'âge du compositeur Les informations complètes sur un compositeur en particulier peuvent être affichées en cliquant sur le bouton "En savoir plus...".
 
 A partir des détails d'un compositeur, on peut également voir la liste des morceaux de ce compositeur joués par les utilisateurs de Toccatech, s'il y en a au moins un. Les partitions associées à chaque morceau ne sont pas affichées, elles restent strictement personnelles.
 
-La page des détails d'un compositeur permet également, pour les utilisateurs connectés, de contribuer et modifier ces informations pour apporter ou corriger des informations.
+La page des détails d'un compositeur permet également, pour les utilisateurs connectés, de contribuer et modifier ces informations pour apporter ou corriger des informations. Afin de modifier les informations d'un compositeur, un formulaire comportant plusieurs champs est affiché. Tous les champs sont requis, pour que l'encyclopédie soit la plus riche possible. Pour la sélection d'une photo d'un compositeur, deux options se présentent : l'utilisateur peut soit utiliser une URL d'une photo provenant d'un site web externe, ou télécharger une photo à partir de son ordinateur sur le serveur de l'application. Dans les deux cas, si l'image est valide, un aperçu en temps réel apparaît à côté du nom du compositeur.
+
+Si la photo du compositeur voulue est accessible via une URL provenant d'un autre site web, le champ photo URL doit être utilisé. Celui-ci effectue une validation de l'URL grâce à une requête HTTP pour tester si l'image existe réellement. Cette validation est déclenchée à chaque modification du champ URL. Par contre, si l'image est protégée par le ["Cross-origin resource sharing" (CORS)](https://developer.mozilla.org/fr/docs/Web/HTTP/CORS) bien qu'elle existe, le formulaire ne validera pas cette photo, et il faudra alors d'abord télécharger l'image et ensuite la sélectionner depuis son ordinateur via l'autre champ de formulaire ("Sélectionner une photo..."). Cela est dû à l'utilisation de la [`Fetch API`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), qui prend en compte la validation CORS.
+
+La case à cocher "Valider sélection photo" rend les deux champs pour choisir l'image du compositeur non modifiables. Dans le cas d'une sélection d'une photo à partir de son ordinateur, le fichier est téléchargé sur le serveur Toccatech à l'activation de cette case à cocher. Une fois cette opération réussie, le lien vers la photo se trouvant cette fois-ci sur le serveur de l'application est automatiquement ajouté dans le champ "Photo du compositeur (URL)" et vide l'autre champ. La désactivation de la case à cocher supprime automatiquement l'image si elle est stockée sur le serveur Toccatech et vide le champ URL.
+
+Dans tous les cas, la sélection de cette case à cocher est nécessaire pour envoyer le formulaire. Sa désélection permet de modifier à nouveau la photo du compositeur.
 
 ## Ma Partothèque
 
 Toccatech met à disposition des utilisateurs de l'application une partothèque personnelle, qui permet d'enregistrer ses morceaux ainsi que de télécharger ses partitions personnelles. Chaque morceau possède un titre qui est associé à un compositeur. Celui-ci doit forcément déjà exister dans la base de données de compositeurs. S'il n'existe pas, il est obligatoire de le créer d'abord à partir de la page de l'encyclopédie. Les morceaux ajoutés dans sa partothèque personnelles sont visibles publiquement dans la page des détails du compositeur associé à chaque morceau.
+
+## Barre de navigation et autres fonctionnalités
+
+La barre de navigation, présente sur toutes les pages, permet de naviguer facilement entre les pages principales de l'application, c'est-à-dire les pages "Ma Partothèque" et "Encyclopédie". Si l'utilisateur n'est pas connecté, un bouton supplémentaire est affiché qui permet d'ouvrir une popup de connexion ou d'inscription.
+
+Toutes les pages de l'application sont réactives grâce à un changement de l'interface utilisateur en fonction de la taille de l'écran, ce qui signifie que Toccatech peut aussi bien être utilisé sur un ordinateur, sur une tablette ou encore sur un smartphone.
+
+Le système d'authentification implémenté dans l'application vérifie également à chaque fois que l'utilisateur entre sur une page qu'il a la permission de l'afficher. Des restrictions s'appliquent seulement pour les utilisateurs non connectés. Si un utilisateur non connecté tente effectivement d'accéder à une page nécessitant la connexion (il s'agit des pages de modification d'un compositeur, d'ajout d'un compositeur ainsi que celle de la partothèque personnelle), il est redirigé vers la page d'accueil.
+
+Toutes les données provenant de la base de données Toccatech sont mises à jour en temps réel, ce qui signifie qu'un utilisateur n'a jamais besoin de rafraichir la page pour actualiser les données ; ce processus se fait automatiquement lorsque la base de données est modifiée.
 
 # Description technique
 
@@ -132,7 +148,7 @@ Chaque compositeur peut également posséder une sous-collection `oeuvres` qui p
 
 ### Les routes de l'application
 
-Chaque route de l'application est identifée non seulement par une url dans la barre d'adresse, mais aussi grâce à un nom que l'on peut leur donner afin de pouvoir changer ultérieurement l'url sans avoir à modifier le reste de l'application dirigeant vers cette route. Voici les différentes routes de l'application Toccatech :
+Chaque route de l'application est identifiée non seulement par une url dans la barre d'adresse, mais aussi grâce à un nom que l'on peut leur donner afin de pouvoir changer ultérieurement l'url sans avoir à modifier le reste de l'application dirigeant vers cette route. Voici les différentes routes de l'application Toccatech :
 
 | Chemin de l'url             | Nom                        | Requiert l'authentification | Description                                                                                                         |
 | --------------------------- | -------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
@@ -147,7 +163,7 @@ Chaque route de l'application est identifée non seulement par une url dans la b
 
 ### La programmation avec Vue
 
-Les paragraphes qui suivent ne décrivent seulement certains aspets de Vue. Pour apprendre Vue plus en détails, je recommande [le tutoriel de _The Net Ninja_ sur Youtube](https://www.youtube.com/playlist?list=PL4cUxeGkcC9hYYGbV60Vq3IXYNfDk8At1) que j'ai utilisé comme point de départ pour la programmation avec Vue. Même s'il permet d'apprendre la version 3 de Vue.js, les syntaxes expliquées sont presque identiques dans Vue 2. La [documentation officielle de Vue.js](https://fr.vuejs.org/index.html) est également de très bonne qualité.
+Les paragraphes qui suivent ne décrivent seulement certains aspects de Vue. Pour apprendre Vue plus en détails, je recommande [le tutoriel de _The Net Ninja_ sur Youtube](https://www.youtube.com/playlist?list=PL4cUxeGkcC9hYYGbV60Vq3IXYNfDk8At1) que j'ai utilisé comme point de départ pour la programmation avec Vue. Même s'il permet d'apprendre la version 3 de Vue.js, les syntaxes expliquées sont presque identiques dans Vue 2. La [documentation officielle de Vue.js](https://fr.vuejs.org/index.html) est également de très bonne qualité.
 
 #### Le système de composants
 
@@ -184,7 +200,7 @@ L'attribut `v-else`, placé après un élément possédant l'attribut `v-if`, pe
 <p v-else>Voici la page d'accueil !</p>
 ```
 
-Vue permet également de préfixer n'importe quel attribut HTMl existant avec la syntaxe suivante : `v-bind:mon-attribut="duCodeJavaScript"`. Cela permet de passer à un attribut HTML du code JavaScript comme une variable à la place d'une valeur fixe. Par exemple, si l'on a défini une variable `titre` possédant la valeur `Page d'accueil`, on peut définir
+Vue permet également de préfixer n'importe quel attribut HTML existant avec la syntaxe suivante : `v-bind:mon-attribut="duCodeJavaScript"`. Cela permet de passer à un attribut HTML du code JavaScript comme une variable à la place d'une valeur fixe. Par exemple, si l'on a défini une variable `titre` possédant la valeur `Page d'accueil`, on peut définir
 l'attribut title d'un élément `a` en lui passant cette variable grâce à `v-bind` :
 
 ```html
@@ -215,9 +231,9 @@ Les variables se placent dans un objet renvoyé par la fonction `data`. Après a
 
 Cependant, certaines variables dépendent d'autres variables du composant, et celles-ci ne peuvent pas être déclarées dans la fonction `data`. Elles sont en revanche déclarées comme `computed properties` dans l'option `computed` de l'objet comme paramètre à la classe `Vue.extend`. Ces `computed properties` peuvent être utilisées comme des variables qui ne changent seulement si les variables auxquelles elles dépendent elles-mêmes changent.
 
-Un composant peut également posséder des méthodes qui peuvent ensuite être apellées pour réagir à un événement par exemple. Celles-ci sont déclarées dans la propriété `methods` de l'objet des options Vue.
+Un composant peut également posséder des méthodes qui peuvent ensuite être appelées pour réagir à un événement par exemple. Celles-ci sont déclarées dans la propriété `methods` de l'objet des options Vue.
 
-Pour finir, parlons des `hooks` de cycle de vie qui sont exécutés automatiquement à certaines phases d'initialisation de la classe Vue. La plus utilisée dans mon projet est `mounted`. Cette fonction est apellée lorsque le composant est complètement initialisé, c'est-à-dire lorsque que les variables ainsi que le `template` sont prêts à être utilisés.
+Pour finir, parlons des `hooks` de cycle de vie qui sont exécutés automatiquement à certaines phases d'initialisation de la classe Vue. La plus utilisée dans mon projet est `mounted`. Cette fonction est appelée lorsque le composant est complètement initialisé, c'est-à-dire lorsque que les variables ainsi que le `template` sont prêts à être utilisés.
 
 Ces principes ne sont que le début de la programmation avec Vue. Je conseille donc, pour en savoir davantage, d'aller visiter la très bonne [documentation de Vue ](https://fr.vuejs.org/index.html).
 
@@ -339,3 +355,4 @@ Un autre avantage de Sass est qu'il permet l'utilisation de `mixins`. Celles-ci 
 Pour apprendre le TypeScript, je recommande [l'excellent tutoriel de _The Net Nina_ sur Youtube](https://www.youtube.com/playlist?list=PL4cUxeGkcC9gUgr39Q_yD6v-bSyMwKPUI) !
 
 Cependant, la déclaration explicite du type `any` est parfois nécessaire, lorsque la valeur contenue par la variable est inconnue ou que cette variable pourrait posséder n'importe quel type. Enfin, le point d'exclamation est parfois utilisé après l'appel d'une variable pour indiquer à TypeScript que cette variable ne peut pas avoir le type `null`.
+
