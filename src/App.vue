@@ -40,6 +40,33 @@
         </template>
       </NavBar>
     </nav>
+    <SideBar
+      :montrer="montrerSidebar"
+      @fermeture="montrerSidebar = false"
+      :cheminAvatar="avatarUtilisateur"
+    >
+      <li><router-link :to="{ name: 'Encyclopédie' }">Encyclopédie</router-link></li>
+      <li>
+        <router-link :to="{ name: 'MaPartothèque' }" v-if="estConnecté">Ma Partothèque</router-link>
+      </li>
+      <li v-if="!estConnecté" title="Connectez-vous pour accéder à votre partothèque !">
+        <a class="désactivé">Ma Partothèque</a>
+      </li>
+      <div v-if="estConnecté" class="my-4" style="display: flex; justify-content: center">
+        <Bouton class="blue-grey" @click="déconnexion()">Déconnexion</Bouton>
+      </div>
+      <div v-if="!estConnecté" class="my-3" style="display: flex; justify-content: center">
+        <Bouton
+          @click="
+            montrerSidebar = false;
+            montrerModalConnexionInscription = true;
+          "
+          class="orange darken-3"
+        >
+          Connexion / Inscription
+        </Bouton>
+      </div>
+    </SideBar>
     <Modal
       :montrerModal="montrerModalConnexionInscription"
       @fermetureModal="montrerModalConnexionInscription = !montrerModalConnexionInscription"
