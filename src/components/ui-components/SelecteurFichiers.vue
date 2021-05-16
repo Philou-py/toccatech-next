@@ -20,13 +20,11 @@
 <script lang="ts">
 import Vue from "vue";
 import ChampTexte from "@/components/ui-components/ChampTexte.vue";
-import Bouton from "@/components/ui-components/Bouton.vue";
 import { BusEvénements } from "@/BusEvénements";
 
 export default Vue.extend({
   components: {
     ChampTexte,
-    Bouton,
   },
 
   props: {
@@ -34,7 +32,10 @@ export default Vue.extend({
     accepter: String,
     invalide: Boolean,
     icôneDevant: String,
-    requis: Boolean,
+    requis: {
+      type: Boolean,
+      default: false,
+    },
     désactivé: {
       type: Boolean,
       default: false,

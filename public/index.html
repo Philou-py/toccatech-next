@@ -9,13 +9,15 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   </head>
   <body>
+    <!-- Message à afficher si JavaScript est désactivé -->
     <noscript>
       <strong>
-        We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without
-        JavaScript enabled. Please enable it to continue.
+        L'application <%= htmlWebpackPlugin.options.title %> ne peut pas fonctionner avec JavaScript
+        désactivé ! Veuillez l'activer pour continuer.
       </strong>
     </noscript>
+
+    <!-- Toute l'application est injectée par Vue à la place de ce 'div' -->
     <div id="app"></div>
-    <!-- built files will be auto injected -->
   </body>
 </html>

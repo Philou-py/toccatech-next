@@ -1,7 +1,7 @@
 <template>
   <Container class="overflow-hidden">
     <div v-if="existant && chargementCompositeurTerminé && chargementOeuvresTerminé">
-      <Carte class="carte-détails-compositeur">
+      <Carte class="carte-détails-compositeur my-4">
         <div class="nom-image-compositeur" :class="$mq">
           <h1 class="centrer-texte" :class="$mq">{{ compositeur.nom }}</h1>
           <div class="container-img">
@@ -18,11 +18,12 @@
             <h3>Carte d'identité</h3>
             <ul>
               <li>
-                Date de naissance : {{ compositeur.date_naissance.toDate().toLocaleDateString() }}
+                Date de naissance :
+                {{ compositeur.date_naissance.toLocaleDateString() }}
               </li>
               <li v-if="compositeur.est_mort">
-                Date de décès : {{ compositeur.date_décès.toDate().toLocaleDateString() }} (mort à
-                {{ compositeur.âge }} ans)
+                Date de décès :
+                {{ compositeur.date_décès.toLocaleDateString() }} (mort à {{ compositeur.âge }} ans)
               </li>
               <li v-else>Âge : {{ compositeur.âge }}</li>
               <li>Styles musicaux : {{ compositeur.styles_musicaux }}</li>
@@ -35,7 +36,12 @@
         </div>
         <div class="actions-carte mt-4">
           <Espacement />
-          <router-link :to="{ name: 'ModifierInfosCompositeur', params: { id: compositeur.id } }">
+          <router-link
+            :to="{
+              name: 'ModifierInfosCompositeur',
+              params: { id: compositeur.id },
+            }"
+          >
             <Bouton
               :désactivé="!estConnecté"
               :titre="messageNonConnecté"
@@ -63,7 +69,8 @@
       <h3>Ce compositeur n'existe pas !</h3>
       <h5>
         Retournez donc sur
-        <router-link :to="{ name: 'Encyclopédie' }">l'encyclopédie</router-link> !
+        <router-link :to="{ name: 'Encyclopédie' }">l'encyclopédie</router-link>
+        !
       </h5>
     </div>
   </Container>
@@ -73,19 +80,13 @@
 import Vue from "vue";
 import { db, auth } from "@/firebase";
 import Container from "@/components/ui-components/Container.vue";
-import ChampTexte from "@/components/ui-components/ChampTexte.vue";
-import Formulaire from "@/components/ui-components/Formulaire.vue";
 import Carte from "@/components/ui-components/Carte.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
 import Espacement from "@/components/ui-components/Espacement.vue";
-import Accueil from "./Accueil.vue";
 
 export default Vue.extend({
   components: {
     Container,
-    ChampTexte,
-    Formulaire,
-    Accueil,
     Carte,
     Bouton,
     Espacement,
@@ -101,8 +102,8 @@ export default Vue.extend({
     existant: true,
     chargementCompositeurTerminé: false,
     chargementOeuvresTerminé: false,
-    enleverEcouteurOeuvres: () => {},
-    enleverEcouteurCompositeur: () => {},
+    enleverEcouteurOeuvres: <any>null,
+    enleverEcouteurCompositeur: <any>null,
     nom: "",
     biographie: "",
     estConnecté: false,
@@ -119,17 +120,12 @@ export default Vue.extend({
       (document) => {
         if (document.exists) {
           let données = document.data()!;
-          if (données.date_décès) {
-            données.est_mort = true;
-            let âge =
-              (données.date_décès.toDate().getTime() - données.date_naissance.toDate().getTime()) /
-              une_année_en_millisecondes;
-            données.âge = Math.floor(âge);
-          } else {
-            données.est_mort = false;
+          données.date_décès = new Date(données.date_décès);
+          données.date_naissance = new Date(données.date_naissance);
+          if (!données.est_mort) {
             let maintenant = new Date();
             let âge =
-              (maintenant.getTime() - données.date_naissance.toDate().getTime()) /
+              (maintenant.getTime() - données.date_naissance.getTime()) /
               une_année_en_millisecondes;
             données.âge = Math.floor(âge);
           }

@@ -13,7 +13,7 @@
   max-width: var(--largeur-max);
   min-width: var(--largeur-min);
   overflow: hidden;
-  margin: 2%;
+  // margin: 2%;
   padding-left: 16px;
   padding-right: 16px;
   color: #666666;
@@ -39,9 +39,9 @@
     align-items: center;
     margin: 0px 16px 16px;
 
-    /* .btn { */
-    /*   margin: 0 5px; */
-    /* } */
+    // .btn {
+    //   margin: 0 5px;
+    // }
   }
 }
 </style>
@@ -56,7 +56,7 @@ export default Vue.extend({
   },
 
   computed: {
-    variablesCSS(): object {
+    variablesCSS(): { "--largeur"?: string; "--largeur-max"?: string; "--largeur-min"?: string } {
       return {
         "--largeur": this.largeur ? this.largeur + "px" : undefined,
         "--largeur-max": this.largeurMax ? this.largeurMax + "px" : undefined,

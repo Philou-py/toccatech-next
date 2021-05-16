@@ -2,9 +2,11 @@
   <Container petit class="encyclopédie">
     <div class="nom-bouton-compositeur" :class="$mq">
       <h1 class="centrer-texte titre-page" :class="$mq">Encyclopédie</h1>
-      <router-link :to="{ name: 'NouveauCompositeur' }"
-        ><Bouton class="blue-grey">Nouveau Compositeur</Bouton></router-link
-      >
+      <router-link :to="{ name: 'NouveauCompositeur' }">
+        <Bouton class="blue-grey" :désactivé="!estConnecté" :titre="messageNonConnecté">
+          Nouveau Compositeur
+        </Bouton>
+      </router-link>
     </div>
     <div class="container-cartes" v-if="chargementTerminé">
       <Carte
@@ -21,19 +23,20 @@
             <!-- {{ compositeur.biographie }} -->
             <ul>
               <li>
-                Date de naissance : {{ compositeur.date_naissance.toDate().toLocaleDateString() }}
+                Date de naissance :
+                {{ compositeur.date_naissance.toLocaleDateString() }}
               </li>
               <li v-if="compositeur.est_mort">
-                Date de décès : {{ compositeur.date_décès.toDate().toLocaleDateString() }} (mort à
-                {{ compositeur.âge }} ans)
+                Date de décès :
+                {{ compositeur.date_décès.toLocaleDateString() }} (mort à {{ compositeur.âge }} ans)
               </li>
-              <li v-else>Âge : {{ compositeur.âge }}</li>
+              <li v-else>Âge : {{ compositeur.âge }} ans</li>
               <li>Styles musicaux : {{ compositeur.styles_musicaux }}</li>
             </ul>
           </div>
-          <router-link :to="{ name: 'DétailsCompositeur', params: { id: compositeur.id } }"
-            ><Bouton texte class="indigo darken-1 mt-3">En savoir plus...</Bouton></router-link
-          >
+          <router-link :to="{ name: 'DétailsCompositeur', params: { id: compositeur.id } }">
+            <Bouton texte class="indigo darken-1 mt-3">En savoir plus...</Bouton>
+          </router-link>
         </div>
         <div class="container-photo">
           <img :src="compositeur.photo" alt="Image" class="photo-compositeur" />
@@ -48,7 +51,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { db } from "@/firebase";
+import { db, auth } from "@/firebase";
 import Carte from "@/components/ui-components/Carte.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
 import Container from "@/components/ui-components/Container.vue";
@@ -63,10 +66,22 @@ export default Vue.extend({
   data: () => ({
     compositeurs: [],
     chargementTerminé: false,
-    enleverEcouteur: () => {},
+    enleverEcouteur: <any>null,
+    estConnecté: false,
+    messageNonConnecté: "",
   }),
 
   mounted() {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.estConnecté = true;
+        this.messageNonConnecté = "";
+      } else {
+        this.estConnecté = false;
+        this.messageNonConnecté = "Connectez-vous pour contribuer !";
+      }
+    });
+
     var une_année_en_millisecondes = 1000 * 60 * 60 * 24 * 365;
 
     // Récupération des données des compositeurs depuis
@@ -79,18 +94,12 @@ export default Vue.extend({
           let résultat: any = [];
           snapShot.docs.forEach((document) => {
             let données = document.data();
-            if (données.date_décès) {
-              données.est_mort = true;
-              let âge =
-                (données.date_décès.toDate().getTime() -
-                  données.date_naissance.toDate().getTime()) /
-                une_année_en_millisecondes;
-              données.âge = Math.floor(âge);
-            } else {
-              données.est_mort = false;
+            données.date_décès = new Date(données.date_décès);
+            données.date_naissance = new Date(données.date_naissance);
+            if (!données.est_mort) {
               let maintenant = new Date();
               let âge =
-                (maintenant.getTime() - données.date_naissance.toDate().getTime()) /
+                (maintenant.getTime() - données.date_naissance.getTime()) /
                 une_année_en_millisecondes;
               données.âge = Math.floor(âge);
             }
@@ -111,6 +120,14 @@ export default Vue.extend({
 
   metaInfo: {
     title: "Encyclopédie",
+
+    meta: [
+      {
+        name: "description",
+        content:
+          "L'encyclopédie Toccatech, constamment enrichie par la communauté, regroupe des informations sur de nombreux compositeurs de différents styles musicaux.",
+      },
+    ],
   },
 });
 </script>
@@ -142,6 +159,7 @@ export default Vue.extend({
   flex-wrap: wrap;
 
   .carte-compositeur {
+    margin: 2%;
     display: flex;
 
     &.xs {
@@ -171,6 +189,7 @@ export default Vue.extend({
 
     &.sm {
       max-height: 230px;
+      width: 96%;
     }
 
     &.md {

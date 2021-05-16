@@ -13,6 +13,7 @@
           :styleIcone="styleIconeNav"
           :couleurRipple="couleurRippleIconeNav"
           v-if="['xs', 'sm'].includes($mq)"
+          @click="gérerClicIconeNav()"
         >
           {{ nomIconeNav }}
         </BoutonIcone>
@@ -37,7 +38,7 @@
 
 <style lang="scss">
 .navbar {
-  background-color: var(--couleur-bg-navbar);
+  background-color: #9e1030;
 
   .container {
     display: flex;
@@ -53,7 +54,7 @@
       margin: 0 16px 0 8px;
 
       button:hover {
-        background-color: var(--couleur-bg-hover-bouton-icone-nav);
+        background-color: #755139;
       }
     }
 
@@ -61,6 +62,7 @@
       text-decoration: none;
       color: inherit;
       display: flex;
+      align-items: center;
       height: 100%;
     }
 
@@ -90,9 +92,7 @@
   }
 
   .titre {
-    margin: 0;
-    margin: auto 0;
-    color: var(--couleur-fg-nom-site);
+    color: white;
   }
 
   ul.menu-nav {
@@ -120,10 +120,11 @@
       transition: background-color 400ms ease;
 
       &:hover {
-        background-color: var(--couleur-bg-hover-item-menu-nav);
+        background-color: #755139;
       }
 
-      &.désactivé:hover {
+      &.désactivé {
+        // pointer-events: none;
         cursor: not-allowed;
       }
     }
@@ -163,6 +164,11 @@ export default Vue.extend({
     couleurRippleIconeNav: String,
     centrerTitrePetitsEcran: Boolean,
     cheminAvatar: String,
+  },
+  methods: {
+    gérerClicIconeNav() {
+      this.$emit("clicIconeNav");
+    },
   },
 });
 </script>

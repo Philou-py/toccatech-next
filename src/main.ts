@@ -9,6 +9,10 @@ import Meta from "vue-meta";
 
 Vue.config.productionTip = false;
 
+// Initialisation de Vue Meta
+// Vue Meta est une librairie Vue pour ajouter des données meta à chaque
+// composant Vue (comme on le ferait avec les balises 'meta' dans la balise
+// 'head' d'une page html).
 Vue.use(Meta);
 
 // Initialisation de Vue MQ avec des breakpoints personnalisés
