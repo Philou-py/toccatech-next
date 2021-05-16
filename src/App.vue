@@ -9,6 +9,7 @@
         centrerTitrePetitsEcran
         :cheminAvatar="avatarUtilisateur"
         class="barre-navigation"
+        @clicIconeNav="montrerSidebar = true"
       >
         <template v-slot:logo>
           <!-- Le symbole '@' est un alias du dossier 'src' -->
@@ -24,7 +25,7 @@
             <router-link :to="{ name: 'MaPartothèque' }">Ma Partothèque</router-link>
           </li>
           <li v-if="!estConnecté" title="Connectez-vous pour accéder à votre partothèque !">
-            <a class="désactivé"> Ma Partothèque </a>
+            <a class="désactivé">Ma Partothèque</a>
           </li>
 
           <!-- Le bouton de déconnexion n'est affiché que si l'utilisateur est connecté -->
@@ -91,6 +92,7 @@ import Modal from "@/components/ui-components/Modal.vue";
 import BarreMessages from "@/components/ui-components/BarreMessages.vue";
 import FormulaireInscription from "@/components/layouts/accounts/FormulaireInscription.vue";
 import FormulaireConnexion from "@/components/layouts/accounts/FormulaireConnexion.vue";
+import SideBar from "@/components/ui-components/SideBar.vue";
 
 export default Vue.extend({
   components: {
@@ -103,19 +105,27 @@ export default Vue.extend({
     FormulaireInscription,
     FormulaireConnexion,
     BarreMessages,
+    SideBar,
   },
 
   data: () => ({
     estConnecté: true,
     avatarUtilisateur: "",
-    enleverEcouteurAvatar: () => {},
+    enleverEcouteurAvatar: <any>null,
     montrerModalConnexionInscription: false,
+    montrerSidebar: false,
     composantConnexionInscription: "FormulaireConnexion",
     texteSnackBar: "",
     montrerSnackBar: false,
     typeSnackBar: "",
-    enleverEcouteurAuth: () => {},
+    enleverEcouteurAuth: <any>null,
   }),
+
+  watch: {
+    $route() {
+      this.montrerSidebar = false;
+    },
+  },
 
   methods: {
     basculerComposant(composant: any) {
@@ -129,6 +139,7 @@ export default Vue.extend({
           if (this.$route.name != "Accueil") {
             this.$router.push({ name: "Accueil" });
           }
+          this.enleverEcouteurAvatar();
           this.texteSnackBar = "Vous êtes à présent déconnecté !";
           this.typeSnackBar = "succès";
           this.montrerSnackBar = true;
@@ -176,14 +187,15 @@ export default Vue.extend({
       } else {
         this.estConnecté = false;
         this.avatarUtilisateur = "";
-        this.enleverEcouteurAvatar();
       }
     });
   },
 
   destroyed() {
+    if (this.estConnecté) {
+      this.enleverEcouteurAvatar();
+    }
     this.enleverEcouteurAuth();
-    this.enleverEcouteurAvatar();
   },
 
   metaInfo: {

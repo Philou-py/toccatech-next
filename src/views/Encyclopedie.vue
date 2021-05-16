@@ -22,18 +22,21 @@
           <div class="biographie-compositeur">
             <!-- {{ compositeur.biographie }} -->
             <ul>
-              <li>Date de naissance : {{ compositeur.date_naissance.toLocaleDateString() }}</li>
-              <li v-if="compositeur.est_mort">
-                Date de décès : {{ compositeur.date_décès.toLocaleDateString() }} (mort à
-                {{ compositeur.âge }} ans)
+              <li>
+                Date de naissance :
+                {{ compositeur.date_naissance.toLocaleDateString() }}
               </li>
-              <li v-else>Âge : {{ compositeur.âge }}</li>
+              <li v-if="compositeur.est_mort">
+                Date de décès :
+                {{ compositeur.date_décès.toLocaleDateString() }} (mort à {{ compositeur.âge }} ans)
+              </li>
+              <li v-else>Âge : {{ compositeur.âge }} ans</li>
               <li>Styles musicaux : {{ compositeur.styles_musicaux }}</li>
             </ul>
           </div>
-          <router-link :to="{ name: 'DétailsCompositeur', params: { id: compositeur.id } }"
-            ><Bouton texte class="indigo darken-1 mt-3">En savoir plus...</Bouton></router-link
-          >
+          <router-link :to="{ name: 'DétailsCompositeur', params: { id: compositeur.id } }">
+            <Bouton texte class="indigo darken-1 mt-3">En savoir plus...</Bouton>
+          </router-link>
         </div>
         <div class="container-photo">
           <img :src="compositeur.photo" alt="Image" class="photo-compositeur" />
@@ -63,7 +66,7 @@ export default Vue.extend({
   data: () => ({
     compositeurs: [],
     chargementTerminé: false,
-    enleverEcouteur: () => {},
+    enleverEcouteur: <any>null,
     estConnecté: false,
     messageNonConnecté: "",
   }),
@@ -156,6 +159,7 @@ export default Vue.extend({
   flex-wrap: wrap;
 
   .carte-compositeur {
+    margin: 2%;
     display: flex;
 
     &.xs {
@@ -185,6 +189,7 @@ export default Vue.extend({
 
     &.sm {
       max-height: 230px;
+      width: 96%;
     }
 
     &.md {

@@ -7,6 +7,7 @@
     :title="titre"
     class="btn"
     id="btn"
+    ref="bouton"
   >
     <slot></slot>
   </button>

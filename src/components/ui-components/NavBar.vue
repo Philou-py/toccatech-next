@@ -13,6 +13,7 @@
           :styleIcone="styleIconeNav"
           :couleurRipple="couleurRippleIconeNav"
           v-if="['xs', 'sm'].includes($mq)"
+          @click="gérerClicIconeNav()"
         >
           {{ nomIconeNav }}
         </BoutonIcone>
@@ -163,6 +164,11 @@ export default Vue.extend({
     couleurRippleIconeNav: String,
     centrerTitrePetitsEcran: Boolean,
     cheminAvatar: String,
+  },
+  methods: {
+    gérerClicIconeNav() {
+      this.$emit("clicIconeNav");
+    },
   },
 });
 </script>

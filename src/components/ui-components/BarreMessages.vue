@@ -3,7 +3,10 @@
     <div class="snackbar-wrapper" v-if="montrerSnackBar">
       <div
         class="snackbar"
-        :class="{ green: typeSnackBar == 'succès', red: typeSnackBar == 'erreur' }"
+        :class="{
+          green: typeSnackBar == 'succès',
+          red: typeSnackBar == 'erreur',
+        }"
       >
         <slot></slot>
       </div>

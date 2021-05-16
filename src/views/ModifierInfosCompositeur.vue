@@ -1,7 +1,7 @@
 <template>
   <div>
     <Container v-show="existant && chargementTerminé" class="overflow-hidden">
-      <Carte class="carte-modification-infos-compositeur">
+      <Carte class="carte-modification-infos-compositeur my-4" :class="$mq">
         <div class="nom-image-compositeur" :class="$mq">
           <h1 class="centrer-texte" :class="$mq">
             {{ compositeur.nom }}<span v-if="compositeur.nom"> - </span
@@ -135,16 +135,14 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { db, storage, Timestamp } from "@/firebase";
+import { db, storage } from "@/firebase";
 import { BusEvénements } from "@/BusEvénements";
 import Container from "@/components/ui-components/Container.vue";
 import ChampTexte from "@/components/ui-components/ChampTexte.vue";
 import Formulaire from "@/components/ui-components/Formulaire.vue";
 import Carte from "@/components/ui-components/Carte.vue";
 import Bouton from "@/components/ui-components/Bouton.vue";
-import Espacement from "@/components/ui-components/Espacement.vue";
 import SelecteurFichiers from "@/components/ui-components/SelecteurFichiers.vue";
-import Accueil from "./Accueil.vue";
 
 export default Vue.extend({
   props: {
@@ -157,9 +155,7 @@ export default Vue.extend({
     Formulaire,
     Carte,
     Bouton,
-    Espacement,
     SelecteurFichiers,
-    Accueil,
   },
 
   data: () => ({
@@ -295,7 +291,7 @@ export default Vue.extend({
         données.date_décès = this.compositeur.date_décès_string;
 
         var une_année_en_millisecondes = 1000 * 60 * 60 * 24 * 365;
-        var âge = (date_décès.getTime() - date_naissance.getTime()) / une_année_en_millisecondes;
+        let âge = (date_décès.getTime() - date_naissance.getTime()) / une_année_en_millisecondes;
         données.âge = Math.floor(âge);
       }
 
@@ -352,7 +348,7 @@ export default Vue.extend({
               this.$set(this.compositeur, "date_décès_string", this.compositeur.date_décès);
               this.$set(this.compositeur, "date_décès", new Date(this.compositeur.date_décès));
               if (!this.compositeur.âge) {
-                var âge =
+                let âge =
                   (this.compositeur.date_décès.getTime() -
                     this.compositeur.date_naissance.getTime()) /
                   une_année_en_millisecondes;
@@ -360,7 +356,7 @@ export default Vue.extend({
               }
             } else {
               let maintenant = new Date();
-              var âge =
+              let âge =
                 (maintenant.getTime() - this.compositeur.date_naissance.getTime()) /
                 une_année_en_millisecondes;
               this.$set(this.compositeur, "âge", Math.floor(âge));

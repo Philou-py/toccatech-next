@@ -139,7 +139,7 @@ export default Vue.extend({
 
   data: () => ({
     estConnecté: true,
-    enleverEcouteurAuth: () => {},
+    enleverEcouteurAuth: <any>null,
     texteSnackBar: "",
     montrerSnackBar: false,
     typeSnackBar: "",

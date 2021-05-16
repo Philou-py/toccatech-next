@@ -1,5 +1,5 @@
 <template>
-  <div class="bouton-icone">
+  <div class="bouton-icone" @click="émettreClicBouton()">
     <button @mousedown="createRipple">
       <span class="material-icons" :style="styleIcone"><slot></slot></span>
     </button>
@@ -61,6 +61,10 @@ export default Vue.extend({
       circle.style.backgroundColor = this.couleurRipple;
       circle.classList.add("ripple");
       button.appendChild(circle);
+    },
+
+    émettreClicBouton() {
+      this.$emit("click");
     },
   },
 });

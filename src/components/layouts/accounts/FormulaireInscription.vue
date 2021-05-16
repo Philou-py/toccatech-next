@@ -1,5 +1,5 @@
 <template>
-  <Carte class="carte-inscription" :largeur="450">
+  <Carte class="carte-inscription" :largeur="$mq == 'xs' ? 300 : 450">
     <h3 class="titre-carte">Créer un compte</h3>
     <div class="contenu-carte">
       <Formulaire v-model="formulaireValide" class="formulaire-inscription">
@@ -110,7 +110,9 @@ export default Vue.extend({
           if (this.fichierAvatar) {
             let refAvatar = storage.ref(`avatars_utilisateurs/${this.fichierAvatar.name}`);
             refAvatar
-              .put(this.fichierAvatar, { cacheControl: "public,max-age: 432000" })
+              .put(this.fichierAvatar, {
+                cacheControl: "public,max-age: 432000",
+              })
               .then((réponse) => {
                 réponse.ref.getDownloadURL().then((url) => {
                   db.collection("utilisateurs")
@@ -130,7 +132,10 @@ export default Vue.extend({
                     })
                     .catch((erreur) => {
                       this.chargement = false;
-                      this.$emit("messageConnexionInscription", { valeur: erreur, succès: false });
+                      this.$emit("messageConnexionInscription", {
+                        valeur: erreur,
+                        succès: false,
+                      });
                     });
                 });
               });
@@ -151,7 +156,10 @@ export default Vue.extend({
               })
               .catch((erreur) => {
                 this.chargement = false;
-                this.$emit("messageConnexionInscription", { valeur: erreur, succès: false });
+                this.$emit("messageConnexionInscription", {
+                  valeur: erreur,
+                  succès: false,
+                });
               });
           }
         })
@@ -167,7 +175,10 @@ export default Vue.extend({
           } else {
             messageErreur = error; // Use error.message to get only the message
           }
-          this.$emit("messageConnexionInscription", { valeur: messageErreur, succès: false });
+          this.$emit("messageConnexionInscription", {
+            valeur: messageErreur,
+            succès: false,
+          });
         });
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <Carte class="carte-connexion" :largeur="400">
+  <Carte class="carte-connexion" :largeur="$mq == 'xs' ? 300 : 400">
     <h3 class="titre-carte">Connexion</h3>
     <div class="contenu-carte">
       <Formulaire v-model="formulaireValide" class="formulaire-connexion">
@@ -113,7 +113,10 @@ export default Vue.extend({
           } else {
             messageErreur = erreur; // Utiliser error.message pour avoir seulement le message
           }
-          this.$emit("messageConnexionInscription", { valeur: messageErreur, succès: false });
+          this.$emit("messageConnexionInscription", {
+            valeur: messageErreur,
+            succès: false,
+          });
         });
     },
   },

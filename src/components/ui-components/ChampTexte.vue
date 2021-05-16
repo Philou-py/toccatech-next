@@ -37,7 +37,7 @@
         :value="valeurInput"
         @focus="gérerFocus()"
         @blur="gérerBlur($event.target.value)"
-        @input="émettreEvénements($event.target.value)"
+        @input="émettreEvénement($event.target.value)"
       />
       <div v-if="typeInput == 'select'" class="container-sélecteur">
         <div class="container-sélection">
@@ -47,7 +47,7 @@
         <span class="container-flèche material-icons">arrow_drop_down</span>
         <transition name="fade">
           <ul v-if="selectActif" class="menu-déroulant">
-            <li v-for="item in items" :key="item" @click="émettreEvénements(item)">
+            <li v-for="item in items" :key="item" @click="émettreEvénement(item)">
               {{ item }}
             </li>
           </ul>
@@ -63,7 +63,7 @@
         @focus="gérerFocus()"
         @blur="gérerBlur($event.target.value)"
         @input="
-          émettreEvénements($event.target.value);
+          émettreEvénement($event.target.value);
           redimensionnerInput();
         "
       ></textarea>
@@ -454,6 +454,7 @@ export default Vue.extend({
     élémentFormulaire: true,
     actif: false,
     focus: false,
+    champValide: true,
     champVide: false,
     champRequisVide: false,
     // Initialisation de message avec un espace insécable pour éviter un changement
@@ -472,7 +473,22 @@ export default Vue.extend({
       } else if (!this.focus && this.typeInput != "date") {
         this.actif = false;
       }
-      this.émettreEvénements(nouvelleValeur);
+      this.champValide = this.validerChamp();
+      this.émettreEvénement(nouvelleValeur);
+    },
+
+    // Valider le formulaire si l'état de validité change
+    // ou si un champ requis ne devient plus vide
+    champValide: function () {
+      this.émettreFormulaireAValider();
+    },
+    champRequisVide: function () {
+      this.émettreFormulaireAValider();
+    },
+
+    invalide: function (nouvelleValeur) {
+      this.champValide = nouvelleValeur ? false : this.validerChamp();
+      console.log(nouvelleValeur);
     },
   },
 
@@ -512,8 +528,19 @@ export default Vue.extend({
     nbCaractères(): number {
       return this.valeurInput.length;
     },
+  },
 
-    champValide(): boolean {
+  methods: {
+    émettreFormulaireAValider() {
+      BusEvénements.$emit("état-validité-à-vérifier");
+    },
+
+    émettreEvénement(valeurInput: string) {
+      this.$emit("input", valeurInput);
+      // this.émettreFormulaireAValider();
+    },
+
+    validerChamp(): boolean {
       // Application de la validation prioritaire venant du composant parent
       if (this.invalide) {
         if (this.vide) {
@@ -574,13 +601,6 @@ export default Vue.extend({
       this.message = "&nbsp;";
       return true;
     },
-  },
-
-  methods: {
-    émettreEvénements(valeurInput: string) {
-      this.$emit("input", valeurInput);
-      BusEvénements.$emit("état-validité-à-vérifier");
-    },
 
     gérerFocus() {
       // La référence au champ de texte dans le DOM doit être stockée dans une variable
@@ -638,6 +658,9 @@ export default Vue.extend({
       this.actif = true;
     }
 
+    // Validation initiale du champ de texte en fonction des props renseignées
+    this.validerChamp();
+
     const input = this.$refs.input as HTMLInputElement;
     if (!this.label) {
       // Si aucun label n'est détecté mais qu'un placeholder est spécifié,
@@ -657,7 +680,7 @@ export default Vue.extend({
 
     if (this.typeInput == "select") {
       if (this.sélectionDéfaut) {
-        this.émettreEvénements(this.items[this.sélectionDéfaut]);
+        this.émettreEvénement(this.items[this.sélectionDéfaut]);
       }
       document.addEventListener("click", this.gérerClicBody);
     }

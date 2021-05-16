@@ -120,8 +120,8 @@ export default Vue.extend({
     titreOeuvre: "",
     partition: <any>null,
     montrerFormulaire: false,
-    enleverEcouteurPartothèque: () => {},
-    enleverEcouteurCompositeurs: () => {},
+    enleverEcouteurPartothèque: <any>null,
+    enleverEcouteurCompositeurs: <any>null,
     formulaireValide: false,
     chargement: false,
   }),
@@ -137,6 +137,8 @@ export default Vue.extend({
     messageTitre(): string | undefined {
       if (!this.formulaireValide) {
         return "Le formulaire n'est pas valide !";
+      } else {
+        return undefined;
       }
     },
   },
