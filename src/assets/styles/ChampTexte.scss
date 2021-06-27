@@ -1,0 +1,287 @@
+// Mixine Sass pour changer les couleurs du champ de texte (en fonction de sa validité)
+@mixin changerThème($couleur-thème) {
+  input,
+  textarea,
+  .container-sélection {
+    caret-color: $couleur-thème;
+    border-color: $couleur-thème;
+  }
+
+  .icône-devant,
+  label {
+    color: $couleur-thème;
+  }
+
+  .ligne {
+    background-color: $couleur-thème;
+  }
+
+  .messages {
+    color: $couleur-thème;
+  }
+
+  .compteur {
+    color: $couleur-thème;
+  }
+
+  &:hover {
+    input,
+    textarea {
+      border-color: darken($couleur-thème, 10%);
+    }
+
+    .ligne {
+      background-color: darken($couleur-thème, 10%);
+    }
+
+    .icône-devant,
+    label {
+      color: darken($couleur-thème, 10%);
+    }
+
+    .messages {
+      color: darken($couleur-thème, 10%);
+    }
+
+    .compteur {
+      color: darken($couleur-thème, 10%);
+    }
+  }
+}
+
+.sélectionnable * {
+  cursor: pointer !important;
+}
+
+.champ-texte {
+  position: relative;
+  display: flex;
+  padding: 16px 0 2px;
+  width: 100%;
+  font-size: 18px;
+
+  .avant-champ-texte {
+    // Taille fixe pour l'icône (l'icône a la forme d'un carré de 24px de côté)
+    width: 30px; // 24 + 6 = 36px
+    height: 24px;
+    padding: 2px 6px 0 0;
+    // L'icône ne doit pas prendre moins de place, même si le composant rétrécit.
+    flex-shrink: 0;
+
+    .icône-devant {
+      color: rgba(black, 0.6);
+      transition: all 0.3s;
+    }
+  }
+
+  .contenu {
+    flex-grow: 1;
+    position: relative;
+  }
+
+  input,
+  textarea {
+    border: none;
+    background-color: transparent;
+    // La fonction 'rgba', dans ce cas, permet de donner une opacité de 0.6 à la couleur black.
+    border-bottom: 1px solid rgba(black, 0.6);
+    border-radius: 0;
+    font-size: 1em;
+    outline: 0;
+    width: 100%;
+    padding: 1px 0 5px;
+    transition: border-color 0.3s linear;
+
+    &::placeholder {
+      color: rgba(black, 0.5);
+    }
+  }
+
+  textarea {
+    // Autoriser le redimensionnement vertical seulement
+    resize: vertical;
+    /* overflow: hidden; */
+
+    & ~ .ligne {
+      bottom: 20px;
+    }
+  }
+
+  label {
+    position: absolute;
+    z-index: 1;
+    top: 17px;
+    left: 30px;
+    cursor: text;
+    color: rgba(black, 0.6);
+    // Transition pour les propriétés 'top', 'color' et 'font-size'
+    // Utiliser 'all' permet de moins écrire
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  }
+
+  .label-à-gauche {
+    left: 0;
+  }
+
+  .ligne {
+    height: 2px;
+    width: 0;
+    position: absolute;
+    bottom: 15px;
+    background-color: rgba(black, 0.6);
+    transition: all 0.3s;
+  }
+
+  .container-sélecteur {
+    position: relative;
+  }
+
+  .container-sélection {
+    border: none;
+    border-bottom: 1px solid rgba(black, 0.6);
+    width: 100%;
+    padding: 1px 0 5px;
+    height: 30px;
+  }
+
+  .container-flèche {
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    height: 24px;
+    width: 24px;
+  }
+
+  .menu-déroulant {
+    position: absolute;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    // box-shadow: 0 0 5px 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    max-height: 200px;
+    overflow: auto;
+
+    li {
+      background-color: white;
+      padding: 6px 10px;
+      transition: all 300ms;
+
+      &:hover {
+        background-color: lightgrey;
+      }
+    }
+  }
+
+  &:hover {
+    input,
+    textarea {
+      border-color: rgba(black, 0.9);
+    }
+
+    .ligne {
+      background-color: rgba(black, 0.9);
+    }
+
+    .icône-devant,
+    label {
+      color: rgba(black, 0.9);
+    }
+
+    .compteur {
+      color: rgba(black, 0.9);
+    }
+  }
+
+  &.actif {
+    label {
+      top: 0px;
+      font-size: 0.78em;
+    }
+  }
+
+  &.focus {
+    @include changerThème(#1867c0);
+
+    .ligne {
+      width: 100%;
+    }
+  }
+
+  &.désactivé input,
+  &.désactivé textarea {
+    background-color: rgba(#1867c0, 0.2);
+  }
+
+  &.valide:not(.champVide) {
+    @include changerThème(#00c853);
+  }
+
+  &.invalide {
+    @keyframes secouer {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      10%,
+      30%,
+      50%,
+      70%,
+      90% {
+        transform: translateX(-5px);
+      }
+
+      20%,
+      40%,
+      60%,
+      80% {
+        transform: translateX(5px);
+      }
+    }
+
+    label {
+      animation-name: secouer;
+      animation-duration: 0.9s;
+    }
+
+    @include changerThème(#ff5252);
+  }
+
+  &.champRequisVide {
+    @include changerThème(#9e1030); // #9c27b0
+  }
+
+  .indices {
+    display: flex;
+    height: 15px;
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .messages {
+    width: 80%;
+    transition: all 0.3s;
+  }
+
+  .compteur {
+    display: block;
+    width: 20%;
+    text-align: right;
+    transition: all 0.3s;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s;
+  }
+  .fade-enter,
+  .fade-leave-to {
+    opacity: 0;
+  }
+}
