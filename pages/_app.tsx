@@ -1,4 +1,11 @@
 import "../styles/globals.scss";
+import "../styles/typography.scss";
+import "../styles/colours.scss";
+import "../styles/Container.scss";
+import "../styles/Button.scss";
+import "../styles/Card.scss";
+import "../styles/InputField.scss";
+import "../styles/Ripple.scss";
 import { AppProps } from "next/app";
 import BreakpointsProvider from "../contexts/BreakpointsContext";
 
