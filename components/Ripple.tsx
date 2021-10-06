@@ -9,7 +9,6 @@ interface RippleProps {
 export default function Ripple({ children: child, className }: RippleProps) {
   const createRipple = (event: MouseEvent<HTMLDivElement>) => {
     const element = event.currentTarget;
-    console.log(element);
     const circle = document.createElement("span");
     const diameter = Math.max(element.clientWidth, element.clientHeight);
     const radius = diameter / 2;
@@ -22,6 +21,10 @@ export default function Ripple({ children: child, className }: RippleProps) {
     }px`;
     circle.classList.add("ripple");
     element.appendChild(circle);
+    // Remove circle after animation
+    setTimeout(() => {
+      element.removeChild(circle);
+    }, 800);
   };
 
   return cloneElement(child, {
