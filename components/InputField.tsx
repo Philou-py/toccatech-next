@@ -10,6 +10,8 @@ import {
   SetStateAction,
   useRef,
   CSSProperties,
+  useCallback,
+  memo,
 } from "react";
 import cn from "classnames";
 import useValidation from "../hooks/useValidation";
@@ -40,7 +42,12 @@ interface InputFieldProps {
   onSelect?: (event: MouseEvent<HTMLLIElement>, item: string) => void;
 }
 
-export default function InputField(props: InputFieldProps) {
+interface CustomCSSProperties extends CSSProperties {
+  "--offset-width": string;
+}
+
+function InputField(props: InputFieldProps) {
+  console.log("Input Field rendered!");
   const {
     type = "text",
     value = "",
@@ -168,23 +175,26 @@ export default function InputField(props: InputFieldProps) {
   }, [isValid, setInputValidity, inputUid]);
 
   // Event handlers
-  const handleFocus = (event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFocus = useCallback(() => {
     setIsActive(true);
     setIsFocused(true);
-  };
+  }, []);
 
-  const handleBlur = (event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleBlur = useCallback(() => {
     if (!value && type !== "date") {
       setIsActive(false);
       setIsFocused(false);
     } else {
       setIsFocused(false);
     }
-  };
+  }, [value, type]);
 
-  const handleInput = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setValue((event.target as HTMLInputElement).value);
-  };
+  const handleInput = useCallback(
+    (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setValue((event.target as HTMLInputElement).value);
+    },
+    [setValue]
+  );
 
   // Template
   const prependTemplate = prependIcon ? (
@@ -269,7 +279,12 @@ export default function InputField(props: InputFieldProps) {
         select: type === "select",
       })}
       ref={inputFieldRef}
-      style={{ width: width ? width : fullWidth ? "initial" : "300px" }}
+      style={
+        {
+          maxWidth: width ? width : fullWidth ? undefined : "300px",
+          "--offset-width": prependIcon ? "30px" : "0px",
+        } as CustomCSSProperties
+      }
     >
       {prependTemplate}
       {label && (
@@ -292,3 +307,5 @@ export default function InputField(props: InputFieldProps) {
     </div>
   );
 }
+
+export default memo(InputField);

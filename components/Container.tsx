@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { ReactNode, useContext } from "react";
+import { ReactNode, useContext, memo } from "react";
 import { BreakpointsContext } from "../contexts/BreakpointsContext";
 
 interface ContainerProps {
@@ -8,7 +8,7 @@ interface ContainerProps {
   children: ReactNode;
 }
 
-export default function Container({ large, narrow, children }: ContainerProps) {
+function Container({ large, narrow, children }: ContainerProps) {
   const { currentBreakpoint } = useContext(BreakpointsContext);
 
   return (
@@ -22,3 +22,5 @@ export default function Container({ large, narrow, children }: ContainerProps) {
     </div>
   );
 }
+
+export default memo(Container);
