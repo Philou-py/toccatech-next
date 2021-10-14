@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { memo } from "react";
 
 interface ImageProps {
   src: string;
@@ -10,7 +11,7 @@ interface TextProps {
 
 type AvatarProps = ImageProps | TextProps;
 
-export default function Avatar(props: AvatarProps) {
+function Avatar(props: AvatarProps) {
   let avatarTemplate;
 
   if ("src" in props) {
@@ -30,3 +31,5 @@ export default function Avatar(props: AvatarProps) {
 
   return <div className="avatar-container">{avatarTemplate}</div>;
 }
+
+export default memo(Avatar);

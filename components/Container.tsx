@@ -8,7 +8,7 @@ interface ContainerProps {
   children: ReactNode;
 }
 
-function Container({ large, narrow, children }: ContainerProps) {
+export default function Container({ large, narrow, children }: ContainerProps) {
   const { currentBreakpoint } = useContext(BreakpointsContext);
 
   return (
@@ -22,5 +22,3 @@ function Container({ large, narrow, children }: ContainerProps) {
     </div>
   );
 }
-
-export default memo(Container);
