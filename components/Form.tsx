@@ -4,15 +4,16 @@ import {
   FormEvent,
   Children,
   cloneElement,
-  ReactElement,
   ReactNode,
   Dispatch,
   SetStateAction,
   isValidElement,
+  useCallback,
+  memo,
 } from "react";
 
 interface FormProps {
-  setFormValidity: Dispatch<SetStateAction<boolean>>;
+  getFormValidity: Dispatch<SetStateAction<boolean>>;
   action?: string;
   method?: string;
   onSubmit?: (event: FormEvent) => void;
@@ -20,24 +21,27 @@ interface FormProps {
   children: ReactNode;
 }
 
-export default function Form({
+function Form({
   action,
   method,
   preventDefault,
   onSubmit,
   children,
-  setFormValidity,
+  getFormValidity: getFormValidity,
 }: FormProps) {
-  const handleSubmit = (event: FormEvent) => {
-    if (preventDefault) event.preventDefault();
-    if (onSubmit) onSubmit(event);
-  };
-
   const [fieldsValidity, setFieldsValidity] = useState<object>({});
 
+  const handleSubmit = useCallback(
+    (event: FormEvent) => {
+      if (preventDefault) event.preventDefault();
+      if (onSubmit) onSubmit(event);
+    },
+    [preventDefault, onSubmit]
+  );
+
   useEffect(() => {
-    setFormValidity(Object.values(fieldsValidity).includes(false) ? false : true);
-  }, [fieldsValidity, setFormValidity]);
+    getFormValidity(Object.values(fieldsValidity).includes(false) ? false : true);
+  }, [fieldsValidity, getFormValidity]);
 
   return (
     <form action={action} method={method} onSubmit={handleSubmit}>
@@ -51,3 +55,5 @@ export default function Form({
     </form>
   );
 }
+
+export default memo(Form);

@@ -31,7 +31,7 @@ interface InputFieldProps {
   fullWidth?: boolean;
   selectItems?: string[];
   defaultSelection?: string;
-  setInputValidity?: Dispatch<SetStateAction<object>>;
+  getInputValidity?: Dispatch<SetStateAction<object>>;
   maxLength?: number;
   minLength?: number;
   isRequired?: boolean;
@@ -62,7 +62,7 @@ function InputField(props: InputFieldProps) {
     fullWidth,
     selectItems,
     defaultSelection,
-    setInputValidity,
+    getInputValidity: getInputValidity,
     maxLength,
     minLength,
     isRequired = false,
@@ -169,10 +169,10 @@ function InputField(props: InputFieldProps) {
   }, [isActive, placeholder, label]);
 
   useEffect(() => {
-    if (setInputValidity) {
-      setInputValidity((prev) => ({ ...prev, [inputUid]: isValid }));
+    if (getInputValidity) {
+      getInputValidity((prev) => ({ ...prev, [inputUid]: isValid }));
     }
-  }, [isValid, setInputValidity, inputUid]);
+  }, [isValid, getInputValidity, inputUid]);
 
   // Event handlers
   const handleFocus = useCallback(() => {
