@@ -7,7 +7,6 @@ import "../styles/Button.scss";
 import "../styles/Card.scss";
 import "../styles/InputField.scss";
 import "../styles/Ripple.scss";
-import "../styles/Avatar.scss";
 import { AppProps } from "next/app";
 import BreakpointsProvider from "../contexts/BreakpointsContext";
 

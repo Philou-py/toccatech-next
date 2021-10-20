@@ -21,7 +21,7 @@ interface FormProps {
   children: ReactNode;
 }
 
-function Form({
+export default function Form({
   action,
   method,
   preventDefault,
@@ -55,5 +55,3 @@ function Form({
     </form>
   );
 }
-
-export default memo(Form);
