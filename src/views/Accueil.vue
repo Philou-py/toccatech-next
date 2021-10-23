@@ -66,7 +66,7 @@
         <p>
           En cas de problème, je peux vous aider ! N'hésitez pas à m'écrire à l'adresse suivante :
           <a href="mailto:contact@toccatech.com">contact@toccatech.com</a>. Je vous répondrai dans
-          les meileurs délais. Toutes vos remarques ou suggestions seront les bienvenues également
+          les meilleurs délais. Toutes vos remarques ou suggestions seront les bienvenues également
           car, n'oubliez pas, ce site est fait pour vous !
         </p>
       </Container>
