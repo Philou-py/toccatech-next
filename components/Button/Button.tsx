@@ -1,6 +1,9 @@
-import { ReactNode, MouseEvent } from "react";
+import { memo, MouseEvent } from "react";
+import buttonStyles from "./Button.module.scss";
+import colours from "../../styles/colours.module.scss";
 import cn from "classnames";
-import Ripple from "./Ripple";
+import Ripple from "../Ripple";
+import Icon from "../Icon";
 
 interface ButtonProps {
   isText?: boolean;
@@ -13,19 +16,19 @@ interface ButtonProps {
   trailingIcon?: string;
   className?: string;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-  children?: ReactNode;
+  children?: string;
 }
 
-export default function Button(props: ButtonProps) {
+function Button(props: ButtonProps) {
   const makeIconTemplate = (icon: string, type: string) => (
-    <span className={"material-icons " + type}>{icon}</span>
+    <Icon icon={icon} className={buttonStyles[type]} />
   );
 
   const childrenWithIcons = (
     <>
-      {props.prependIcon && makeIconTemplate(props.prependIcon, "prepend")}
+      {props.prependIcon && makeIconTemplate(props.prependIcon, "prependIcon")}
       {props.children}
-      {props.trailingIcon && makeIconTemplate(props.trailingIcon, "trailing")}
+      {props.trailingIcon && makeIconTemplate(props.trailingIcon, "trailingIcon")}
     </>
   );
 
@@ -39,20 +42,23 @@ export default function Button(props: ButtonProps) {
         type="button"
         onClick={props.onClick}
         className={cn(
-          "btn",
+          buttonStyles.btn,
+          colours.btn,
           {
-            icon: props.isIconButton,
-            text: props.isText,
-            disabled: props.isDisabled,
-            [props.size!]: props.size,
+            [buttonStyles.icon]: props.isIconButton,
+            [buttonStyles.text]: props.isText,
+            [buttonStyles.disabled]: props.isDisabled,
+            [buttonStyles[props.size!]]: props.size,
           },
           props.className
         )}
         disabled={props.isDisabled}
         title={props.title}
       >
-        <span className="content">{buttonContent}</span>
+        <span className={buttonStyles.content}>{buttonContent}</span>
       </button>
     </Ripple>
   );
 }
+
+export default memo(Button);

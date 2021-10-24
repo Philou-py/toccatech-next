@@ -33,14 +33,12 @@ button.btn {
     font-size: 17px;
   }
 
-  span.material-icons {
-    &.prepend {
-      margin-right: 8px;
-    }
+  .prependIcon {
+    margin-right: 8px;
+  }
 
-    &.trailing {
-      margin-left: 8px;
-    }
+  .trailingIcon {
+    margin-left: 8px;
   }
 
   &.text {

@@ -1,4 +1,6 @@
 import { ReactElement, MouseEvent, cloneElement } from "react";
+import rippleStyles from "./Ripple.module.scss";
+import colours from "../../styles/colours.module.scss";
 import cn from "classnames";
 
 interface RippleProps {
@@ -19,7 +21,7 @@ export default function Ripple({ children: child, className }: RippleProps) {
     circle.style.top = `${
       event.pageY - element.getBoundingClientRect().top - radius - window.pageYOffset
     }px`;
-    circle.classList.add("ripple");
+    circle.classList.add(rippleStyles.ripple, colours.ripple);
     element.appendChild(circle);
     // Remove circle after animation
     setTimeout(() => {
@@ -28,7 +30,7 @@ export default function Ripple({ children: child, className }: RippleProps) {
   };
 
   return cloneElement(child, {
-    className: cn("ripple-container", className, child.props.className),
+    className: cn(rippleStyles["ripple-container"], className, child.props.className),
     onMouseDown: createRipple,
   });
 }

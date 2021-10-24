@@ -1,6 +1,6 @@
-import css from "./Avatar.module.scss";
-import Image from "next/image";
 import { CSSProperties, memo, useMemo } from "react";
+import Image from "next/image";
+import avatarStyles from "./Avatar.module.scss";
 import cn from "classnames";
 
 interface CommonAvatarProps {
@@ -46,7 +46,7 @@ function Avatar(props: AvatarProps) {
       <Image
         src={props.src}
         alt="Avatar"
-        className={cn(css.avatar, { [css["border-around"]]: props.borderColour })}
+        className={cn(avatarStyles.avatar, { [avatarStyles["border-around"]]: props.borderColour })}
         width={40}
         height={40}
         layout="responsive"
@@ -54,11 +54,11 @@ function Avatar(props: AvatarProps) {
     );
   } else {
     style["--avatar-bg"] = initialsAvatarBgColour;
-    avatarTemplate = <div className={css.initials}>{props.initials}</div>;
+    avatarTemplate = <div className={avatarStyles.initials}>{props.initials}</div>;
   }
 
   return (
-    <div className={css["avatar-container"]} style={style}>
+    <div className={avatarStyles["avatar-container"]} style={style}>
       {avatarTemplate}
     </div>
   );

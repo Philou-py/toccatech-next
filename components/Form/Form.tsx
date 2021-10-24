@@ -9,7 +9,6 @@ import {
   SetStateAction,
   isValidElement,
   useCallback,
-  memo,
 } from "react";
 
 interface FormProps {
@@ -27,7 +26,7 @@ export default function Form({
   preventDefault,
   onSubmit,
   children,
-  getFormValidity: getFormValidity,
+  getFormValidity,
 }: FormProps) {
   const [fieldsValidity, setFieldsValidity] = useState<object>({});
 
@@ -48,7 +47,7 @@ export default function Form({
       {Children.map(children, (child) => {
         if (isValidElement(child)) {
           return cloneElement(child, {
-            setInputValidity: setFieldsValidity,
+            getInputValidity: setFieldsValidity,
           });
         }
       })}

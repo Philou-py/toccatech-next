@@ -1,9 +1,6 @@
 import {
-  ReactNode,
   useState,
-  ChangeEvent,
   MouseEvent,
-  FocusEvent,
   FormEvent,
   useEffect,
   Dispatch,
@@ -13,9 +10,11 @@ import {
   useCallback,
   memo,
 } from "react";
+import inputFieldStyles from "./InputField.module.scss";
 import cn from "classnames";
-import useValidation from "../hooks/useValidation";
-import Ripple from "./Ripple";
+import Ripple from "../Ripple";
+import Icon from "../Icon";
+import useValidation from "../../hooks/useValidation";
 
 interface InputFieldProps {
   type?: "text" | "email" | "password" | "date" | "textarea" | "select";
@@ -62,7 +61,7 @@ function InputField(props: InputFieldProps) {
     fullWidth,
     selectItems,
     defaultSelection,
-    getInputValidity: getInputValidity,
+    getInputValidity,
     maxLength,
     minLength,
     isRequired = false,
@@ -198,10 +197,12 @@ function InputField(props: InputFieldProps) {
 
   // Template
   const prependTemplate = prependIcon ? (
-    <div className="prepend">
-      <span className="material-icons prepend-icon" onClick={onPrependIconClick}>
-        {prependIcon}
-      </span>
+    <div className={inputFieldStyles.prepend}>
+      <Icon
+        icon={prependIcon}
+        className={inputFieldStyles["prepend-icon"]}
+        onClick={onPrependIconClick}
+      />
     </div>
   ) : (
     false
@@ -224,11 +225,11 @@ function InputField(props: InputFieldProps) {
     );
   } else if (type === "select") {
     inputTemplate = (
-      <div className="input-container">
-        <div className="selection-container">{isActive && value}</div>
-        <span className="arrow-container material-icons">arrow_drop_down</span>
+      <div className={inputFieldStyles["input-container"]}>
+        <div className={inputFieldStyles["selection-container"]}>{isActive && value}</div>
+        <Icon icon="arrow_drop_down" className={inputFieldStyles["arrow-container"]} />
         {selectActive && (
-          <ul className="drop-down">
+          <ul className={inputFieldStyles["drop-down"]}>
             {selectItems!.map((item) => (
               <Ripple key={item}>
                 <li
@@ -267,16 +268,16 @@ function InputField(props: InputFieldProps) {
 
   return (
     <div
-      className={cn("input-field", {
-        disabled: isDisabled,
-        focused: isFocused,
-        active: isActive,
-        emtpy: value === "",
-        emptyAndRequired: value === "" && isRequired,
-        valid: isValid,
+      className={cn(inputFieldStyles["input-field"], {
+        [inputFieldStyles.disabled]: isDisabled,
+        [inputFieldStyles.focused]: isFocused,
+        [inputFieldStyles.active]: isActive,
+        [inputFieldStyles.emtpy]: value === "",
+        [inputFieldStyles.emptyAndRequired]: value === "" && isRequired,
+        [inputFieldStyles.valid]: isValid,
         // Show invalidity only if the field is not empty and required
-        invalid: !isValid && !(value === "" && isRequired),
-        select: type === "select",
+        [inputFieldStyles.invalid]: !isValid && !(value === "" && isRequired),
+        [inputFieldStyles.select]: type === "select",
       })}
       ref={inputFieldRef}
       style={
@@ -288,17 +289,17 @@ function InputField(props: InputFieldProps) {
     >
       {prependTemplate}
       {label && (
-        <label htmlFor={id} className={cn({ "shift-label": prependIcon })}>
+        <label htmlFor={id} className={cn({ [inputFieldStyles["shift-label"]]: prependIcon })}>
           {label}
         </label>
       )}
-      <div className="content">
+      <div className={inputFieldStyles.content}>
         {inputTemplate}
-        <div className="line"></div>
-        <div className="hints">
-          <div className="message">{message}</div>
+        <div className={inputFieldStyles.line}></div>
+        <div className={inputFieldStyles.hints}>
+          <div className={inputFieldStyles.message}>{message}</div>
           {maxLength && (
-            <div className="counter">
+            <div className={inputFieldStyles.counter}>
               {value.length} / {maxLength}
             </div>
           )}

@@ -1,4 +1,4 @@
-// Fonctions
+// Utilities
 
 @function map-deep-set($map, $keys, $value) {
   $maps: ($map);
@@ -104,7 +104,7 @@
   @return $result;
 }
 
-// Couleurs
+// Material Colour Palette
 
 $red: (
   "base": #f44336,
@@ -450,7 +450,7 @@ $colors: map-deep-merge(
   $colors
 );
 
-// Création des classes permettant d'appliquer les couleurs ci-dessus
+// Classes that apply the above colours
 
 @mixin background-color($color_value) {
   background-color: $color_value !important;
@@ -461,41 +461,22 @@ $colors: map-deep-merge(
   caret-color: $color_value !important;
 }
 
-// Changement de la couleur du texte si l'arrière plan est trop sombre.
+// Lighten colours if the background is too dark
 @mixin tester-luminosité($color_name, $color_value, $color_type) {
-  @if index(
-      "base" "lighten-1" "lighten-2" "darken-1" "darken-2" "darken-3" "darken-4",
-      $color_type
-    ) !=
+  @if index("lighten-1" "lighten-2" "darken-1" "darken-2" "darken-3" "darken-4", $color_type) !=
     null
   {
-    @if $color_type == "base" {
-      .#{$color_name} {
-        color: white;
+    .#{$color_name}.#{$color_type} {
+      color: white;
+    }
+
+    .btn.#{$color_name}.#{$color_type} {
+      &:hover {
+        background-color: lighten($color_value, 7%) !important;
       }
 
-      .btn.#{$color_name} {
-        &:hover {
-          background-color: lighten($color_value, 7%) !important;
-        }
-
-        span.ripple {
-          background-color: rgba(white, 0.7) !important;
-        }
-      }
-    } @else {
-      .#{$color_name}.#{$color_type} {
-        color: white;
-      }
-
-      .btn.#{$color_name}.#{$color_type} {
-        &:hover {
-          background-color: lighten($color_value, 7%) !important;
-        }
-
-        span.ripple {
-          background-color: rgba(white, 0.7) !important;
-        }
+      span.ripple {
+        background-color: rgba(white, 0.7) !important;
       }
     }
   }
@@ -524,9 +505,9 @@ $colors: map-deep-merge(
 @each $color_name, $color_color in $colors {
   @each $color_type, $color_value in $color_color {
     @if ($color_type == "base") {
-      // Couleur d'arrière plan pour une couleur de base
       .#{$color_name} {
         @include background-color($color_value);
+        color: white;
       }
 
       .#{$color_name}--text {
@@ -535,11 +516,11 @@ $colors: map-deep-merge(
 
       .btn.#{$color_name} {
         &:hover {
-          background-color: darken($color_value, 7%) !important;
+          background-color: lighten($color_value, 7%) !important;
         }
 
         span.ripple {
-          background-color: rgba(black, 0.2) !important;
+          background-color: rgba(white, 0.7) !important;
         }
       }
 
@@ -552,8 +533,6 @@ $colors: map-deep-merge(
           background-color: rgba($color_value, 0.6);
         }
       }
-
-      @include tester-luminosité($color_name, $color_value, $color_type);
     } @else if ($color_type != "shades") {
       .#{$color_name}.#{$color_type} {
         color: black;
@@ -570,7 +549,7 @@ $colors: map-deep-merge(
         }
 
         span.ripple {
-          background-color: rgba(black, 0.2) !important;
+          background-color: rgba(black, 0.3) !important;
         }
       }
 
@@ -587,22 +566,4 @@ $colors: map-deep-merge(
       @include tester-luminosité($color_name, $color_value, $color_type);
     }
   }
-}
-
-// Taille des Material icons
-
-.material-icons.taille-18 {
-  font-size: 18px;
-}
-
-.material-icons.taille-24 {
-  font-size: 24px;
-}
-
-.material-icons.taille-36 {
-  font-size: 36px;
-}
-
-.material-icons.taille-48 {
-  font-size: 48px;
 }
