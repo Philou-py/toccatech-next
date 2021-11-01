@@ -114,7 +114,7 @@ function InputField(props: InputFieldProps) {
       let handleClickBody = (event: globalThis.MouseEvent) => {
         let inputField = inputFieldRef.current!;
         let clickedElem = event.target as HTMLElement;
-        if (inputField.contains(clickedElem) && !selectActive) {
+        if (inputField && inputField.contains(clickedElem) && !selectActive) {
           setSelectActive(true);
           setIsActive(true);
           setIsFocused(true);
