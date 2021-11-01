@@ -2,7 +2,7 @@
   .bg {
     top: 0;
     position: fixed;
-    background: rgba(#000, 0.5);
+    background-color: rgba(#000, 0.5);
     width: 100%;
     height: 100%;
     z-index: 9999;
@@ -22,19 +22,22 @@
     display: block;
   }
 
-  .transition-sidebar-bg-enter,
-  .transition-sidebar-bg-leave-to {
+  .tBgEnter {
     opacity: 0;
   }
 
-  .transition-sidebar-bg-enter-to,
-  .transition-sidebar-bg-leave {
+  .tBgExit {
     opacity: 1;
   }
 
-  .transition-sidebar-bg-enter-active,
-  .transition-sidebar-bg-leave-active {
-    transition: opacity 0.3s ease;
+  .tBgEnterActive {
+    opacity: 1;
+    transition: opacity 0.3s;
+  }
+
+  .tBgExitActive {
+    opacity: 0;
+    transition: opacity 0.3s;
   }
 
   .title {
@@ -58,6 +61,26 @@
     &-leave-active {
       transition: transform 0.3s ease;
     }
+  }
+
+  .tSidebarAppear,
+  .tSidebarEnter {
+    transform: translateX(-250px);
+  }
+
+  .tSidebarAppearActive,
+  .tSidebarEnterActive {
+    transform: translateX(0);
+    transition: transform 0.3s;
+  }
+
+  .tSidebarExit {
+    transform: translateX(0);
+  }
+
+  .tSidebarExitActive {
+    transform: translateX(-250px);
+    transition: transform 0.3s;
   }
 
   ul.navList {

@@ -2,6 +2,7 @@ import { cloneElement, ReactElement, useCallback, useRef, MouseEvent, memo } fro
 import Link from "next/link";
 import sideBarStyles from "./SideBar.module.scss";
 import cn from "classnames";
+import { CSSTransition } from "react-transition-group";
 
 interface SideBarProps {
   showSideBar: boolean;
@@ -27,9 +28,32 @@ function SideBar({ showSideBar, title, userAvatar, navLinks, authButton, onClose
 
   return (
     <div className={sideBarStyles.sidebar}>
-      {showSideBar && (
+      <CSSTransition
+        in={showSideBar}
+        mountOnEnter
+        unmountOnExit
+        timeout={300}
+        classNames={{
+          enter: sideBarStyles.tBgEnter,
+          enterActive: sideBarStyles.tBgEnterActive,
+          exit: sideBarStyles.tBgExit,
+          exitActive: sideBarStyles.tBgExitActive,
+        }}
+      >
         <div className={sideBarStyles.bg} ref={bgRef} onClick={handleSideBarClose}>
-          {showSideBar && (
+          <CSSTransition
+            in={showSideBar}
+            appear
+            timeout={300}
+            classNames={{
+              appear: sideBarStyles.tSidebarAppear,
+              appearActive: sideBarStyles.tSidebarAppearActive,
+              enter: sideBarStyles.tSidebarEnter,
+              enterActive: sideBarStyles.tSidebarEnterActive,
+              exit: sideBarStyles.tSidebarExit,
+              exitActive: sideBarStyles.tSidebarExitActive,
+            }}
+          >
             <div className={sideBarStyles.content}>
               {!userAvatar && (
                 <Link href="/" passHref>
@@ -49,9 +73,9 @@ function SideBar({ showSideBar, title, userAvatar, navLinks, authButton, onClose
                   className: cn(sideBarStyles.authButton, authButton.props.className),
                 })}
             </div>
-          )}
+          </CSSTransition>
         </div>
-      )}
+      </CSSTransition>
     </div>
   );
 }
