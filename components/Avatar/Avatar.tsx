@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useMemo } from "react";
+import { CSSProperties, memo, useState } from "react";
 import Image from "next/image";
 import avatarStyles from "./Avatar.module.scss";
 import cn from "classnames";
@@ -6,6 +6,8 @@ import cn from "classnames";
 interface CommonAvatarProps {
   borderColour?: string;
   size?: number;
+  centerAvatar?: boolean;
+  className?: string;
 }
 
 interface ImageProps extends CommonAvatarProps {
@@ -31,7 +33,7 @@ function Avatar(props: AvatarProps) {
   if (props.borderColour) style["--border-colour"] = props.borderColour;
   style["--size"] = props.size ? props.size + "px" : "50px";
 
-  const initialsAvatarBgColour = useMemo(() => {
+  const [initialsAvatarBgColour] = useState(() => {
     if (!("src" in props)) {
       if (props.bgColour) {
         return props.bgColour;
@@ -39,18 +41,24 @@ function Avatar(props: AvatarProps) {
         return "#" + Math.floor(Math.random() * 0xffffff).toString(16);
       }
     }
-  }, [props]);
+  });
 
   if ("src" in props) {
+    // The next/image component can't be the direct child of a flex container
+    // Hence, wrap it with a div
     avatarTemplate = (
-      <Image
-        src={props.src}
-        alt="Avatar"
-        className={cn(avatarStyles.avatar, { [avatarStyles["border-around"]]: props.borderColour })}
-        width={40}
-        height={40}
-        layout="responsive"
-      />
+      <div>
+        <Image
+          src={props.src}
+          alt="Avatar"
+          className={cn(avatarStyles.avatar, {
+            [avatarStyles.borderAround]: props.borderColour,
+          })}
+          width={props.size ? props.size : 50}
+          height={props.size ? props.size : 50}
+          layout="responsive"
+        />
+      </div>
     );
   } else {
     style["--avatar-bg"] = initialsAvatarBgColour;
@@ -58,7 +66,7 @@ function Avatar(props: AvatarProps) {
   }
 
   return (
-    <div className={avatarStyles["avatar-container"]} style={style}>
+    <div className={cn(avatarStyles.avatarContainer, props.className)} style={style}>
       {avatarTemplate}
     </div>
   );

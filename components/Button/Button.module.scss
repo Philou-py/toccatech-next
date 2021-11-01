@@ -12,6 +12,7 @@ button.btn {
   cursor: pointer;
   overflow: hidden;
   min-width: 64px;
+  max-width: 100%;
   transition: all 300ms;
   background-color: #f5f5f5;
   vertical-align: middle;
@@ -20,6 +21,12 @@ button.btn {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    .text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   &:hover {
@@ -41,7 +48,7 @@ button.btn {
     margin-left: 8px;
   }
 
-  &.text {
+  &.flat {
     box-shadow: none;
     background-color: transparent;
   }

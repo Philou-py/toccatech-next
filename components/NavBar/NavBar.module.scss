@@ -1,0 +1,92 @@
+.navBar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9000;
+  box-shadow: 0 2px 4px 0 darkgrey;
+  background-color: #9e1030;
+
+  .navBarContainer {
+    display: flex;
+    height: 60px;
+  }
+
+  .presentation {
+    display: flex;
+    align-items: center;
+
+    * {
+      cursor: pointer;
+    }
+
+    .navIconButton {
+      margin: 0 20px 0 8px;
+
+      &:hover {
+        background-color: #755139 !important;
+      }
+    }
+
+    .logoAndTitle {
+      display: flex;
+      align-items: center;
+
+      .logoContainer {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        margin-right: 5px;
+      }
+
+      .title {
+        color: white;
+      }
+    }
+
+    &.centerNav {
+      flex-grow: 1;
+
+      .logoAndTitle {
+        margin: 0 auto;
+      }
+    }
+  }
+
+  ul.navMenu {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-grow: 1;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+
+    li {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 15px;
+      text-decoration: none;
+      text-align: center;
+      color: white;
+      cursor: pointer;
+      transition: background-color 400ms ease;
+
+      &:hover {
+        background-color: #755139;
+      }
+
+      &.disabled {
+        // pointer-events: none;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .avatarContainer {
+    height: 100%;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+  }
+}

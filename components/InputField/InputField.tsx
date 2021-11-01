@@ -199,7 +199,7 @@ function InputField(props: InputFieldProps) {
   const prependTemplate = prependIcon ? (
     <div className={inputFieldStyles.prepend}>
       <Icon
-        icon={prependIcon}
+        iconName={prependIcon}
         className={inputFieldStyles["prepend-icon"]}
         onClick={onPrependIconClick}
       />
@@ -227,7 +227,7 @@ function InputField(props: InputFieldProps) {
     inputTemplate = (
       <div className={inputFieldStyles["input-container"]}>
         <div className={inputFieldStyles["selection-container"]}>{isActive && value}</div>
-        <Icon icon="arrow_drop_down" className={inputFieldStyles["arrow-container"]} />
+        <Icon iconName="arrow_drop_down" className={inputFieldStyles["arrow-container"]} />
         {selectActive && (
           <ul className={inputFieldStyles["drop-down"]}>
             {selectItems!.map((item) => (
