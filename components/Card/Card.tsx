@@ -3,11 +3,18 @@ import cardStyles from "./Card.module.scss";
 import cn from "classnames";
 
 interface CardProps {
+  cssWidth?: string;
   children: ReactNode;
 }
 
-export default function Card({ children }: CardProps) {
-  return <div className={cardStyles["card"]}>{children}</div>;
+export default function Card({ cssWidth, children }: CardProps) {
+  let styles: Record<string, string> = {};
+  if (cssWidth) styles["--card-width"] = cssWidth;
+  return (
+    <div className={cardStyles["card"]} style={styles}>
+      {children}
+    </div>
+  );
 }
 
 interface CardHeaderProps {
