@@ -20,7 +20,7 @@ export default function Ripple({ children: child, className }: RippleProps) {
     circle.style.top = `${
       event.pageY - element.getBoundingClientRect().top - radius - window.pageYOffset
     }px`;
-    circle.classList.add(rippleStyles.ripple, "ripple"); // Don't forget about colours!
+    circle.classList.add(rippleStyles.ripple, "ripple"); // Don't forget the class 'ripple' for the colours!
     element.appendChild(circle);
     // Remove circle after animation
     setTimeout(() => {
@@ -29,7 +29,7 @@ export default function Ripple({ children: child, className }: RippleProps) {
   };
 
   return cloneElement(child, {
-    className: cn(rippleStyles["ripple-container"], className, child.props.className),
+    className: cn(rippleStyles.rippleContainer, className, child.props.className),
     onMouseDown: createRipple,
   });
 }

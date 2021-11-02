@@ -75,8 +75,6 @@ button.btn {
     }
   }
 
-  // Ajouter le sélecteur #btn permet que ce style l'emporte sur l'ajout d'une potentielle classe
-  // de couleur par le composant parent, car le sélecteur id a une plus haute priorité qu'une classe.
   &.disabled,
   &.disabled:hover {
     background-color: rgba(black, 0.12) !important;

@@ -26,7 +26,7 @@ interface CardHeaderProps {
 
 export function CardHeader({ title, subtitle, action, centerTitle }: CardHeaderProps) {
   return (
-    <div className={cardStyles["card-header"]}>
+    <div className={cardStyles.cardHeader}>
       <div className={cardStyles.content}>
         {cloneElement(title, {
           className: cn(cardStyles.title, title.props.className),
@@ -47,7 +47,7 @@ interface CardContentProps {
 }
 
 export function CardContent({ children }: CardContentProps) {
-  return <div className={cardStyles["card-content"]}>{children}</div>;
+  return <div className={cardStyles.cardContent}>{children}</div>;
 }
 
 interface CardActionsProps {
@@ -55,5 +55,5 @@ interface CardActionsProps {
 }
 
 export function CardActions({ children }: CardContentProps) {
-  return <div className={cardStyles["card-actions"]}>{children}</div>;
+  return <div className={cardStyles.cardActions}>{children}</div>;
 }

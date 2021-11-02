@@ -8,7 +8,7 @@
   color: #666666;
   background-color: white;
 
-  .card-header {
+  .cardHeader {
     padding: 16px;
     padding-bottom: 0;
     display: flex;
@@ -32,8 +32,10 @@
     }
   }
 
-  .card-content {
+  .cardContent {
     padding: 16px;
+    margin-top: 0;
+    margin-bottom: 8px;
 
     p:first-child {
       margin-top: 0;
@@ -44,12 +46,7 @@
     }
   }
 
-  .card-content {
-    margin-top: 0;
-    margin-bottom: 8px;
-  }
-
-  .card-actions {
+  .cardActions {
     display: flex;
     align-items: center;
     margin: 0px 16px 16px;

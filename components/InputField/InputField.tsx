@@ -14,7 +14,7 @@ import inputFieldStyles from "./InputField.module.scss";
 import cn from "classnames";
 import Ripple from "../Ripple";
 import Icon from "../Icon";
-import useValidation from "../../hooks/useValidation";
+import useValidation from "./useValidation";
 
 interface InputFieldProps {
   type?: "text" | "email" | "password" | "date" | "textarea" | "select";
@@ -195,12 +195,12 @@ function InputField(props: InputFieldProps) {
     [setValue]
   );
 
-  // Template
+  // Templates
   const prependTemplate = prependIcon ? (
     <div className={inputFieldStyles.prepend}>
       <Icon
         iconName={prependIcon}
-        className={inputFieldStyles["prepend-icon"]}
+        className={inputFieldStyles.prependIcon}
         onClick={onPrependIconClick}
       />
     </div>
@@ -225,8 +225,8 @@ function InputField(props: InputFieldProps) {
     );
   } else if (type === "select") {
     inputTemplate = (
-      <div className={inputFieldStyles["input-container"]}>
-        <div className={inputFieldStyles["selection-container"]}>{isActive && value}</div>
+      <>
+        <div className={inputFieldStyles.selectionContainer}>{isActive && value}</div>
         <Icon iconName="arrow_drop_down" className={inputFieldStyles["arrow-container"]} />
         {selectActive && (
           <ul className={inputFieldStyles["drop-down"]}>
@@ -247,7 +247,7 @@ function InputField(props: InputFieldProps) {
             ))}
           </ul>
         )}
-      </div>
+      </>
     );
   } else if (type === "textarea") {
     inputTemplate = (
@@ -268,7 +268,7 @@ function InputField(props: InputFieldProps) {
 
   return (
     <div
-      className={cn(inputFieldStyles["input-field"], {
+      className={cn(inputFieldStyles.inputField, {
         [inputFieldStyles.disabled]: isDisabled,
         [inputFieldStyles.focused]: isFocused,
         [inputFieldStyles.active]: isActive,
