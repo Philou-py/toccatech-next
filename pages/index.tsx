@@ -1,173 +1,114 @@
+import { useContext, useState } from "react";
 import Image from "next/image";
-import { useState, useEffect, useContext } from "react";
 import { BreakpointsContext } from "../contexts/BreakpointsContext";
-import Container from "../components/Container";
-import Button from "../components/Button";
-import Card, { CardHeader, CardContent, CardActions } from "../components/Card";
-import Spacer from "../components/Spacer";
-import InputField from "../components/InputField";
-import Form from "../components/Form";
-import Ripple from "../components/Ripple";
-import axios from "axios";
+import { Container, Button, Icon } from "../components";
+import ConnexionForm from "../layouts/ConnexionForm";
+import SignUpForm from "../layouts/SignUpForm";
+import bgCoffeeImage from "../public/images/bg-coffee.jpg";
+import bgPianoImage from "../public/images/bg-piano.jpg";
+import bgArsenalImage from "../public/images/bg-arsenal.jpg";
+import cn from "classnames";
 
 export default function Home() {
-  const { breakpoints, currentBreakpoint } = useContext(BreakpointsContext);
-  const matchingList = Object.keys(breakpoints).map((media) => (
-    <li key={media}>
-      {media} ---- {breakpoints[media] ? "Yes" : "No"}
-    </li>
-  ));
-  const [myValue, setMyValue] = useState<string>("");
-  const [isFormValid, setIsFormValid] = useState(false);
-
-  // useEffect(() => {
-  //   console.log("hello");
-  //   axios
-  //     .post(
-  //       "http://localhost:3001/signin",
-  //       {
-  //         email: "shaun@google.com",
-  //         password: "test1234",
-  //       },
-  //       { withCredentials: true }
-  //     )
-  //     .then((data) => console.log(data))
-  //     .catch((error) => console.log(error));
-  //   // fetch("http://localhost:3001/signin", {
-  //   //   method: "POST",
-  //   //   body: JSON.stringify({ email: "shaun@google.com", password: "test1234" }),
-  //   //   headers: { "Content-Type": "application/json" },
-  //   //   credentials: "include",
-  //   // })
-  //   //   .then((res) => res.json())
-  //   //   .then((data) => console.log(data))
-  //   //   .catch((error) => console.log(error));
-  // }, []);
+  const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
+  const [currentUser, setCurrentUser] = useState<boolean | undefined>(true);
 
   return (
-    <div className="home">
-      <Container>
-        <ul>{matchingList}</ul>
-        <p>Currently, your screen corresponds to the {currentBreakpoint} breakpoint.</p>
-        {/* <div className="div-image-bg-coffee"> */}
-        {/*   <Image */}
-        {/*     src="/images/bg-coffee.jpg" */}
-        {/*     alt="Image de la page d'accueil Toccatech" */}
-        {/*     width={1024} */}
-        {/*     height={656} */}
-        {/*   /> */}
-        {/* </div> */}
-        <Button className="blue--text">I am a button!</Button>
-        <Button className="red--text">Buttonbuttonbutton!</Button>
-        <Button className="purple--text" prependIcon="favorite">
-          I have an icon!
-        </Button>
-        <Button className="blue lighten-2" trailingIcon="send">
-          I have a trailing icon!
-        </Button>
-        <Button className="blue lighten-2 red--text" isIconButton icon="favorite" isText />
-        <Button className="blue darken-3 red--text" isIconButton icon="favorite" />
-        <Button isIconButton icon="favorite" size="large" className="orange yellow--text" />
-        <span>Hello, world</span>
-        <Button className="green--text" isText>
-          Click me!
-        </Button>
-        <Button className="orange--text" isText>
-          Click me!
-        </Button>
-        <Button className="purple--text" isText>
-          Click me!
-        </Button>
-        <Button isText>Test</Button>
-        <Button className="orange lighten-3">I am also a button!</Button>
-        <Button isDisabled>I am disabled!</Button>
-        <Button size="large">I am a large button!</Button>
-        <Button>Hello world!</Button>
-        <Card>
-          {/* <h3 className="card-title">I am the title of the card</h3> */}
-          {/* <div className="card-content"> */}
-          {/*   <p> */}
-          {/*     Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla quia atque, totam */}
-          {/*     assumenda autem molestiae voluptatum quidem unde excepturi minima, accusamus fugiat */}
-          {/*     non deleniti rem amet adipisci inventore earum itaque? */}
-          {/*   </p> */}
-          {/* </div> */}
-          {/* <div className="card-actions"> */}
-          {/*   <Spacer /> */}
-          {/*   <Button className="green" onClick={() => console.log("Button clicked!")}> */}
-          {/*     Valider */}
-          {/*   </Button> */}
-          {/* </div> */}
-          <CardHeader
-            title={
-              <Ripple>
-                <h5>My First Card</h5>
-              </Ripple>
-            }
-            subtitle={<p>My First Subtitle</p>}
-            action={<Button isIconButton className="red" icon="delete" size="large" />}
-          />
-          <CardContent>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore facere velit
-              dolore, rerum magni assumenda voluptatibus, exercitationem corporis, et ad in nihil!
-              Doloremque ratione facere sunt exercitationem nulla, soluta harum!
-            </p>
-          </CardContent>
-          <CardActions>
-            <Spacer />
-            <Button className="green">Submit</Button>
-          </CardActions>
-        </Card>
-        <Form setFormValidity={setIsFormValid}>
-          <InputField
-            value={myValue}
-            setValue={(newValue) => {
-              setMyValue(newValue);
-            }}
-            label="My First Input Field"
-            placeholder="Enter your name"
-            prependIcon="favorite"
-            maxLength={20}
-            isRequired
-            fullWidth
-          />
-          <InputField
-            value={myValue}
-            setValue={(newValue) => {
-              setMyValue(newValue);
-            }}
-            label="My best input field!"
-          />
-          <InputField
-            value={myValue}
-            setValue={(newValue) => {
-              setMyValue(newValue);
-            }}
-            placeholder="No label"
-            width="200px"
-          />
-          <InputField
-            type="select"
-            value={myValue}
-            setValue={setMyValue}
-            selectItems={["Marion", "Moummy", "Douddy", "Filou"]}
-            label="My First Select!"
-            width="50%"
-          />
-          <InputField
-            type="textarea"
-            value={myValue}
-            setValue={setMyValue}
-            label="My First Text Area!"
-            maxLength={1000}
-            nbRows={6}
-            isRequired
-            fullWidth
-          />
-          <Button isDisabled={!isFormValid}>Submit</Button>
-        </Form>
+    <div className={cn("home", cbp)}>
+      <div className="getStarted">
+        <Image
+          src={bgCoffeeImage}
+          className="coffeeBgImage"
+          alt="Image de la page d'accueil"
+          layout="fill"
+          objectFit="cover"
+          quality={100}
+        />
+        <Container large className="container">
+          <h1 className="title">Votre boîte à outils musicale... découvrez la vite !</h1>
+          <Button className="blue-grey" size="x-large">
+            C&rsquo;est parti !
+          </Button>
+        </Container>
+      </div>
+      <Container className={cn("useCases", cbp)}>
+        <div>
+          <Icon iconName="library_music" className="icon" />
+          <h4>Une partothèque personnelle</h4>
+          <p>
+            Vous êtes musicien professionnel, étudiant ou simplement amateur. Votre répertoire
+            musical s&rsquo;étoffe de jour en jour. Vous perdez vos partitions ? Vous oubliez le
+            titre des oeuvres que vous avez appris à jouer ? Créez ici votre partothèque personnelle
+            ! Quelques clics suffiront pour enregistrer et lister vos titres préférés !
+          </p>
+        </div>
+        <div>
+          <Icon iconName="library_books" className="icon" />
+          <h4>Une bibliothèque de données musicales</h4>
+          <p>
+            Découvrez les fiches de synthèse relatives aux compositeurs. Vous ne trouvez pas votre
+            compositeur favori ? Ajoutez le et contribuez ainsi à la création d&rsquo;une véritable
+            encyclopédie musicale partagée !
+          </p>
+        </div>
+        <div>
+          <Icon iconName="auto_stories" className="icon" />
+          <h4>Un archivage de vos partitions personnelles</h4>
+          <p>
+            Vos partitions sont riches d&rsquo;annotations personnelles précieuses que vous ne
+            voulez pas perdre. Numérisez vos documents et archivez les ici. Des années après, vous
+            apprécierez de pouvoir rejouer les morceaux de votre jeunesse !
+          </p>
+        </div>
       </Container>
+      <div className={cn("easyTools", cbp)}>
+        <Image
+          src={bgPianoImage}
+          className={cn("pianoBgImage")}
+          alt="Image d'un piano de la page d'accueil"
+          layout="fill"
+          objectFit="cover"
+          quality={100}
+        />
+        <h2>Des outils simples et efficaces au service de votre passion !</h2>
+      </div>
+      <div className={cn("contact", cbp)}>
+        <Container>
+          <h3>Contact</h3>
+          <p>
+            En cas de problème, je peux vous aider ! N&rsquo;hésitez pas à m&rsquo;écrire à
+            l&rsquo;adresse suivante&nbsp;:&nbsp;
+            <a href="mailto:contact@toccatech.com">contact@toccatech.com</a>. Je vous répondrai dans
+            les meilleurs délais. Toutes vos remarques ou suggestions seront les bienvenues
+            également car, n&rsquo;oubliez pas, ce site est fait pour vous !
+          </p>
+        </Container>
+      </div>
+      <div className="arsenalRoom">
+        <a
+          href="https://www.citemusicale-metz.fr/la-cite-musicale/les-salles/larsenal"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            src={bgArsenalImage}
+            className={cn("arsenalBgImage")}
+            alt="Image de la salle de l'Arsenal de Metz"
+            layout="fill"
+            objectFit="cover"
+            quality={100}
+          />
+          <Container className="container">
+            <h2>Art, culture et nouvelles technologies !</h2>
+          </Container>
+        </a>
+      </div>
+      {currentUser && (
+        <div className={cn("authSection", cbp)}>
+          <ConnexionForm />
+          <SignUpForm />
+        </div>
+      )}
     </div>
   );
 }

@@ -1,12 +1,17 @@
+import "../styles/helpers.scss";
 import "../styles/globals.scss";
 import "../styles/typography.scss";
 import "../styles/colours.scss";
+import "./pageStyles/index.scss";
 import { AppProps } from "next/app";
 import BreakpointsProvider from "../contexts/BreakpointsContext";
+import Footer from "../layouts/Footer";
 import NavBar from "../components/NavBar";
-import Avatar from "../components/Avatar";
 import SideBar from "../components/SideBar";
+import Avatar from "../components/Avatar";
+import Card, { CardHeader, CardContent, CardActions } from "../components/Card";
 import Button from "../components/Button";
+import Modal from "../components/Modal";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 
@@ -22,6 +27,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     []
   );
   const [sideBarOpen, setSideBarOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleNavIconClick = useCallback(() => {
     setSideBarOpen(true);
@@ -29,6 +35,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const handleBgClick = useCallback(() => {
     setSideBarOpen(false);
+  }, []);
+
+  const connectUser = useCallback(() => {
+    setModalOpen(true);
   }, []);
 
   const disconnectUser = useCallback(() => {
@@ -41,9 +51,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         title="Toccatech"
         logoPath="https://toccatech.com/img/logo.fa766f7b.png"
         navLinks={[
-          ["Encyclopédie", "/"],
-          ["Ma Partothèque", "/"],
-          ["Déconnexion", disconnectUser],
+          ["Encyclopédie", "/socket-io"],
+          ["Ma Partothèque", "/demo"],
+          ["Déconnexion", connectUser],
         ]}
         userAvatar={
           <Avatar
@@ -70,8 +80,8 @@ function MyApp({ Component, pageProps }: AppProps) {
           />
         }
         navLinks={[
-          ["Encyclopédie", "/"],
-          ["Ma Partothèque", "/", true],
+          ["Encyclopédie", "/socket-io"],
+          ["Ma Partothèque", "/demo", true],
         ]}
         authButton={
           <Button
@@ -84,9 +94,23 @@ function MyApp({ Component, pageProps }: AppProps) {
           </Button>
         }
       />
-      <div style={{ marginTop: 60 }}>
+      <Modal showModal={modalOpen} closeFunc={setModalOpen}>
+        <Card cssWidth="clamp(300px, 30%, 400px)">
+          <CardHeader title={<h3>Hello, world!</h3>} />
+          <CardContent>
+            <p>This is my first modal!</p>
+            <p>
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia nesciunt sapiente
+              quasi quas, aliquam ea autem dolorem a, earum molestiae ullam vel atque animi totam
+              repudiandae error mollitia magnam distinctio.
+            </p>
+          </CardContent>
+        </Card>
+      </Modal>
+      <div style={{ marginTop: 60, marginBottom: 20 }}>
         <Component {...pageProps} />
       </div>
+      <Footer />
     </BreakpointsProvider>
   );
 }
