@@ -10,11 +10,11 @@ type ValidationRules = ((inputValue: string) => true | string)[];
 
 export default function useValidation(
   inputValue: string,
-  inputType: "text" | "email" | "password" | "date" | "textarea" | "select",
+  inputType: "text" | "email" | "password" | "date" | "textarea" | "select" | "file",
   { isRequired, maxLength, minLength }: BasicValidation,
   customValidationRules: ValidationRules
 ) {
-  const [isValid, setIsValid] = useState<boolean>(true);
+  const [isValid, setIsValid] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
 
   function validateInput() {

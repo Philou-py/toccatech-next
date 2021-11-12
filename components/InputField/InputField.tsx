@@ -3,8 +3,6 @@ import {
   MouseEvent,
   FormEvent,
   useEffect,
-  Dispatch,
-  SetStateAction,
   useRef,
   CSSProperties,
   useCallback,
@@ -17,69 +15,83 @@ import Icon from "../Icon";
 import useValidation from "./useValidation";
 
 interface InputFieldProps {
-  type?: "text" | "email" | "password" | "date" | "textarea" | "select";
   value: string;
-  setValue: (newValue: string) => void;
   label?: string;
   placeholder?: string;
-  nbRows?: number;
-  nbCols?: number;
   isDisabled?: boolean;
   prependIcon?: string;
   width?: string;
   fullWidth?: boolean;
-  selectItems?: string[];
-  defaultSelection?: string;
-  getInputValidity?: Dispatch<SetStateAction<object>>;
+  getInputValidity?: (newValue: object | ((prev: object) => object)) => void;
   maxLength?: number;
   minLength?: number;
   isRequired?: boolean;
   customValidationRules?: ((value: string) => true | string)[];
+  className?: string;
 
   // Events handlers from parent
   onPrependIconClick?: (event: MouseEvent<HTMLSpanElement>) => void;
+}
+
+interface TextInputProps extends InputFieldProps {
+  type: "text" | "email" | "password" | "date";
+  setValue: (newValue: string) => void;
+}
+
+interface TextAreaProps extends InputFieldProps {
+  type: "textarea";
+  setValue: (newValue: string) => void;
+  nbRows?: number;
+  nbCols?: number;
+}
+
+interface SelectInputProps extends InputFieldProps {
+  type: "select";
+  setValue: (newValue: string) => void;
+  selectItems: string[];
+  defaultSelection?: string;
   onSelect?: (event: MouseEvent<HTMLLIElement>, item: string) => void;
+}
+
+interface FileInputProps extends InputFieldProps {
+  type: "file";
+  setValue: (newValue: File | "") => void;
+  acceptTypes?: string;
 }
 
 interface CustomCSSProperties extends CSSProperties {
   "--offset-width": string;
 }
 
-function InputField(props: InputFieldProps) {
+function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | FileInputProps) {
   console.log("Input Field rendered!");
   const {
-    type = "text",
     value = "",
-    setValue,
     label,
     placeholder,
-    nbRows,
-    nbCols,
     isDisabled,
     prependIcon,
     width,
     fullWidth,
-    selectItems,
-    defaultSelection,
     getInputValidity,
     maxLength,
     minLength,
     isRequired = false,
     customValidationRules = [],
+    className,
 
     // Event handlers from parent
     onPrependIconClick,
-    onSelect,
   } = props;
 
   const [id, setId] = useState<string>("input-field");
   const { isValid, message, validateInput } = useValidation(
     value,
-    type,
+    props.type,
     { isRequired, maxLength, minLength },
     customValidationRules
   );
-  const [isActive, setIsActive] = useState<boolean>(type === "date" ? true : false);
+  const [isActive, setIsActive] = useState<boolean>(props.type === "date" ? true : false);
   const [isFocused, setIsFocused] = useState(false);
   const [computedPlaceholder, setComputedPlaceholder] = useState<string | undefined>(
     placeholder && !label ? placeholder : undefined
@@ -102,13 +114,13 @@ function InputField(props: InputFieldProps) {
 
   // Set input to always be active when the type is date
   useEffect(() => {
-    if (type === "date") {
+    if (props.type === "date") {
       setIsActive(true);
     }
-  }, [type]);
+  }, [props.type]);
 
   useEffect(() => {
-    if (type == "select") {
+    if (props.type == "select") {
       // Event listener to detect if the input field was clicked in order to
       // open the drop-down menu, or if the rest of the body to close it
       let handleClickBody = (event: globalThis.MouseEvent) => {
@@ -126,10 +138,11 @@ function InputField(props: InputFieldProps) {
       document.addEventListener("click", handleClickBody);
 
       // Define default selection of the select input
-      if (defaultSelection) {
-        setValue(defaultSelection);
+      if (props.defaultSelection) {
+        // See: https://github.com/facebook/react/issues/16265#issuecomment-517518539
+        props.setValue.call(undefined, props.defaultSelection);
       } else if (!label) {
-        setValue(selectItems![0]);
+        props.setValue.call(undefined, props.selectItems[0]);
       }
 
       // Remove event listener on unmount
@@ -139,16 +152,16 @@ function InputField(props: InputFieldProps) {
       };
     }
     // eslint-disable-next-line
-  }, [type]);
+  }, [props.type, props.setValue]);
 
   // Lift or reset label according to the content of the input field
   useEffect(() => {
     if (value) {
       setIsActive(true);
-    } else if (!isFocused && type !== "date") {
+    } else if (!isFocused && props.type !== "date") {
       setIsActive(false);
     }
-  }, [value, isFocused, type]);
+  }, [value, isFocused, props.type]);
 
   // Set or remove the computed placeholder accordingly
   useEffect(() => {
@@ -180,20 +193,30 @@ function InputField(props: InputFieldProps) {
   }, []);
 
   const handleBlur = useCallback(() => {
-    if (!value && type !== "date") {
+    if (value && props.type !== "date") {
       setIsActive(false);
       setIsFocused(false);
     } else {
       setIsFocused(false);
     }
-  }, [value, type]);
+  }, [value, props.type]);
 
   const handleInput = useCallback(
-    (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setValue((event.target as HTMLInputElement).value);
+    (event: FormEvent) => {
+      if (props.type !== "file") {
+        props.setValue.call(undefined, (event.target as HTMLInputElement).value);
+      } else {
+        if ((event.target as HTMLInputElement).files!.length > 0) {
+          props.setValue.call(undefined, (event.target as HTMLInputElement).files![0]);
+        } else {
+          props.setValue.call(undefined, "");
+        }
+      }
     },
-    [setValue]
+    [props.type, props.setValue]
   );
+
+  const handleFileInput = useCallback((event: FormEvent<HTMLInputElement>) => {}, []);
 
   // Templates
   const prependTemplate = prependIcon ? (
@@ -209,11 +232,11 @@ function InputField(props: InputFieldProps) {
   );
 
   let inputTemplate;
-  if (type !== "textarea" && type !== "select") {
+  if (props.type !== "textarea" && props.type !== "select") {
     inputTemplate = (
       <input
-        type={type}
-        disabled={isDisabled}
+        type={props.type === "file" ? "text" : props.type}
+        disabled={props.type == "file" || isDisabled}
         id={id}
         placeholder={computedPlaceholder}
         required={isRequired}
@@ -223,20 +246,20 @@ function InputField(props: InputFieldProps) {
         onInput={handleInput}
       />
     );
-  } else if (type === "select") {
+  } else if (props.type === "select") {
     inputTemplate = (
       <>
         <div className={inputFieldStyles.selectionContainer}>{isActive && value}</div>
         <Icon iconName="arrow_drop_down" className={inputFieldStyles["arrow-container"]} />
         {selectActive && (
           <ul className={inputFieldStyles["drop-down"]}>
-            {selectItems!.map((item) => (
+            {props.selectItems!.map((item) => (
               <Ripple key={item}>
                 <li
                   onClick={(event) => {
-                    setValue(item);
-                    if (onSelect) {
-                      onSelect(event, item);
+                    props.setValue(item);
+                    if (props.onSelect) {
+                      props.onSelect(event, item);
                     }
                     setSelectActive(false);
                   }}
@@ -249,7 +272,7 @@ function InputField(props: InputFieldProps) {
         )}
       </>
     );
-  } else if (type === "textarea") {
+  } else if (props.type === "textarea") {
     inputTemplate = (
       <textarea
         disabled={isDisabled}
@@ -260,15 +283,22 @@ function InputField(props: InputFieldProps) {
         onFocus={handleFocus}
         onBlur={handleBlur}
         onInput={handleInput}
-        rows={nbRows}
-        cols={nbCols}
+        rows={props.nbRows}
+        cols={props.nbCols}
       ></textarea>
+    );
+  }
+
+  let fileInputTemplate;
+  if (props.type === "file") {
+    fileInputTemplate = (
+      <input type="file" accept={props.acceptTypes} onChange={handleInput} disabled={isDisabled} />
     );
   }
 
   return (
     <div
-      className={cn(inputFieldStyles.inputField, {
+      className={cn(inputFieldStyles.inputField, className, {
         [inputFieldStyles.disabled]: isDisabled,
         [inputFieldStyles.focused]: isFocused,
         [inputFieldStyles.active]: isActive,
@@ -277,7 +307,7 @@ function InputField(props: InputFieldProps) {
         [inputFieldStyles.valid]: isValid,
         // Show invalidity only if the field is not empty and required
         [inputFieldStyles.invalid]: !isValid && !(value === "" && isRequired),
-        [inputFieldStyles.select]: type === "select",
+        [inputFieldStyles.select]: props.type === "select",
       })}
       ref={inputFieldRef}
       style={
@@ -295,6 +325,7 @@ function InputField(props: InputFieldProps) {
       )}
       <div className={inputFieldStyles.content}>
         {inputTemplate}
+        {fileInputTemplate}
         <div className={inputFieldStyles.line}></div>
         <div className={inputFieldStyles.hints}>
           <div className={inputFieldStyles.message}>{message}</div>

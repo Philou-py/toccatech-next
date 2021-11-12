@@ -30,7 +30,7 @@ export function CardHeader({ title, subtitle, action, centerTitle }: CardHeaderP
       <div className={cardStyles.content}>
         {cloneElement(title, {
           className: cn(cardStyles.title, title.props.className),
-          style: centerTitle ? { textAlign: "center" } : undefined,
+          style: centerTitle ? { textAlign: "center", ...title.props.style } : title.props.style,
         })}
         {subtitle &&
           cloneElement(subtitle, {

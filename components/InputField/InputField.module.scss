@@ -1,3 +1,8 @@
+$zLabel: 1;
+$zTextInput: 2;
+$zDropDown: 3;
+$zFile: 3;
+
 // Sass mixin that changes the colour theme according to the validity of the user input
 @mixin changeTheme($theme-colour) {
   input,
@@ -77,8 +82,28 @@
     position: relative;
   }
 
+  input[type="file"] {
+    position: absolute;
+    z-index: $zFile;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    cursor: pointer !important;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+
+    &:disabled {
+      cursor: default !important;
+    }
+  }
+
   input,
   textarea {
+    position: relative;
+    z-index: $zTextInput;
     border: none;
     background-color: transparent;
     // La fonction 'rgba', dans ce cas, permet de donner une opacité de 0.6 à la couleur black.
@@ -88,6 +113,10 @@
     outline: 0;
     padding: 1px 0 5px;
     transition: border-color 0.3s linear;
+
+    &:disabled {
+      color: initial;
+    }
 
     &::placeholder {
       color: rgba(black, 0.5);
@@ -102,10 +131,9 @@
   label {
     @include setEllipsisOverflow();
     position: absolute;
-    z-index: 1;
+    z-index: $zLabel;
     top: 17px;
     left: 0;
-    cursor: text;
     color: rgba(black, 0.6);
     // Avoid label overflow
     max-width: calc(100% - var(--offset-width));
@@ -147,7 +175,7 @@
 
   .drop-down {
     position: absolute;
-    z-index: 999;
+    z-index: $zDropDown;
     top: 0;
     left: 0;
     list-style-type: none;

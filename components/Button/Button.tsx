@@ -8,7 +8,7 @@ interface ButtonProps {
   isText?: boolean;
   isDisabled?: boolean;
   title?: string;
-  size?: "large";
+  size?: "large" | "x-large";
   isIconButton?: boolean;
   iconName?: string;
   prependIcon?: string;
@@ -48,8 +48,8 @@ function Button(props: ButtonProps) {
             [buttonStyles.flat]: props.isText,
             [buttonStyles.disabled]: props.isDisabled,
             [buttonStyles[props.size!]]: props.size,
-          },
-          props.className
+            [props.className!]: props.className && !props.isDisabled,
+          }
         )}
         disabled={props.isDisabled}
         title={props.title}

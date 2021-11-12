@@ -37,6 +37,13 @@ button.btn {
     height: 45px;
     padding: 0 24px;
     min-width: 74px;
+    font-size: 15px;
+  }
+
+  &.x-large {
+    height: 55px;
+    padding: 0 34px;
+    min-width: 94px;
     font-size: 17px;
   }
 

@@ -14,6 +14,8 @@ interface NavBarProps {
   userAvatar?: ReactElement;
   centerNavSmScreens?: boolean;
   onNavIconClick?: () => void;
+  fixed?: boolean;
+  flat?: boolean;
 }
 
 export default function NavBar({
@@ -23,6 +25,8 @@ export default function NavBar({
   navLinks,
   userAvatar,
   onNavIconClick,
+  fixed = true,
+  flat,
 }: NavBarProps) {
   const { currentBreakpoint } = useContext(BreakpointsContext);
 
@@ -59,7 +63,12 @@ export default function NavBar({
   );
 
   return (
-    <div className={navBarStyles.navBar}>
+    <div
+      className={cn(navBarStyles.navBar, {
+        [navBarStyles.flat]: flat,
+        [navBarStyles.fixed]: fixed,
+      })}
+    >
       <Container className={navBarStyles.navBarContainer}>
         <div
           className={cn(navBarStyles.presentation, {
