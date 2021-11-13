@@ -7,6 +7,11 @@ import SignUpForm from "../layouts/SignUpForm";
 import bgCoffeeImage from "../public/images/bg-coffee.jpg";
 import bgPianoImage from "../public/images/bg-piano.jpg";
 import bgArsenalImage from "../public/images/bg-arsenal.jpg";
+import WavesSVG from "./svgs/Waves";
+import Waves2 from "./svgs/Waves2";
+import LayeredWaves from "./svgs/LayeredWaves";
+import PeakWaves from "./svgs/PeakWaves";
+import SmallWaves from "./svgs/SmallWaves";
 import cn from "classnames";
 
 export default function Home() {
@@ -30,6 +35,9 @@ export default function Home() {
             C&rsquo;est parti !
           </Button>
         </Container>
+        <div className="waves">
+          <WavesSVG />
+        </div>
       </div>
       <Container className={cn("useCases", cbp)}>
         <div>
@@ -62,6 +70,9 @@ export default function Home() {
         </div>
       </Container>
       <div className={cn("easyTools", cbp)}>
+        <div className="peakWaves">
+          <PeakWaves />
+        </div>
         <Image
           src={bgPianoImage}
           className={cn("pianoBgImage")}
@@ -71,6 +82,9 @@ export default function Home() {
           quality={100}
         />
         <h2>Des outils simples et efficaces au service de votre passion !</h2>
+        <div className="waves2">
+          <Waves2 />
+        </div>
       </div>
       <div className={cn("contact", cbp)}>
         <Container>
@@ -90,6 +104,9 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
+          <div className="layeredWaves">
+            <LayeredWaves />
+          </div>
           <Image
             src={bgArsenalImage}
             className={cn("arsenalBgImage")}
@@ -101,6 +118,9 @@ export default function Home() {
           <Container className="container">
             <h2>Art, culture et nouvelles technologies !</h2>
           </Container>
+          <div className="smallWaves">
+            <SmallWaves />
+          </div>
         </a>
       </div>
       {currentUser && (

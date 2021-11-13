@@ -26,6 +26,7 @@
     // avec une position non statique est positionné au dessus d'un
     // élément avec une position statique.
     position: relative;
+    z-index: 2;
     text-align: center;
     margin-top: 80px;
   }
@@ -37,10 +38,31 @@
     margin-top: 200px;
   }
 
+  .waves svg,
+  .waves2 svg,
+  .layeredWaves svg,
+  .peakWaves svg,
+  .smallWaves svg {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+  }
+
+  .waves svg,
+  .waves2 svg,
+  .smallWaves svg {
+    bottom: 0;
+  }
+
+  .layeredWaves svg,
+  .peakWaves svg {
+    top: 0;
+  }
+
   .useCases {
     display: flex;
     margin-top: 40px;
-    margin-bottom: 40px;
 
     &.xs {
       flex-direction: column;
@@ -70,19 +92,24 @@
 
   .easyTools {
     h2 {
-      position: relative;
-      margin: 150px 50% 150px 10%;
+      position: absolute;
+      z-index: 2;
+      top: 150px;
+      right: 50%;
+      bottom: 150px;
+      left: 10%;
+      // margin: 150px 50% 150px 10%;
       text-align: center;
       color: #9b4c06;
     }
 
     &.sm h2 {
-      margin-right: 25%;
+      right: 25%;
     }
 
     &.xs h2 {
-      margin-right: 10%;
-      margin-top: 100px;
+      right: 10%;
+      top: 100px;
     }
   }
 
