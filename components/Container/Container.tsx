@@ -1,4 +1,4 @@
-import { ReactNode, cloneElement, useContext } from "react";
+import { ReactNode, useContext } from "react";
 import containerStyles from "./Container.module.scss";
 import cn from "classnames";
 import { BreakpointsContext } from "../../contexts/BreakpointsContext";
@@ -7,7 +7,7 @@ interface ContainerProps {
   large?: boolean;
   narrow?: boolean;
   className?: string;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export default function Container({ large, narrow, children, className }: ContainerProps) {

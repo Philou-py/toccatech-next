@@ -4,15 +4,32 @@ import cn from "classnames";
 
 interface CardProps {
   cssWidth?: string;
-  children: ReactNode;
+  media?: ReactElement;
+  mediaPosition?: "top" | "right" | "left";
+  mediaClassName?: string;
+  mainContentClassName?: string;
+  className?: string;
+  children?: ReactNode;
 }
 
-export default function Card({ cssWidth, children }: CardProps) {
+export default function Card({
+  cssWidth,
+  media,
+  mediaPosition,
+  mediaClassName,
+  mainContentClassName,
+  className,
+  children,
+}: CardProps) {
   let styles: Record<string, string> = {};
   if (cssWidth) styles["--card-width"] = cssWidth;
+  const mediaPositionClass = mediaPosition
+    ? cardStyles["media" + mediaPosition[0].toUpperCase() + mediaPosition.slice(1)]
+    : undefined;
   return (
-    <div className={cardStyles["card"]} style={styles}>
-      {children}
+    <div className={cn(cardStyles.card, mediaPositionClass, className)} style={styles}>
+      {media && <div className={cn(cardStyles.media, mediaClassName)}>{media}</div>}
+      <div className={cn(cardStyles.mainContent, mainContentClassName)}>{children}</div>
     </div>
   );
 }
@@ -22,11 +39,12 @@ interface CardHeaderProps {
   centerTitle?: boolean;
   subtitle?: ReactElement;
   action?: ReactElement;
+  className?: string;
 }
 
-export function CardHeader({ title, subtitle, action, centerTitle }: CardHeaderProps) {
+export function CardHeader({ title, subtitle, action, className, centerTitle }: CardHeaderProps) {
   return (
-    <div className={cardStyles.cardHeader}>
+    <div className={cn(cardStyles.cardHeader, className)}>
       <div className={cardStyles.content}>
         {cloneElement(title, {
           className: cn(cardStyles.title, title.props.className),
@@ -43,17 +61,19 @@ export function CardHeader({ title, subtitle, action, centerTitle }: CardHeaderP
 }
 
 interface CardContentProps {
-  children: ReactNode;
+  className?: string;
+  children?: ReactNode;
 }
 
-export function CardContent({ children }: CardContentProps) {
-  return <div className={cardStyles.cardContent}>{children}</div>;
+export function CardContent({ className, children }: CardContentProps) {
+  return <div className={cn(cardStyles.cardContent, className)}>{children}</div>;
 }
 
 interface CardActionsProps {
-  children: ReactNode;
+  className?: string;
+  children?: ReactNode;
 }
 
-export function CardActions({ children }: CardContentProps) {
-  return <div className={cardStyles.cardActions}>{children}</div>;
+export function CardActions({ className, children }: CardContentProps) {
+  return <div className={cn(cardStyles.cardActions, className)}>{children}</div>;
 }

@@ -1,4 +1,4 @@
-import { memo, MouseEvent } from "react";
+import { CSSProperties, memo, MouseEvent } from "react";
 import buttonStyles from "./Button.module.scss";
 import cn from "classnames";
 import Ripple from "../Ripple";
@@ -7,12 +7,15 @@ import Icon from "../Icon";
 interface ButtonProps {
   isText?: boolean;
   isDisabled?: boolean;
+  disableIfInvalidForm?: boolean;
+  isFullWidth?: boolean;
   title?: string;
   size?: "large" | "x-large";
   isIconButton?: boolean;
   iconName?: string;
   prependIcon?: string;
   trailingIcon?: string;
+  style?: CSSProperties;
   className?: string;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   children?: string;
@@ -47,10 +50,12 @@ function Button(props: ButtonProps) {
             [buttonStyles.icon]: props.isIconButton,
             [buttonStyles.flat]: props.isText,
             [buttonStyles.disabled]: props.isDisabled,
+            [buttonStyles.fullWidth]: props.isFullWidth,
             [buttonStyles[props.size!]]: props.size,
             [props.className!]: props.className && !props.isDisabled,
           }
         )}
+        style={props.style}
         disabled={props.isDisabled}
         title={props.title}
       >
