@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import Image from "next/image";
 import { BreakpointsContext } from "../contexts/BreakpointsContext";
 import { Container, Button, Icon } from "../components";

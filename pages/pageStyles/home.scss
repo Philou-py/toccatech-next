@@ -28,6 +28,9 @@
     position: relative;
     z-index: 2;
     text-align: center;
+  }
+
+  .getStarted .container {
     margin-top: 80px;
   }
 
@@ -35,7 +38,10 @@
     display: block;
     color: white;
     text-decoration: none;
-    margin-top: 200px;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding-top: 200px;
   }
 
   .waves svg,

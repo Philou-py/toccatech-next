@@ -13,7 +13,9 @@ import Card, { CardHeader, CardContent, CardActions } from "../components/Card";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
+import dbSocket from "../helpers/db-socket";
+import { CSSTransition } from "react-transition-group";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const breakpointsList = useMemo(
@@ -51,7 +53,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         title="Toccatech"
         logoPath="https://toccatech.com/img/logo.fa766f7b.png"
         navLinks={[
-          ["Encyclopédie", "/socket-io"],
+          ["Encyclopédie", "/encyclopaedia"],
           ["Ma Partothèque", "/demo"],
           ["Déconnexion", connectUser],
         ]}
@@ -80,7 +82,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           />
         }
         navLinks={[
-          ["Encyclopédie", "/socket-io"],
+          ["Encyclopédie", "/encyclopaedia"],
           ["Ma Partothèque", "/demo", true],
         ]}
         authButton={
@@ -107,7 +109,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           </CardContent>
         </Card>
       </Modal>
-      <div style={{ marginTop: 60, marginBottom: 20 }}>
+      <div style={{ paddingTop: 60, paddingBottom: 20, overflow: "hidden" }}>
         <Component {...pageProps} />
       </div>
       <Footer />

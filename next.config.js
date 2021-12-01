@@ -4,6 +4,11 @@ module.exports = {
   reactStrictMode: true,
 
   images: {
-    domains: ["file-server.toccatech.com", "toccatech.com"],
+    domains: [
+      "file-server.toccatech.com",
+      "toccatech.com",
+      "upload.wikimedia.org",
+      "firebasestorage.googleapis.com",
+    ],
   },
 };
