@@ -1,0 +1,66 @@
+.composerDetails {
+  position: relative;
+
+  &::before {
+    content: "";
+    display: block;
+    position: absolute;
+    opacity: 0.08;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("/images/bg-composer-details.jpg");
+    background-size: 25%;
+  }
+
+  // Position elements in front of the background image
+  * {
+    position: relative;
+  }
+
+  .heading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .photoContainer {
+    margin-left: 4%;
+    position: relative;
+    height: 150px;
+    width: 110px;
+
+    img {
+      border-radius: 10px;
+    }
+  }
+
+  .composerInfo {
+    display: flex;
+    color: black;
+
+    ul {
+      padding-left: 0px;
+      list-style-position: inside;
+    }
+
+    &.xs,
+    &.sm {
+      flex-direction: column;
+    }
+
+    &.md,
+    &.lg,
+    &.xl {
+      div:first-child {
+        width: 40%;
+        margin-right: 3%;
+      }
+
+      div:last-child {
+        width: 58%;
+      }
+    }
+  }
+}
