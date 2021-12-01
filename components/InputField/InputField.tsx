@@ -22,7 +22,7 @@ interface InputFieldProps {
   prependIcon?: string;
   width?: string;
   fullWidth?: boolean;
-  getInputValidity?: (newValue: object | ((prev: object) => object)) => void;
+  setFieldsValidity?: (newValue: object | ((oldValue: object) => object)) => void;
   maxLength?: number;
   minLength?: number;
   isRequired?: boolean;
@@ -66,14 +66,14 @@ interface CustomCSSProperties extends CSSProperties {
 function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | FileInputProps) {
   console.log("Input Field rendered!");
   const {
-    value = "",
+    value,
     label,
     placeholder,
     isDisabled,
     prependIcon,
     width,
-    fullWidth,
-    getInputValidity,
+    fullWidth = true,
+    setFieldsValidity,
     maxLength,
     minLength,
     isRequired = false,
@@ -181,10 +181,10 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
   }, [isActive, placeholder, label]);
 
   useEffect(() => {
-    if (getInputValidity) {
-      getInputValidity((prev) => ({ ...prev, [inputUid]: isValid }));
+    if (setFieldsValidity) {
+      setFieldsValidity((prev) => ({ ...prev, [inputUid]: isValid }));
     }
-  }, [isValid, getInputValidity, inputUid]);
+  }, [isValid, setFieldsValidity, inputUid]);
 
   // Event handlers
   const handleFocus = useCallback(() => {

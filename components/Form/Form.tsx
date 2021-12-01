@@ -1,35 +1,13 @@
-import {
-  useEffect,
-  useState,
-  FormEvent,
-  Children,
-  cloneElement,
-  ReactNode,
-  Dispatch,
-  SetStateAction,
-  isValidElement,
-  useCallback,
-} from "react";
+import { ReactNode, useCallback, DetailedHTMLProps, FormHTMLAttributes, FormEvent } from "react";
 
 interface FormProps {
-  getFormValidity: Dispatch<SetStateAction<boolean>>;
-  action?: string;
-  method?: string;
-  onSubmit?: (event: FormEvent) => void;
-  preventDefault?: boolean;
-  children: ReactNode;
+  onSubmit: (event: FormEvent) => void;
+  preventDefault: boolean;
+  otherProps: DetailedHTMLProps<FormHTMLAttributes<HTMLFormElement>, HTMLFormElement>;
+  children?: ReactNode;
 }
 
-export default function Form({
-  action,
-  method,
-  preventDefault,
-  onSubmit,
-  children,
-  getFormValidity,
-}: FormProps) {
-  const [fieldsValidity, setFieldsValidity] = useState<object>({});
-
+export default function Form({ preventDefault, onSubmit, children, ...otherProps }: FormProps) {
   const handleSubmit = useCallback(
     (event: FormEvent) => {
       if (preventDefault) event.preventDefault();
@@ -38,19 +16,5 @@ export default function Form({
     [preventDefault, onSubmit]
   );
 
-  useEffect(() => {
-    getFormValidity(Object.values(fieldsValidity).includes(false) ? false : true);
-  }, [fieldsValidity, getFormValidity]);
-
-  return (
-    <form action={action} method={method} onSubmit={handleSubmit}>
-      {Children.map(children, (child) => {
-        if (isValidElement(child)) {
-          return cloneElement(child, {
-            getInputValidity: setFieldsValidity,
-          });
-        }
-      })}
-    </form>
-  );
+  return <form onSubmit={handleSubmit}>{children}</form>;
 }
