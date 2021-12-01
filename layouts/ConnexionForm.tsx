@@ -9,18 +9,21 @@ import {
   Button,
   Spacer,
 } from "../components";
+import useForm from "../components/Form/useForm";
 
 interface ConnexionFormProps {
   noAccountFunc?: () => void;
 }
 
 function ConnexionForm({ noAccountFunc }: ConnexionFormProps) {
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [email, setEmail] = useState("");
-  const [pwd, setPwd] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const buttonTitle = !isFormValid ? "Le formulaire n'est pas valide !" : undefined;
+  const { isValid, register } = useForm({
+    email: "",
+    pwd: "",
+  });
+
+  const buttonTitle = !isValid ? "Le formulaire n'est pas valide !" : undefined;
 
   const handleSubmit = useCallback(() => {
     console.log("Connection...");
@@ -30,26 +33,24 @@ function ConnexionForm({ noAccountFunc }: ConnexionFormProps) {
     <Card>
       <CardHeader title={<h3>Connexion</h3>} centerTitle />
       <CardContent>
-        <Form getFormValidity={setIsFormValid}>
+        <Form>
           <InputField
             type="email"
-            value={email}
-            setValue={setEmail}
             label="Adresse email"
             prependIcon="account_circle"
             placeholder="vous@domaine.tld"
             fullWidth
             isRequired
+            {...register("email")}
           />
           <InputField
             type="password"
-            value={pwd}
-            setValue={setPwd}
             label="Mot de passe"
             prependIcon="lock"
             minLength={4}
             fullWidth
             isRequired
+            {...register("pwd")}
           />
         </Form>
       </CardContent>
@@ -58,7 +59,7 @@ function ConnexionForm({ noAccountFunc }: ConnexionFormProps) {
         <Spacer />
         <Button
           className="blue darken-3"
-          isDisabled={!isFormValid || isLoading}
+          isDisabled={!isValid || isLoading}
           title={buttonTitle}
           onClick={handleSubmit}
         >

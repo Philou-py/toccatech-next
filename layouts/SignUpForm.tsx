@@ -9,18 +9,26 @@ import {
   Button,
   Spacer,
 } from "../components";
+import useForm from "../components/Form/useForm";
 
 interface ConnexionFormProps {
   alreadyAnAccountFunc?: () => void;
 }
 
 function SignUpForm({ alreadyAnAccountFunc }: ConnexionFormProps) {
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [pwd, setPwd] = useState("");
+  console.log("SignUpForm rendered!");
   const [isLoading, setIsLoading] = useState(false);
-  const [file, setFile] = useState<File | "">("");
+
+  const {
+    data,
+    isValid: isFormValid,
+    register,
+  } = useForm({
+    name: "",
+    email: "",
+    pwd: "",
+    file: "",
+  });
 
   const buttonTitle = !isFormValid ? "Le formulaire n'est pas valide !" : undefined;
 
@@ -32,44 +40,40 @@ function SignUpForm({ alreadyAnAccountFunc }: ConnexionFormProps) {
     <Card>
       <CardHeader title={<h3>Inscription</h3>} centerTitle />
       <CardContent>
-        <Form getFormValidity={setIsFormValid}>
+        <Form>
           <InputField
             type="text"
             label="Nom"
             prependIcon="face"
             isRequired
             fullWidth
-            value={name}
-            setValue={setName}
+            {...register("name")}
           />
           <InputField
             type="email"
-            value={email}
-            setValue={setEmail}
             label="Adresse email"
             prependIcon="account_circle"
             placeholder="vous@domaine.tld"
             fullWidth
             isRequired
+            {...register("email")}
           />
           <InputField
             type="password"
-            value={pwd}
-            setValue={setPwd}
             label="Mot de passe"
             prependIcon="lock"
             minLength={4}
             fullWidth
             isRequired
+            {...register("pwd")}
           />
           <InputField
             type="file"
-            value={file === "" ? file : file.name}
-            setValue={setFile}
             label="Télécharger votre avatar"
             prependIcon="image"
             fullWidth
             isRequired
+            {...register("file", data.file)}
           />
         </Form>
       </CardContent>
