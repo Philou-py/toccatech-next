@@ -1,9 +1,9 @@
 import { ReactNode, useCallback, DetailedHTMLProps, FormHTMLAttributes, FormEvent } from "react";
 
-interface FormProps {
-  onSubmit: (event: FormEvent) => void;
-  preventDefault: boolean;
-  otherProps: DetailedHTMLProps<FormHTMLAttributes<HTMLFormElement>, HTMLFormElement>;
+interface FormProps
+  extends DetailedHTMLProps<FormHTMLAttributes<HTMLFormElement>, HTMLFormElement> {
+  onSubmit?: (event: FormEvent) => void;
+  preventDefault?: boolean;
   children?: ReactNode;
 }
 
@@ -16,5 +16,9 @@ export default function Form({ preventDefault, onSubmit, children, ...otherProps
     [preventDefault, onSubmit]
   );
 
-  return <form onSubmit={handleSubmit}>{children}</form>;
+  return (
+    <form onSubmit={handleSubmit} {...otherProps}>
+      {children}
+    </form>
+  );
 }

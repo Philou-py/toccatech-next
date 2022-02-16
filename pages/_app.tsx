@@ -61,7 +61,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Avatar
             type="image-avatar"
             borderColour="#33c9ff"
-            src="https://file-server.toccatech.com/files/61222920005f146fca8c708e"
+            src="https://file-server.toccatech.com/files/620d31e0219aa20013c63653"
             size={50}
           />
         }
@@ -76,7 +76,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Avatar
             type="image-avatar"
             borderColour="#33c9ff"
-            src="https://file-server.toccatech.com/files/61222920005f146fca8c708e"
+            src="https://file-server.toccatech.com/files/620d31e0219aa20013c63653"
             size={150}
             centerAvatar
           />

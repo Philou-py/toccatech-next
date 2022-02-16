@@ -93,6 +93,7 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
   );
   const [isActive, setIsActive] = useState<boolean>(props.type === "date" ? true : false);
   const [isFocused, setIsFocused] = useState(false);
+  const [isTouched, setIsTouched] = useState(false);
   const [computedPlaceholder, setComputedPlaceholder] = useState<string | undefined>(
     placeholder && !label ? placeholder : undefined
   );
@@ -179,6 +180,12 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
       setComputedPlaceholder(undefined);
     }
   }, [isActive, placeholder, label]);
+
+  useEffect(() => {
+    if (!isTouched && value !== "") {
+      setIsTouched(true);
+    }
+  }, [value, isTouched, setIsTouched]);
 
   useEffect(() => {
     if (setFieldsValidity) {
@@ -302,11 +309,11 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
         [inputFieldStyles.disabled]: isDisabled,
         [inputFieldStyles.focused]: isFocused,
         [inputFieldStyles.active]: isActive,
-        [inputFieldStyles.emtpy]: value === "",
-        [inputFieldStyles.emptyAndRequired]: value === "" && isRequired,
-        [inputFieldStyles.valid]: isValid,
+        [inputFieldStyles.empty]: value === "",
+        [inputFieldStyles.emptyAndRequired]: isTouched && value === "" && isRequired,
+        [inputFieldStyles.valid]: isTouched && isValid,
         // Show invalidity only if the field is not empty and required
-        [inputFieldStyles.invalid]: !isValid && !(value === "" && isRequired),
+        [inputFieldStyles.invalid]: isTouched && !isValid && !(value === "" && isRequired),
         [inputFieldStyles.select]: props.type === "select",
       })}
       ref={inputFieldRef}
@@ -320,7 +327,7 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
       {prependTemplate}
       {label && (
         <label htmlFor={id} className={cn({ [inputFieldStyles["shift-label"]]: prependIcon })}>
-          {label}
+          {label + (isRequired ? " *" : "")}
         </label>
       )}
       <div className={inputFieldStyles.content}>
@@ -328,7 +335,7 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
         {fileInputTemplate}
         <div className={inputFieldStyles.line}></div>
         <div className={inputFieldStyles.hints}>
-          <div className={inputFieldStyles.message}>{message}</div>
+          <div className={inputFieldStyles.message}>{isTouched && message}</div>
           {maxLength && (
             <div className={inputFieldStyles.counter}>
               {value.length} / {maxLength}

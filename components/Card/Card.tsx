@@ -1,4 +1,12 @@
-import { ReactNode, ReactElement, ComponentType, cloneElement } from "react";
+import {
+  ReactNode,
+  ReactElement,
+  ComponentType,
+  cloneElement,
+  DetailedHTMLProps,
+  HTMLAttributes,
+  CSSProperties,
+} from "react";
 import cardStyles from "./Card.module.scss";
 import cn from "classnames";
 
@@ -9,7 +17,12 @@ interface CardProps {
   mediaClassName?: string;
   mainContentClassName?: string;
   className?: string;
+  style?: CSSProperties;
   children?: ReactNode;
+}
+
+interface CSSWithVars extends CSSProperties {
+  "--card-width"?: string;
 }
 
 export default function Card({
@@ -19,9 +32,11 @@ export default function Card({
   mediaClassName,
   mainContentClassName,
   className,
+  style,
   children,
 }: CardProps) {
-  let styles: Record<string, string> = {};
+  let styles: CSSWithVars = {};
+  if (style) styles = style;
   if (cssWidth) styles["--card-width"] = cssWidth;
   const mediaPositionClass = mediaPosition
     ? cardStyles["media" + mediaPosition[0].toUpperCase() + mediaPosition.slice(1)]
@@ -60,20 +75,30 @@ export function CardHeader({ title, subtitle, action, className, centerTitle }: 
   );
 }
 
-interface CardContentProps {
+interface CardContentProps
+  extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   className?: string;
   children?: ReactNode;
 }
 
-export function CardContent({ className, children }: CardContentProps) {
-  return <div className={cn(cardStyles.cardContent, className)}>{children}</div>;
+export function CardContent({ className, children, ...otherProps }: CardContentProps) {
+  return (
+    <div className={cn(cardStyles.cardContent, className)} {...otherProps}>
+      {children}
+    </div>
+  );
 }
 
-interface CardActionsProps {
+interface CardActionsProps
+  extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   className?: string;
   children?: ReactNode;
 }
 
-export function CardActions({ className, children }: CardContentProps) {
-  return <div className={cn(cardStyles.cardActions, className)}>{children}</div>;
+export function CardActions({ className, children, ...otherProps }: CardContentProps) {
+  return (
+    <div className={cn(cardStyles.cardActions, className)} {...otherProps}>
+      {children}
+    </div>
+  );
 }

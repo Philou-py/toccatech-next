@@ -1,6 +1,5 @@
 * {
-  box-sizing: border-box;
-
+  box-sizing: inherit;
   // Enlever l'arrière-plan bleu lors d'un clic sur un bouton sur mobiles :
   // https://stackoverflow.com/questions/45049873/how-to-remove-the-blue-background-of-button-on-mobile
   -webkit-tap-highlight-color: transparent;
@@ -9,6 +8,7 @@
 html {
   // Cette propriété permet de rendre le scrolling doux lors du clic sur un lien faisant référence à une autre endroit dans la page grâce à un id
   scroll-behavior: smooth;
+  box-sizing: border-box;
 }
 
 body {

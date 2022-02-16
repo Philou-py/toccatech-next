@@ -10,7 +10,7 @@ type ValidationRules = ((inputValue: string) => true | string)[];
 
 export default function useValidation(
   inputValue: string,
-  inputType: "text" | "email" | "password" | "date" | "textarea" | "select" | "file",
+  inputType: "text" | "email" | "password" | "date" | "textarea" | "select" | "file" | "url",
   { isRequired, maxLength, minLength }: BasicValidation,
   customValidationRules: ValidationRules
 ) {
@@ -28,23 +28,34 @@ export default function useValidation(
     } else if (minLength && inputValue.length < minLength) {
       setMessage(`Longueur min: ${minLength}`);
     } else {
-      // Basic validation was passed - now, check custom validation rules
-      let customValidationPassed = true;
-      customValidationRules.every((rule) => {
-        const result = rule(inputValue);
-        if (result !== true) {
-          // Rule failed, so stop iteration
-          setMessage(result);
-          customValidationPassed = false;
-          return false;
-        } else return true;
-      });
-      if (customValidationPassed) {
-        // Default validation (email)
-        const emailRegex = /^[a-z]+(\.[a-z]+)?@[a-z]+\.[a-z]+(\.[a-z]+)?$/;
-        if (inputType === "email" && !emailRegex.test(inputValue)) {
-          setMessage("Invalid email");
-        } else {
+      // Default validation (email)
+      let defaultValidationPassed = true;
+      const emailRegex = /^[a-z]+(\.[a-z]+)?@[a-z]+\.[a-z]+(\.[a-z]+)?$/;
+      if (inputType === "email" && !emailRegex.test(inputValue)) {
+        setMessage("Invalid email");
+        defaultValidationPassed = false;
+      }
+
+      const URLRegex = /^(http|https):\/\/[^ "]+$/;
+      if (inputType === "url" && !URLRegex.test(inputValue)) {
+        setMessage("Invalid URL");
+        defaultValidationPassed = false;
+      }
+
+      if (defaultValidationPassed) {
+        // Basic validation was passed - now, check custom validation rules
+        let customValidationPassed = true;
+        customValidationRules.every((rule) => {
+          const result = rule(inputValue);
+          if (result !== true) {
+            // Rule failed, so stop iteration
+            setMessage(result);
+            customValidationPassed = false;
+            return false;
+          } else return true;
+        });
+
+        if (customValidationPassed) {
           // All validations passed - the input field is valid
           setIsValid(true);
           setMessage("");

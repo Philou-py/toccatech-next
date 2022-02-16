@@ -59,6 +59,7 @@ $zFile: 3;
   display: flex;
   padding: 16px 0 2px;
   font-size: 18px;
+  box-sizing: border-box;
 
   .prepend {
     // Taille fixe pour l'icône (l'icône a la forme d'un carré de 24px de côté)
@@ -69,7 +70,7 @@ $zFile: 3;
     flex-shrink: 0;
 
     .prependIcon {
-      color: rgba(black, 0.6);
+      color: rgba(black, 0.7);
       transition: all 0.3s;
     }
   }
@@ -90,7 +91,7 @@ $zFile: 3;
     left: 0;
     bottom: 0;
     cursor: pointer !important;
-    width: 100%;
+    width: calc(100% - var(--offset-width));
     margin: 0;
     padding: 0;
     opacity: 0;
@@ -106,13 +107,13 @@ $zFile: 3;
     z-index: $zTextInput;
     border: none;
     background-color: transparent;
-    // La fonction 'rgba', dans ce cas, permet de donner une opacité de 0.6 à la couleur black.
-    border-bottom: 1px solid rgba(black, 0.6);
+    // La fonction 'rgba', dans ce cas, permet de donner une opacité de 0.7 à la couleur black.
+    border-bottom: 1px solid rgba(black, 0.7);
     border-radius: 0;
     font-size: 1em;
     outline: 0;
     padding: 1px 0 5px;
-    transition: border-color 0.3s linear;
+    transition: border-color 0.3s linear, background-color 0.2s linear;
 
     &:disabled {
       color: initial;
@@ -134,7 +135,7 @@ $zFile: 3;
     z-index: $zLabel;
     top: 17px;
     left: 0;
-    color: rgba(black, 0.6);
+    color: rgba(black, 0.7);
     // Avoid label overflow
     max-width: calc(100% - var(--offset-width));
     // Transition pour les propriétés 'top', 'color' et 'font-size'
@@ -151,14 +152,14 @@ $zFile: 3;
     width: 0;
     position: absolute;
     bottom: 15px;
-    background-color: rgba(black, 0.6);
+    background-color: rgba(black, 0.7);
     transition: all 0.3s;
   }
 
   .selectionContainer {
     @include setEllipsisOverflow();
     position: relative;
-    border-bottom: 1px solid rgba(black, 0.6);
+    border-bottom: 1px solid rgba(black, 0.7);
     padding: 1px 0 5px;
     height: 30px;
     transition: border-color 0.3s linear;
