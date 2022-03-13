@@ -13,9 +13,11 @@ import {
   Spacer,
 } from "../../../components";
 import cn from "classnames";
+import client from "../../../apollo-client";
+import { gql } from "@apollo/client";
 
 interface RawComposer {
-  _id: string;
+  id: string;
   name: string;
   birthDate: string;
   deathDate: string;
@@ -36,15 +38,25 @@ type Composer = Modify<
 >;
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const url = `https://mongodb-server.toccatech.com/db/findOneWithId?collectionName=composers&docId=${
-    params!.composerId
-  }`;
-  const response = await fetch(url);
-  const composer = (await response.json()).data;
+  const { data: composer } = await client.query({
+    query: gql`
+      query {
+        getComposer(id: "${params!.composerId}") {
+          id
+          name
+          birthDate
+          deathDate
+          photoURL
+          biography
+          musicalStyles
+        }
+      }
+    `,
+  });
 
   return {
     props: {
-      rawComposer: composer,
+      rawComposer: composer.getComposer,
     },
   };
 };
@@ -58,10 +70,15 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
       birthDate: new Date(rawComposer.birthDate),
       deathDate: isDead ? new Date(rawComposer.deathDate) : undefined,
     };
+    const yearInMiliseconds = 1000 * 60 * 60 * 24 * 365;
     if (!isDead) {
       const now = new Date();
-      const yearInMiliseconds = 1000 * 60 * 60 * 24 * 365;
       const age = (now.getTime() - parsedComposer.birthDate!.getTime()) / yearInMiliseconds;
+      parsedComposer.age = Math.floor(age);
+    } else {
+      const age =
+        (parsedComposer.deathDate!.getTime() - parsedComposer.birthDate!.getTime()) /
+        yearInMiliseconds;
       parsedComposer.age = Math.floor(age);
     }
     return { ...rawComposer, ...parsedComposer } as Composer;
@@ -72,13 +89,14 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
       <Card className="composerDetails">
         <CardHeader
           title={
-            <div className="heading">
-              <h1>{composer.name}</h1>
-              <div className="photoContainer">
+            <div className={cn("heading", cbp)}>
+              <h1 className={cbp}>{composer.name}</h1>
+              <div className={cn("photoContainer", cbp)}>
                 <Image
                   src={composer.photoURL}
                   layout="fill"
                   objectFit="cover"
+                  objectPosition="top"
                   alt="Composer Avatar"
                 />
               </div>
@@ -87,13 +105,13 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
         />
         <CardContent className={cn("composerInfo", cbp)}>
           <div>
-            <h3>Carte d&rsquo;identité</h3>
+            <h3 className={cbp}>Carte d&rsquo;identité</h3>
             <ul>
               <li>Date de naissance : {composer.birthDate.toLocaleDateString()}</li>
               {composer.deathDate && (
                 <li>
-                  Date de décès : {composer.deathDate.toLocaleDateString()} (mort à {composer.age}{" "}
-                  ans)
+                  Date de décès : {composer.deathDate.toLocaleDateString()} (décédé(e) à{" "}
+                  {composer.age} ans)
                 </li>
               )}
               {!composer.deathDate && <li>Âge : {composer.age}</li>}
@@ -101,13 +119,13 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
             </ul>
           </div>
           <div>
-            <h3>Biographie</h3>
-            <p style={{ textAlign: "justify" }}>{composer.biography}</p>
+            <h3 className={cbp}>Biographie</h3>
+            <p className="biography">{composer.biography}</p>
           </div>
         </CardContent>
         <CardActions>
           <Spacer />
-          <Link href={`/encyclopaedia/${composer._id}/modify`} passHref>
+          <Link href={`/encyclopaedia/${composer.id}/update`} passHref>
             <a>
               <Button className="indigo darken-1">Envie de contribuer ?</Button>
             </a>

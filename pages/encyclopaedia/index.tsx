@@ -4,11 +4,12 @@ import Image from "next/image";
 import { Container, Button, Card, CardHeader, CardContent, CardActions } from "../../components";
 import { BreakpointsContext } from "../../contexts/BreakpointsContext";
 import cn from "classnames";
-import dbSocket from "../../helpers/db-socket";
 import { GetServerSideProps } from "next";
+import client from "../../apollo-client";
+import { gql } from "@apollo/client";
 
 interface RawComposer {
-  _id: string;
+  id: string;
   name: string;
   birthDate: string;
   deathDate: string;
@@ -29,31 +30,49 @@ type Composer = Modify<
 >;
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const url = "https://mongodb-server.toccatech.com/db/find?collectionName=composers";
-  const response = await fetch(url);
-  const composers: RawComposer[] = (await response.json()).data;
+  const { data: composers } = await client.query({
+    query: gql`
+      query {
+        queryComposer {
+          id
+          name
+          birthDate
+          deathDate
+          photoURL
+          biography
+          musicalStyles
+        }
+      }
+    `,
+  });
 
   return {
     props: {
-      rawComposers: composers,
+      rawComposers: composers.queryComposer,
     },
   };
 };
 
 export default function Encyclopaedia({ rawComposers }: { rawComposers: RawComposer[] }) {
+  console.log(rawComposers);
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
+
   const [composers, setComposers] = useState(() => {
-    console.log("Composers initialised!");
+    // console.log("Composers initialised!");
     return rawComposers.map((rawComposer) => {
       const isDead = !!rawComposer.deathDate;
       let parsedData: Partial<Composer> = {
         birthDate: new Date(rawComposer.birthDate),
         deathDate: isDead ? new Date(rawComposer.deathDate) : undefined,
       };
+      const yearInMiliseconds = 1000 * 60 * 60 * 24 * 365;
       if (!isDead) {
         const now = new Date();
-        const yearInMiliseconds = 1000 * 60 * 60 * 24 * 365;
         const age = (now.getTime() - parsedData.birthDate!.getTime()) / yearInMiliseconds;
+        parsedData.age = Math.floor(age);
+      } else {
+        const age =
+          (parsedData.deathDate!.getTime() - parsedData.birthDate!.getTime()) / yearInMiliseconds;
         parsedData.age = Math.floor(age);
       }
       return { ...rawComposer, ...parsedData };
@@ -64,12 +83,16 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
     <Container narrow className="encyclopaedia">
       <div className={cn("heading", cbp)}>
         <h1 className="pageTitle">Encyclopédie</h1>
-        <Button className="blue-grey newComposer">Nouveau Compositeur</Button>
+        <Link href="/encyclopaedia/new-composer" passHref>
+          <a>
+            <Button className="blue-grey newComposer">Nouveau Compositeur</Button>
+          </a>
+        </Link>
       </div>
       <div className={cn("composersGrid", cbp)}>
         {composers.map((composer) => (
           <Card
-            key={composer._id}
+            key={composer.id}
             media={
               <Image
                 src={composer.photoURL}
@@ -90,8 +113,8 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
                 <li>Date de naissance : {composer.birthDate.toLocaleDateString()}</li>
                 {composer.deathDate && (
                   <li>
-                    Date de décès : {composer.deathDate.toLocaleDateString()} (mort à {composer.age}{" "}
-                    ans)
+                    Date de décès : {composer.deathDate.toLocaleDateString()} (décédé(e) à{" "}
+                    {composer.age} ans)
                   </li>
                 )}
                 {!composer.deathDate && <li>Âge : {composer.age} ans</li>}
@@ -99,7 +122,7 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
               </ul>
             </CardContent>
             <CardActions>
-              <Link href={`/encyclopaedia/${composer._id}`} passHref>
+              <Link href={`/encyclopaedia/${composer.id}`} passHref>
                 <a style={{ width: "100%" }}>
                   <Button className="indigo darken-1" isFullWidth>
                     En savoir plus...

@@ -14,8 +14,9 @@ import Button from "../components/Button";
 import Modal from "../components/Modal";
 import Link from "next/link";
 import { useCallback, useMemo, useState, useEffect } from "react";
-import dbSocket from "../helpers/db-socket";
 import { CSSTransition } from "react-transition-group";
+import { ApolloProvider } from "@apollo/client";
+import client from "../apollo-client";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const breakpointsList = useMemo(
@@ -48,72 +49,74 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <BreakpointsProvider breakpointsList={breakpointsList}>
-      <NavBar
-        title="Toccatech"
-        logoPath="https://toccatech.com/img/logo.fa766f7b.png"
-        navLinks={[
-          ["Encyclopédie", "/encyclopaedia"],
-          ["Ma Partothèque", "/demo"],
-          ["Déconnexion", connectUser],
-        ]}
-        userAvatar={
-          <Avatar
-            type="image-avatar"
-            borderColour="#33c9ff"
-            src="https://file-server.toccatech.com/files/620d31e0219aa20013c63653"
-            size={50}
-          />
-        }
-        centerNavSmScreens
-        onNavIconClick={handleNavIconClick}
-      />
-      <SideBar
-        showSideBar={sideBarOpen}
-        onClose={handleBgClick}
-        title="Toccatech"
-        userAvatar={
-          <Avatar
-            type="image-avatar"
-            borderColour="#33c9ff"
-            src="https://file-server.toccatech.com/files/620d31e0219aa20013c63653"
-            size={150}
-            centerAvatar
-          />
-        }
-        navLinks={[
-          ["Encyclopédie", "/encyclopaedia"],
-          ["Ma Partothèque", "/demo", true],
-        ]}
-        authButton={
-          <Button
-            className="blue-grey"
-            onClick={() => {
-              console.log("hello");
-            }}
-          >
-            Connexion
-          </Button>
-        }
-      />
-      <Modal showModal={modalOpen} closeFunc={setModalOpen}>
-        <Card cssWidth="clamp(300px, 30%, 400px)">
-          <CardHeader title={<h3>Hello, world!</h3>} />
-          <CardContent>
-            <p>This is my first modal!</p>
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia nesciunt sapiente
-              quasi quas, aliquam ea autem dolorem a, earum molestiae ullam vel atque animi totam
-              repudiandae error mollitia magnam distinctio.
-            </p>
-          </CardContent>
-        </Card>
-      </Modal>
-      <div style={{ paddingTop: 60, paddingBottom: 20, overflow: "hidden" }}>
-        <Component {...pageProps} />
-      </div>
-      <Footer />
-    </BreakpointsProvider>
+    <ApolloProvider client={client}>
+      <BreakpointsProvider breakpointsList={breakpointsList}>
+        <NavBar
+          title="Toccatech"
+          logoPath="https://toccatech.com/img/logo.fa766f7b.png"
+          navLinks={[
+            ["Encyclopédie", "/encyclopaedia"],
+            ["Ma Partothèque", "/demo"],
+            ["Déconnexion", connectUser],
+          ]}
+          userAvatar={
+            <Avatar
+              type="image-avatar"
+              borderColour="#33c9ff"
+              src="https://file-server.toccatech.com/files/620d31e0219aa20013c63653"
+              size={50}
+            />
+          }
+          centerNavSmScreens
+          onNavIconClick={handleNavIconClick}
+        />
+        <SideBar
+          showSideBar={sideBarOpen}
+          onClose={handleBgClick}
+          title="Toccatech"
+          userAvatar={
+            <Avatar
+              type="image-avatar"
+              borderColour="#33c9ff"
+              src="https://file-server.toccatech.com/files/620d31e0219aa20013c63653"
+              size={150}
+              centerAvatar
+            />
+          }
+          navLinks={[
+            ["Encyclopédie", "/encyclopaedia"],
+            ["Ma Partothèque", "/demo", true],
+          ]}
+          authButton={
+            <Button
+              className="blue-grey"
+              onClick={() => {
+                console.log("hello");
+              }}
+            >
+              Connexion
+            </Button>
+          }
+        />
+        <Modal showModal={modalOpen} closeFunc={setModalOpen}>
+          <Card cssWidth="clamp(300px, 30%, 400px)">
+            <CardHeader title={<h3>Hello, world!</h3>} />
+            <CardContent>
+              <p>This is my first modal!</p>
+              <p>
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia nesciunt sapiente
+                quasi quas, aliquam ea autem dolorem a, earum molestiae ullam vel atque animi totam
+                repudiandae error mollitia magnam distinctio.
+              </p>
+            </CardContent>
+          </Card>
+        </Modal>
+        <div style={{ paddingTop: 60, paddingBottom: 20, overflow: "hidden" }}>
+          <Component {...pageProps} />
+        </div>
+        <Footer />
+      </BreakpointsProvider>
+    </ApolloProvider>
   );
 }
 
