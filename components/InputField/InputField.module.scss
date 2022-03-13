@@ -90,8 +90,8 @@ $zFile: 3;
     right: 0;
     left: 0;
     bottom: 0;
+    width: 100%;
     cursor: pointer !important;
-    width: calc(100% - var(--offset-width));
     margin: 0;
     padding: 0;
     opacity: 0;
@@ -115,9 +115,9 @@ $zFile: 3;
     padding: 1px 0 5px;
     transition: border-color 0.3s linear, background-color 0.2s linear;
 
-    &:disabled {
-      color: initial;
-    }
+    // &:disabled {
+    //   color: initial;
+    // }
 
     &::placeholder {
       color: rgba(black, 0.5);

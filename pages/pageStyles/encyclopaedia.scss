@@ -6,7 +6,7 @@
     margin: 20px 0;
 
     .newComposer {
-      margin-left: 4%;
+      margin-left: 15%;
     }
 
     &.xs {
@@ -14,6 +14,10 @@
 
       h1 {
         order: 2;
+      }
+
+      .newComposer {
+        margin-left: 0;
       }
     }
   }
@@ -39,7 +43,7 @@
 
       .composerMedia {
         width: 100%;
-        height: 250px;
+        height: 220px;
       }
     }
 

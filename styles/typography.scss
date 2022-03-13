@@ -29,12 +29,22 @@ h2 {
   font-size: 2.75rem;
   font-weight: 500;
   margin: 0;
+
+  &.xs,
+  &.sm {
+    font-size: 2.3rem;
+  }
 }
 
 h3 {
   font-size: 2.25rem;
   font-weight: 500;
   margin: 0;
+
+  &.xs,
+  &.sm {
+    font-size: 2.1rem;
+  }
 }
 
 h4 {

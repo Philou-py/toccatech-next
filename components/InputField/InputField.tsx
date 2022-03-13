@@ -303,6 +303,8 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
     );
   }
 
+  // console.log(`Input Field with label ${label} rendered!`);
+
   return (
     <div
       className={cn(inputFieldStyles.inputField, className, {

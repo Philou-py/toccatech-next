@@ -23,6 +23,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    h1 {
+      text-align: center;
+    }
+
+    &.xs {
+      flex-direction: column;
+
+      h1 {
+        order: 2;
+      }
+    }
   }
 
   .photoContainer {
@@ -30,6 +42,11 @@
     position: relative;
     height: 150px;
     width: 110px;
+
+    &.xs {
+      margin-left: 0;
+      margin-bottom: 4%;
+    }
 
     img {
       border-radius: 10px;
@@ -39,6 +56,11 @@
   .composerInfo {
     display: flex;
     color: black;
+
+    .biography {
+      text-align: justify;
+      white-space: pre-line;
+    }
 
     ul {
       padding-left: 0px;

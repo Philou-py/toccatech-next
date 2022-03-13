@@ -43,6 +43,11 @@
     height: 150px;
     width: 110px;
 
+    &.xs {
+      margin-left: 0;
+      margin-bottom: 4%;
+    }
+
     img {
       border-radius: 10px;
     }
