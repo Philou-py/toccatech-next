@@ -1,4 +1,4 @@
-import { ReactElement, useContext } from "react";
+import { ReactElement, useContext, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import navBarStyles from "./NavBar.module.scss";
@@ -6,6 +6,7 @@ import cn from "classnames";
 import Container from "../Container";
 import Button from "../Button";
 import { BreakpointsContext } from "../../contexts/BreakpointsContext";
+import { AuthContext } from "../../contexts/AuthContext";
 
 interface NavBarProps {
   logoPath: string;
@@ -16,6 +17,7 @@ interface NavBarProps {
   onNavIconClick?: () => void;
   fixed?: boolean;
   flat?: boolean;
+  handleAuth?: boolean;
 }
 
 export default function NavBar({
@@ -27,14 +29,24 @@ export default function NavBar({
   onNavIconClick,
   fixed = true,
   flat,
+  handleAuth,
 }: NavBarProps) {
   const { currentBreakpoint } = useContext(BreakpointsContext);
+  const { setModalOpen, isAuthenticated, signOut } = useContext(AuthContext);
+
+  const signInSignOut = useCallback(() => {
+    if (isAuthenticated) {
+      signOut();
+    } else {
+      setModalOpen(true);
+    }
+  }, [setModalOpen, isAuthenticated, signOut]);
 
   const navMenu = (
     <ul className={navBarStyles.navMenu}>
-      {navLinks.map(([name, action, isDisabled]) => {
+      {navLinks.map(([name, action, requiresAuth]) => {
         if (typeof action === "string") {
-          if (!isDisabled) {
+          if (!(requiresAuth && !isAuthenticated)) {
             return (
               <Link href={action} passHref key={name}>
                 <li>{name}</li>
@@ -50,8 +62,8 @@ export default function NavBar({
         } else {
           return (
             <li
-              className={cn({ [navBarStyles.disabled]: isDisabled })}
-              onClick={!isDisabled ? action : undefined}
+              className={cn({ [navBarStyles.disabled]: requiresAuth })}
+              onClick={!(requiresAuth && !isAuthenticated) ? action : undefined}
               key={name}
             >
               {name}
@@ -59,6 +71,11 @@ export default function NavBar({
           );
         }
       })}
+      {handleAuth && (
+        <li onClick={signInSignOut} key={"sign-in-sign-out"}>
+          {isAuthenticated ? "Déconnexion" : "Connexion"}
+        </li>
+      )}
     </ul>
   );
 

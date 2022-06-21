@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function useForm<T extends Record<string, string>>(initialData: T) {
   const [data, setData] = useState<typeof initialData>(initialData);

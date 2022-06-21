@@ -21,6 +21,11 @@ a {
   overflow-wrap: break-word;
 }
 
+a:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .link {
   text-decoration: underline solid;
   cursor: pointer;

@@ -1,8 +1,18 @@
-import { cloneElement, ReactElement, useCallback, useRef, MouseEvent, memo } from "react";
+import {
+  cloneElement,
+  ReactElement,
+  useCallback,
+  useContext,
+  useRef,
+  MouseEvent,
+  memo,
+} from "react";
 import Link from "next/link";
 import sideBarStyles from "./SideBar.module.scss";
 import cn from "classnames";
 import { CSSTransition } from "react-transition-group";
+import { AuthContext } from "../../contexts/AuthContext";
+import Button from "../Button";
 
 interface SideBarProps {
   showSideBar: boolean;
@@ -10,10 +20,21 @@ interface SideBarProps {
   userAvatar?: ReactElement;
   navLinks: [string, string, boolean?][];
   authButton?: ReactElement;
+  handleAuth?: boolean;
   onClose: () => void;
 }
 
-function SideBar({ showSideBar, title, userAvatar, navLinks, authButton, onClose }: SideBarProps) {
+function SideBar({
+  showSideBar,
+  title,
+  userAvatar,
+  navLinks,
+  authButton,
+  handleAuth,
+  onClose,
+}: SideBarProps) {
+  const { isAuthenticated, setModalOpen, signOut } = useContext(AuthContext);
+
   const bgRef = useRef(null);
   const handleSideBarClose = useCallback(
     (event: MouseEvent) => {
@@ -25,6 +46,14 @@ function SideBar({ showSideBar, title, userAvatar, navLinks, authButton, onClose
     },
     [onClose]
   );
+
+  const signInSignOut = useCallback(() => {
+    if (isAuthenticated) {
+      signOut();
+    } else {
+      setModalOpen(true);
+    }
+  }, [setModalOpen, isAuthenticated, signOut]);
 
   return (
     <div className={sideBarStyles.sidebar}>
@@ -68,10 +97,14 @@ function SideBar({ showSideBar, title, userAvatar, navLinks, authButton, onClose
                   </Link>
                 ))}
               </ul>
-              {authButton &&
-                cloneElement(authButton, {
-                  className: cn(sideBarStyles.authButton, authButton.props.className),
-                })}
+              {handleAuth && (
+                <Button
+                  className={cn("blue-grey", sideBarStyles.authButton)}
+                  onClick={signInSignOut}
+                >
+                  {isAuthenticated ? "Déconnexion" : "Connexion"}
+                </Button>
+              )}
             </div>
           </CSSTransition>
         </div>

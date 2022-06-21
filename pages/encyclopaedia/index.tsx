@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Container, Button, Card, CardHeader, CardContent, CardActions } from "../../components";
@@ -54,7 +54,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 export default function Encyclopaedia({ rawComposers }: { rawComposers: RawComposer[] }) {
-  console.log(rawComposers);
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
 
   const [composers, setComposers] = useState(() => {

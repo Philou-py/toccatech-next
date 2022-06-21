@@ -1,8 +1,10 @@
-import { useCallback, useMemo, useContext, useEffect, useState } from "react";
+import { useCallback, useMemo, useContext, useState } from "react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { BreakpointsContext } from "../../../contexts/BreakpointsContext";
+import { SnackContext } from "../../../contexts/SnackContext";
+import { AuthContext } from "../../../contexts/AuthContext";
 import {
   Container,
   Button,
@@ -10,7 +12,6 @@ import {
   CardHeader,
   CardContent,
   CardActions,
-  Spacer,
   InputField,
   Form,
 } from "../../../components";
@@ -29,6 +30,9 @@ interface RawComposer {
   musicalStyles: string;
   biography: string;
   age: number;
+  contributors: {
+    id: string;
+  }[];
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R;
@@ -52,6 +56,9 @@ const UPDATE_INFO = gql`
         photoURL
         biography
         musicalStyles
+        contributors {
+          id
+        }
       }
     }
   }
@@ -60,8 +67,8 @@ const UPDATE_INFO = gql`
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { data: composer } = await client.query({
     query: gql`
-      query {
-        getComposer(id: "${params!.composerId}") {
+      query ($composerId: ID!) {
+        getComposer(id: $composerId) {
           id
           name
           birthDate
@@ -72,6 +79,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         }
       }
     `,
+    variables: {
+      composerId: params!.composerId,
+    },
   });
 
   return {
@@ -83,6 +93,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
 export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawComposer }) {
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
+  const { haveASnack } = useContext(SnackContext);
+  const { isAuthenticated, currentUser } = useContext(AuthContext);
 
   const router = useRouter();
 
@@ -94,7 +106,7 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
   } = useForm({
     name: rawComposer.name,
     birthDate: rawComposer.birthDate,
-    deathDate: rawComposer.deathDate,
+    deathDate: rawComposer.deathDate !== null ? rawComposer.deathDate : "",
     musicalStyles: rawComposer.musicalStyles,
     photoURL: rawComposer.photoURL,
     photoFile: "",
@@ -116,6 +128,7 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
   }, []);
 
   const uploadImage = useCallback(async () => {
+    // Delete old picture
     if (rawComposer.photoURL.slice(0, 33) == "https://file-server.toccatech.com") {
       try {
         const response = await fetch(rawComposer.photoURL, {
@@ -135,7 +148,7 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
     const formData = new FormData();
     formData.append("file", rawNewComposer.photoFile);
     formData.append("visibility", "unlisted");
-    formData.append("category", "avatars");
+    formData.append("category", "composerAvatars");
     try {
       const response = await fetch("https://file-server.toccatech.com/files/upload", {
         method: "POST",
@@ -185,10 +198,20 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
 
   const [sendUpdateInfo] = useMutation(UPDATE_INFO, {
     onCompleted: () => {
+      haveASnack(
+        "success",
+        <h6>La biographie de {rawNewComposer.name} a bien été mise à jour !</h6>
+      );
       router.push(`/encyclopaedia/${rawComposer.id}`);
     },
     onError: (error) => {
       console.error("Could not update composer info", error);
+      haveASnack("error", <h6>Oh non, une erreur non identifiée est survenue !</h6>);
+    },
+    context: {
+      headers: {
+        "X-Toccatech-Auth": isAuthenticated ? currentUser!.authToken : "",
+      },
     },
   });
 
@@ -354,12 +377,14 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
           <Button
             className="purple"
             isDisabled={
+              !isAuthenticated ||
               !photoSelectDone ||
               !isFormValid ||
               (photoSelectDone && !rawNewComposer.photoURL && !rawNewComposer.photoFile) ||
               isLoading
             }
             onClick={handleSubmit}
+            title={!isAuthenticated ? "Connectez-vous pour contribuer!" : ""}
           >
             {!isLoading ? "Valider" : "Chargement..."}
           </Button>

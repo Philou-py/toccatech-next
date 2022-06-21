@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useContext, useEffect, useState } from "react";
-import { GetServerSideProps } from "next";
+import { useCallback, useMemo, useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { BreakpointsContext } from "../../contexts/BreakpointsContext";
+import { SnackContext } from "../../contexts/SnackContext";
+import { AuthContext } from "../../contexts/AuthContext";
 import {
   Container,
   Button,
@@ -10,14 +11,12 @@ import {
   CardHeader,
   CardContent,
   CardActions,
-  Spacer,
   InputField,
   Form,
 } from "../../components";
 import useForm from "../../components/Form/useForm";
 import cn from "classnames";
 import { useRouter } from "next/router";
-import client from "../../apollo-client";
 import { gql, useMutation } from "@apollo/client";
 
 interface RawComposer {
@@ -59,6 +58,8 @@ const UPDATE_INFO = gql`
 
 export default function NewComposer() {
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
+  const { haveASnack } = useContext(SnackContext);
+  const { isAuthenticated, currentUser } = useContext(AuthContext);
 
   const router = useRouter();
 
@@ -96,7 +97,7 @@ export default function NewComposer() {
     const formData = new FormData();
     formData.append("file", rawNewComposer.photoFile);
     formData.append("visibility", "unlisted");
-    formData.append("category", "avatars");
+    formData.append("category", "composerAvatars");
     try {
       const response = await fetch("https://file-server.toccatech.com/files/upload", {
         method: "POST",
@@ -146,10 +147,20 @@ export default function NewComposer() {
 
   const [sendUpdateInfo] = useMutation(UPDATE_INFO, {
     onCompleted: () => {
+      haveASnack(
+        "success",
+        <h6>La biographie de {rawNewComposer.name} a bien été enregistrée !</h6>
+      );
       router.push(`/encyclopaedia`);
     },
     onError: (error) => {
+      haveASnack("error", <h6>Oh non, une erreur non identifiée est survenue !</h6>);
       console.error("Could not update composer info", error);
+    },
+    context: {
+      headers: {
+        "X-Toccatech-Auth": isAuthenticated ? currentUser!.authToken : "",
+      },
     },
   });
 
@@ -180,11 +191,14 @@ export default function NewComposer() {
             photoURL: newURL,
             biography: rawNewComposer.biography,
             musicalStyles: rawNewComposer.musicalStyles,
+            contributor: {
+              id: currentUser!.userProfileId,
+            },
           },
         ],
       },
     });
-  }, [rawNewComposer, sendUpdateInfo, uploadImage]);
+  }, [rawNewComposer, sendUpdateInfo, uploadImage, currentUser]);
 
   return (
     <Container className="mt-4">
@@ -312,6 +326,7 @@ export default function NewComposer() {
           <Button
             className="purple"
             isDisabled={
+              !isAuthenticated ||
               !photoSelectDone ||
               !isFormValid ||
               (photoSelectDone && !rawNewComposer.photoURL && !rawNewComposer.photoFile) ||

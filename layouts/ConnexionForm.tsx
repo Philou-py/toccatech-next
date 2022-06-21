@@ -1,4 +1,6 @@
 import { memo, useCallback, useContext, useState } from "react";
+import { AuthContext } from "../contexts/AuthContext";
+import { SnackContext } from "../contexts/SnackContext";
 import {
   Card,
   CardHeader,
@@ -13,41 +15,82 @@ import useForm from "../components/Form/useForm";
 
 interface ConnexionFormProps {
   noAccountFunc?: () => void;
+  onCompleted?: () => void;
 }
 
-function ConnexionForm({ noAccountFunc }: ConnexionFormProps) {
+function ConnexionForm({ noAccountFunc, onCompleted }: ConnexionFormProps) {
+  const { setCurrentUser, setIsAuthenticated } = useContext(AuthContext);
+  const { haveASnack } = useContext(SnackContext);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { isValid, register } = useForm({
-    email: "",
+  const {
+    data: user,
+    isValid,
+    register,
+  } = useForm({
+    username: "",
     pwd: "",
   });
 
   const buttonTitle = !isValid ? "Le formulaire n'est pas valide !" : undefined;
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     console.log("Connection...");
-  }, []);
+    try {
+      const response = await fetch("http://surface-laptop3-philippe:3003/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          username: user.username,
+          password: user.pwd,
+        }),
+      });
+      const result = await response.json();
+      if (response.status == 400) {
+        console.log("Erreur de validation !");
+        haveASnack("error", <h6>Données saisies invalides !</h6>);
+      } else if (response.status == 404) {
+        console.log("Nom d'utilisateur inconnu !");
+        haveASnack("error", <h6>Nom d&rsquo;utilisateur inconnu !</h6>);
+      } else if (response.status == 403) {
+        console.log("Mot de passe incorrect !");
+        haveASnack("error", <h6>Mot de passe incorrect !</h6>);
+      } else if (response.status == 500) {
+        console.log("Erreur serveur !");
+        haveASnack("error", <h6>Oh non, une erreur non identifiée est survenue !</h6>);
+      } else if (response.status == 200) {
+        console.log("Succès !");
+        haveASnack("success", <h6>Content de vous revoir, {result.user.username} !</h6>);
+        setCurrentUser(result.user);
+        setIsAuthenticated(true);
+        if (onCompleted) onCompleted();
+      }
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+      haveASnack("error", <h6>Oh non, le serveur d&rsquo;authentification est inaccessible !</h6>);
+    }
+  }, [user, haveASnack, setCurrentUser, setIsAuthenticated, onCompleted]);
 
   return (
-    <Card>
+    <Card cssWidth={noAccountFunc ? "clamp(300px, 40%, 600px)" : ""}>
       <CardHeader title={<h3>Connexion</h3>} centerTitle />
       <CardContent>
         <Form>
           <InputField
-            type="email"
-            label="Adresse email"
+            type="text"
+            label="Nom d&rsquo;utilisateur"
             prependIcon="account_circle"
-            placeholder="vous@domaine.tld"
             fullWidth
             isRequired
-            {...register("email")}
+            {...register("username")}
           />
           <InputField
             type="password"
             label="Mot de passe"
             prependIcon="lock"
-            minLength={4}
+            minLength={6}
             fullWidth
             isRequired
             {...register("pwd")}

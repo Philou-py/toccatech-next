@@ -4,6 +4,7 @@ import {
   FormEvent,
   useEffect,
   useRef,
+  useId,
   CSSProperties,
   useCallback,
   memo,
@@ -84,7 +85,7 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
     onPrependIconClick,
   } = props;
 
-  const [id, setId] = useState<string>("input-field");
+  const id = useId();
   const { isValid, message, validateInput } = useValidation(
     value,
     props.type,
@@ -97,22 +98,10 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
   const [computedPlaceholder, setComputedPlaceholder] = useState<string | undefined>(
     placeholder && !label ? placeholder : undefined
   );
-  const [inputUid] = useState(() => "uid-" + Math.round(Math.random() * 100));
   const [selectActive, setSelectActive] = useState(false);
   const inputFieldRef = useRef<HTMLDivElement>(null);
 
   // Watchers
-  // Compute the id of the input for the label
-  useEffect(() => {
-    const genId = (val: string) =>
-      val.toLowerCase().replace(/ /g, "-") + "-" + Math.floor(Math.random() * 100);
-    if (label) {
-      setId(genId(label));
-    } else if (placeholder) {
-      setId(genId(placeholder));
-    }
-  }, [label, placeholder]);
-
   // Set input to always be active when the type is date
   useEffect(() => {
     if (props.type === "date") {
@@ -189,9 +178,9 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
 
   useEffect(() => {
     if (setFieldsValidity) {
-      setFieldsValidity((prev) => ({ ...prev, [inputUid]: isValid }));
+      setFieldsValidity((prev) => ({ ...prev, [id]: isValid }));
     }
-  }, [isValid, setFieldsValidity, inputUid]);
+  }, [isValid, setFieldsValidity, id]);
 
   // Event handlers
   const handleFocus = useCallback(() => {

@@ -1,6 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import Image from "next/image";
 import { BreakpointsContext } from "../contexts/BreakpointsContext";
+import { AuthContext } from "../contexts/AuthContext";
 import { Container, Button, Icon } from "../components";
 import ConnexionForm from "../layouts/ConnexionForm";
 import SignUpForm from "../layouts/SignUpForm";
@@ -16,7 +17,7 @@ import cn from "classnames";
 
 export default function Home() {
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
-  const [currentUser, setCurrentUser] = useState<boolean | undefined>(true);
+  const { isAuthenticated } = useContext(AuthContext);
 
   return (
     <div className={cn("home", cbp)}>
@@ -123,7 +124,7 @@ export default function Home() {
           </div>
         </a>
       </div>
-      {currentUser && (
+      {!isAuthenticated && (
         <div className={cn("authSection", cbp)}>
           <ConnexionForm />
           <SignUpForm />

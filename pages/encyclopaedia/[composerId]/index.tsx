@@ -15,6 +15,7 @@ import {
 import cn from "classnames";
 import client from "../../../apollo-client";
 import { gql } from "@apollo/client";
+import { AuthContext } from "../../../contexts/AuthContext";
 
 interface RawComposer {
   id: string;
@@ -63,6 +64,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
 export default function ComposerDetails({ rawComposer }: { rawComposer: RawComposer }) {
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
+  const { isAuthenticated } = useContext(AuthContext);
 
   const [composer] = useState(() => {
     const isDead = !!rawComposer.deathDate;
@@ -125,11 +127,24 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
         </CardContent>
         <CardActions>
           <Spacer />
-          <Link href={`/encyclopaedia/${composer.id}/update`} passHref>
-            <a>
-              <Button className="indigo darken-1">Envie de contribuer ?</Button>
-            </a>
-          </Link>
+          {isAuthenticated && (
+            <Link href={`/encyclopaedia/${composer.id}/update`} passHref>
+              <a>
+                <Button className="indigo darken-1" isDisabled={!isAuthenticated}>
+                  Envie de contribuer ?
+                </Button>
+              </a>
+            </Link>
+          )}
+          {!isAuthenticated && (
+            <Button
+              className="indigo darken-1"
+              isDisabled={!isAuthenticated}
+              title="Connectez-vous pour contribuer !"
+            >
+              Envie de contribuer ?
+            </Button>
+          )}
         </CardActions>
       </Card>
     </Container>
