@@ -8,12 +8,12 @@ import {
   useCallback,
   useContext,
 } from "react";
-import Modal from "../components/Modal";
+import { SnackContext } from "./SnackContext";
+import { Modal } from "../components";
 import ConnexionForm from "../layouts/ConnexionForm";
 import SignUpForm from "../layouts/SignUpForm";
 import client from "../apollo-client";
 import { gql } from "@apollo/client";
-import { SnackContext } from "./SnackContext";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -105,7 +105,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const signOut = useCallback(async () => {
     console.log("Déconnexion...");
     try {
-      const response = await fetch("http://surface-laptop3-philippe:3003/signout", {
+      const response = await fetch("https://auth-server.toccatech.com/signout", {
         credentials: "include",
       });
       if (response.status == 200) {

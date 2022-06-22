@@ -55,9 +55,18 @@ button.btn {
     margin-left: 8px;
   }
 
-  &.flat {
+  &.outlined {
+    border: 1px solid;
+    background-color: transparent;
+  }
+
+  &.textButton {
     box-shadow: none;
     background-color: transparent;
+  }
+
+  &.flat {
+    box-shadow: none;
   }
 
   &.fullWidth {

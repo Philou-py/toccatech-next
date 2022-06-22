@@ -1,17 +1,15 @@
 import { CSSProperties, memo, MouseEvent } from "react";
 import buttonStyles from "./Button.module.scss";
 import cn from "classnames";
-import Ripple from "../Ripple";
-import Icon from "../Icon";
+import { Ripple, Icon } from "..";
 
 interface ButtonProps {
-  isText?: boolean;
+  isFlat?: boolean;
+  type?: "raised" | "outlined" | "icon" | "text";
   isDisabled?: boolean;
-  disableIfInvalidForm?: boolean;
   isFullWidth?: boolean;
   title?: string;
   size?: "large" | "x-large";
-  isIconButton?: boolean;
   iconName?: string;
   prependIcon?: string;
   trailingIcon?: string;
@@ -34,9 +32,8 @@ function Button(props: ButtonProps) {
     </>
   );
 
-  const buttonContent = props.isIconButton
-    ? makeIconTemplate(props.iconName!, "normal")
-    : childrenWithIcons;
+  const buttonContent =
+    props.type === "icon" ? makeIconTemplate(props.iconName!, "normal") : childrenWithIcons;
 
   return (
     <Ripple>
@@ -47,8 +44,10 @@ function Button(props: ButtonProps) {
           buttonStyles.btn,
           "btn", // For the colours
           {
-            [buttonStyles.icon]: props.isIconButton,
-            [buttonStyles.flat]: props.isText,
+            [buttonStyles.icon]: props.type === "icon",
+            [buttonStyles.textButton]: props.type === "text",
+            [buttonStyles.outlined]: props.type === "outlined",
+            [buttonStyles.flat]: props.isFlat || props.type === "outlined",
             [buttonStyles.disabled]: props.isDisabled,
             [buttonStyles.fullWidth]: props.isFullWidth,
             [buttonStyles[props.size!]]: props.size,

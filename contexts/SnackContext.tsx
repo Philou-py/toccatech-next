@@ -1,14 +1,5 @@
-import {
-  createContext,
-  useState,
-  useEffect,
-  ReactNode,
-  SetStateAction,
-  Dispatch,
-  useCallback,
-  ReactElement,
-} from "react";
-import SnackBar from "../components/SnackBar";
+import { createContext, useState, useEffect, ReactNode, useCallback, ReactElement } from "react";
+import { SnackBar } from "../components";
 
 interface SnackProviderProps {
   children: ReactNode;
