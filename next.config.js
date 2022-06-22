@@ -12,3 +12,7 @@ module.exports = {
     ],
   },
 };
+
+// In version 12.1.6, font optimization does not work for routes using SSR
+// Fixed in next@12.1.7-canary.5
+// https://github.com/vercel/next.js/issues/35835
