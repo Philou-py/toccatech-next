@@ -7,11 +7,11 @@ import {
   CardContent,
   CardActions,
   Form,
+  useForm,
   InputField,
   Button,
   Spacer,
 } from "../components";
-import useForm from "../components/Form/useForm";
 
 interface ConnexionFormProps {
   noAccountFunc?: () => void;
@@ -37,7 +37,7 @@ function ConnexionForm({ noAccountFunc, onCompleted }: ConnexionFormProps) {
   const handleSubmit = useCallback(async () => {
     console.log("Connection...");
     try {
-      const response = await fetch("http://surface-laptop3-philippe:3003/signin", {
+      const response = await fetch("https://auth-server.toccatech.com/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

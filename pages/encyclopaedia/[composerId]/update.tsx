@@ -14,8 +14,8 @@ import {
   CardActions,
   InputField,
   Form,
+  useForm,
 } from "../../../components";
-import useForm from "../../../components/Form/useForm";
 import cn from "classnames";
 import client from "../../../apollo-client";
 import { gql, useMutation } from "@apollo/client";
@@ -116,7 +116,6 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
   const [photoSelectDone, setPhotoSelectDone] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [photoToShow, setPhotoToShow] = useState(rawComposer.photoURL);
-  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
   const [previewSrc, setPreviewSrc] = useState("");
 
   // Avoid uselessly re-rendering the Photo URL Input Field by memoizing the validation rules array
@@ -206,6 +205,7 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
     },
     onError: (error) => {
       console.error("Could not update composer info", error);
+      setIsLoading(false);
       haveASnack("error", <h6>Oh non, une erreur non identifiée est survenue !</h6>);
     },
     context: {
@@ -245,11 +245,14 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
             photoURL: newURL,
             biography: rawNewComposer.biography,
             musicalStyles: rawNewComposer.musicalStyles,
+            contributors: {
+              id: currentUser!.userProfileId,
+            },
           },
         },
       },
     });
-  }, [rawComposer.id, rawNewComposer, sendUpdateInfo, uploadImage]);
+  }, [rawComposer.id, rawNewComposer, sendUpdateInfo, uploadImage, currentUser]);
 
   return (
     <Container className="mt-4">
@@ -370,7 +373,9 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
         <CardActions style={{ justifyContent: "center" }}>
           <Link href={`/encyclopaedia/${rawComposer.id}`} passHref>
             <a>
-              <Button className="red">Annuler</Button>
+              <Button className="red--text" type="outlined">
+                Annuler
+              </Button>
             </a>
           </Link>
           <span style={{ width: "10px", display: "inline-block" }}></span>

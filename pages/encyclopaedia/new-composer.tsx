@@ -13,34 +13,13 @@ import {
   CardActions,
   InputField,
   Form,
+  useForm,
 } from "../../components";
-import useForm from "../../components/Form/useForm";
 import cn from "classnames";
 import { useRouter } from "next/router";
 import { gql, useMutation } from "@apollo/client";
 
-interface RawComposer {
-  id: string;
-  name: string;
-  birthDate: string;
-  deathDate: string;
-  photoURL: string;
-  musicalStyles: string;
-  biography: string;
-  age: number;
-}
-
-type Modify<T, R> = Omit<T, keyof R> & R;
-
-type Composer = Modify<
-  RawComposer,
-  {
-    birthDate: Date;
-    deathDate?: Date;
-  }
->;
-
-const UPDATE_INFO = gql`
+const CREATE_COMPOSER = gql`
   mutation UpdateComposer($newComposerInput: [AddComposerInput!]!) {
     addComposer(input: $newComposerInput) {
       composer {
@@ -81,7 +60,6 @@ export default function NewComposer() {
   const [photoSelectDone, setPhotoSelectDone] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [photoToShow, setPhotoToShow] = useState("");
-  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
   const [previewSrc, setPreviewSrc] = useState("");
 
   // Avoid uselessly re-rendering the Photo URL Input Field by memoizing the validation rules array
@@ -145,7 +123,7 @@ export default function NewComposer() {
     };
   }, [rawNewComposer.photoFile, rawNewComposer.photoURL, setData]);
 
-  const [sendUpdateInfo] = useMutation(UPDATE_INFO, {
+  const [sendCreateComposer] = useMutation(CREATE_COMPOSER, {
     onCompleted: () => {
       haveASnack(
         "success",
@@ -154,8 +132,9 @@ export default function NewComposer() {
       router.push(`/encyclopaedia`);
     },
     onError: (error) => {
+      console.error("Could not create new composer", error);
+      setIsLoading(false);
       haveASnack("error", <h6>Oh non, une erreur non identifiée est survenue !</h6>);
-      console.error("Could not update composer info", error);
     },
     context: {
       headers: {
@@ -181,7 +160,7 @@ export default function NewComposer() {
 
     console.log("Sending composer updated info!");
 
-    sendUpdateInfo({
+    sendCreateComposer({
       variables: {
         newComposerInput: [
           {
@@ -191,14 +170,15 @@ export default function NewComposer() {
             photoURL: newURL,
             biography: rawNewComposer.biography,
             musicalStyles: rawNewComposer.musicalStyles,
-            contributor: {
+            isDeleted: false,
+            contributors: {
               id: currentUser!.userProfileId,
             },
           },
         ],
       },
     });
-  }, [rawNewComposer, sendUpdateInfo, uploadImage, currentUser]);
+  }, [rawNewComposer, sendCreateComposer, uploadImage, currentUser]);
 
   return (
     <Container className="mt-4">
@@ -319,7 +299,9 @@ export default function NewComposer() {
         <CardActions style={{ justifyContent: "center" }}>
           <Link href={`/encyclopaedia`} passHref>
             <a>
-              <Button className="red">Annuler</Button>
+              <Button className="red--text" type="outlined">
+                Annuler
+              </Button>
             </a>
           </Link>
           <span style={{ width: "10px", display: "inline-block" }}></span>

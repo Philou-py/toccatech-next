@@ -15,7 +15,6 @@ interface RawComposer {
   deathDate: string;
   photoURL: string;
   musicalStyles: string;
-  biography: string;
   age: number;
 }
 
@@ -33,13 +32,12 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const { data: composers } = await client.query({
     query: gql`
       query {
-        queryComposer {
+        queryComposer(filter: { isDeleted: false }) {
           id
           name
           birthDate
           deathDate
           photoURL
-          biography
           musicalStyles
         }
       }

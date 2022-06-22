@@ -6,12 +6,11 @@ import {
   CardContent,
   CardActions,
   Form,
+  useForm,
   InputField,
   Button,
   Spacer,
 } from "../components";
-import useForm from "../components/Form/useForm";
-import { gql, useMutation } from "@apollo/client";
 import { AuthContext } from "../contexts/AuthContext";
 
 interface ConnexionFormProps {
@@ -70,7 +69,7 @@ function SignUpForm({ alreadyAnAccountFunc, onCompleted }: ConnexionFormProps) {
       if (result) avatarURL = result;
     }
     try {
-      const response = await fetch("http://surface-laptop3-philippe:3003/signup", {
+      const response = await fetch("https://auth-server.toccatech.com/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

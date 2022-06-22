@@ -1,8 +1,11 @@
-import { useContext, useState } from "react";
+import { useRouter } from "next/router";
+import { useCallback, useContext, useState } from "react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { AuthContext } from "../../../contexts/AuthContext";
 import { BreakpointsContext } from "../../../contexts/BreakpointsContext";
+import { SnackContext } from "../../../contexts/SnackContext";
 import {
   Container,
   Button,
@@ -15,7 +18,6 @@ import {
 import cn from "classnames";
 import client from "../../../apollo-client";
 import { gql } from "@apollo/client";
-import { AuthContext } from "../../../contexts/AuthContext";
 
 interface RawComposer {
   id: string;
@@ -26,6 +28,10 @@ interface RawComposer {
   musicalStyles: string;
   biography: string;
   age: number;
+  contributors: {
+    id: string;
+    username: string;
+  }[];
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R;
@@ -37,6 +43,16 @@ type Composer = Modify<
     deathDate?: Date;
   }
 >;
+
+const MARK_AS_DELETED = `
+  mutation UpdateComposer($updateComposerInput: UpdateComposerInput!) {
+    updateComposer(input: $updateComposerInput) {
+      composer {
+        id
+      }
+    }
+  }
+`;
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { data: composer } = await client.query({
@@ -50,6 +66,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
           photoURL
           biography
           musicalStyles
+          contributors {
+            id
+            username
+          }
         }
       }
     `,
@@ -64,7 +84,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
 export default function ComposerDetails({ rawComposer }: { rawComposer: RawComposer }) {
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, currentUser } = useContext(AuthContext);
+  const { haveASnack } = useContext(SnackContext);
+  const router = useRouter();
 
   const [composer] = useState(() => {
     const isDead = !!rawComposer.deathDate;
@@ -85,6 +107,47 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
     }
     return { ...rawComposer, ...parsedComposer } as Composer;
   });
+
+  const handleDelete = useCallback(async () => {
+    console.log("Deleting composer...");
+    try {
+      const response = await fetch("https://dgraph.toccatech.com/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Toccatech-Auth": currentUser!.authToken },
+        body: JSON.stringify({
+          query: MARK_AS_DELETED,
+          variables: {
+            updateComposerInput: {
+              filter: {
+                id: rawComposer.id,
+              },
+              set: {
+                isDeleted: true,
+                contributors: {
+                  id: currentUser!.userProfileId,
+                },
+              },
+            },
+          },
+        }),
+      });
+      const result = await response.json();
+      console.log(result);
+      if (result.errors || result.data.updateComposer.length == 0) {
+        console.log(result.errors, result.data.updateComposer);
+        haveASnack(
+          "error",
+          <h6>Une erreur est survenue, nous n&rsquo;avons pas pu supprimer ce compositeur !</h6>
+        );
+      } else {
+        haveASnack("success", <h6>Le compositeur {rawComposer.name} a bien été supprimé !</h6>);
+        router.push(`/encyclopaedia`);
+      }
+    } catch (error) {
+      console.log(error);
+      haveASnack("error", <h6>Oh non, une erreur non identifiée est survenue !</h6>);
+    }
+  }, [currentUser, haveASnack, rawComposer, router]);
 
   return (
     <Container className="mt-4">
@@ -118,6 +181,7 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
               )}
               {!composer.deathDate && <li>Âge : {composer.age}</li>}
               <li>Styles musicaux : {composer.musicalStyles}</li>
+              <li>Contributeurs: {JSON.stringify(composer.contributors)}</li>
             </ul>
           </div>
           <div>
@@ -127,6 +191,11 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
         </CardContent>
         <CardActions>
           <Spacer />
+          {isAuthenticated && (
+            <Button className="red--text mr-4" type="outlined" onClick={handleDelete}>
+              Supprimer
+            </Button>
+          )}
           {isAuthenticated && (
             <Link href={`/encyclopaedia/${composer.id}/update`} passHref>
               <a>
