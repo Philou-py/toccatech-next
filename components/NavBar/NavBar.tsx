@@ -96,10 +96,10 @@ export default function NavBar({
           {["xs", "sm"].includes(currentBreakpoint) && (
             <Button
               className={cn(navBarStyles.navIconButton, "white--text")}
-              isIconButton
+              type="icon"
               iconName="menu"
               onClick={onNavIconClick}
-              isText
+              isFlat
             />
           )}
           <Link href="/" passHref>

@@ -181,7 +181,6 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
               )}
               {!composer.deathDate && <li>Âge : {composer.age}</li>}
               <li>Styles musicaux : {composer.musicalStyles}</li>
-              <li>Contributeurs: {JSON.stringify(composer.contributors)}</li>
             </ul>
           </div>
           <div>
