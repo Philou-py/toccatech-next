@@ -1,6 +1,6 @@
 $zLabel: 1;
 $zTextInput: 2;
-$zDropDown: 3;
+$zDropDown: 4;
 $zFile: 3;
 
 // Sass mixin that changes the colour theme according to the validity of the user input
@@ -60,11 +60,12 @@ $zFile: 3;
   padding: 16px 0 2px;
   font-size: 18px;
   box-sizing: border-box;
+  color: black;
 
   .prepend {
     // Taille fixe pour l'icône (l'icône a la forme d'un carré de 24px de côté)
     width: 30px; // 24 + 6 = 30px
-    height: 24px;
+    height: 26px; // 24 + 2 = 26px
     padding: 2px 6px 0 0;
     // L'icône ne doit pas prendre moins de place, même si le composant rétrécit.
     flex-shrink: 0;
@@ -91,14 +92,9 @@ $zFile: 3;
     left: 0;
     bottom: 0;
     width: 100%;
-    cursor: pointer !important;
     margin: 0;
     padding: 0;
     opacity: 0;
-
-    &:disabled {
-      cursor: default !important;
-    }
   }
 
   input,
@@ -222,6 +218,22 @@ $zFile: 3;
     }
   }
 
+  input:disabled {
+    color: black;
+  }
+
+  &.disabled * {
+    color: graytext;
+    cursor: default !important;
+  }
+
+  &.disabled input,
+  &.disabled textarea,
+  &.disabled .selectionContainer {
+    color: graytext;
+    background-color: rgba(#1867c0, 0.2);
+  }
+
   &.active {
     label {
       top: 0px;
@@ -235,11 +247,6 @@ $zFile: 3;
     .line {
       width: 100%;
     }
-  }
-
-  &.disabled input,
-  &.disabled textarea {
-    background-color: rgba(#1867c0, 0.2);
   }
 
   &.valid:not(.empty) {

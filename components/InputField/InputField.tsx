@@ -49,8 +49,7 @@ interface TextAreaProps extends InputFieldProps {
 interface SelectInputProps extends InputFieldProps {
   type: "select";
   setValue: (newValue: string) => void;
-  selectItems: string[];
-  defaultSelection?: string;
+  selectItems: string[][];
   onSelect?: (event: MouseEvent<HTMLLIElement>, item: string) => void;
 }
 
@@ -86,28 +85,29 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
   } = props;
 
   const id = useId();
-  const { isValid, message, validateInput } = useValidation(
+  const { isValid, message } = useValidation(
     value,
     props.type,
     { isRequired, maxLength, minLength },
     customValidationRules
   );
-  const [isActive, setIsActive] = useState<boolean>(props.type === "date" ? true : false);
+  const [isActive, setIsActive] = useState<boolean>(props.type === "date");
   const [isFocused, setIsFocused] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
   const [computedPlaceholder, setComputedPlaceholder] = useState<string | undefined>(
     placeholder && !label ? placeholder : undefined
   );
   const [selectActive, setSelectActive] = useState(false);
+  const [persistentLabel] = useState(props.type === "date");
   const inputFieldRef = useRef<HTMLDivElement>(null);
 
   // Watchers
-  // Set input to always be active when the type is date
+  // Set input to always be active when the label is persistent
   useEffect(() => {
-    if (props.type === "date") {
+    if (persistentLabel) {
       setIsActive(true);
     }
-  }, [props.type]);
+  }, [persistentLabel]);
 
   useEffect(() => {
     if (props.type == "select") {
@@ -116,7 +116,7 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
       let handleClickBody = (event: globalThis.MouseEvent) => {
         let inputField = inputFieldRef.current!;
         let clickedElem = event.target as HTMLElement;
-        if (inputField && inputField.contains(clickedElem) && !selectActive) {
+        if (inputField && inputField.contains(clickedElem) && !selectActive && !isDisabled) {
           setSelectActive(true);
           setIsActive(true);
           setIsFocused(true);
@@ -127,13 +127,7 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
       };
       document.addEventListener("click", handleClickBody);
 
-      // Define default selection of the select input
-      if (props.defaultSelection) {
-        // See: https://github.com/facebook/react/issues/16265#issuecomment-517518539
-        props.setValue.call(undefined, props.defaultSelection);
-      } else if (!label) {
-        props.setValue.call(undefined, props.selectItems[0]);
-      }
+      // props.setValue.call(undefined, props.selectItems[0][1]);
 
       // Remove event listener on unmount
       return () => {
@@ -142,16 +136,16 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
       };
     }
     // eslint-disable-next-line
-  }, [props.type, props.setValue]);
+  }, [props.type, props.isDisabled]);
 
   // Lift or reset label according to the content of the input field
   useEffect(() => {
     if (value) {
       setIsActive(true);
-    } else if (!isFocused && props.type !== "date") {
+    } else if (!isFocused && !persistentLabel) {
       setIsActive(false);
     }
-  }, [value, isFocused, props.type]);
+  }, [value, isFocused, persistentLabel]);
 
   // Set or remove the computed placeholder accordingly
   useEffect(() => {
@@ -189,13 +183,13 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
   }, []);
 
   const handleBlur = useCallback(() => {
-    if (value && props.type !== "date") {
+    if (value && !persistentLabel) {
       setIsActive(false);
       setIsFocused(false);
     } else {
       setIsFocused(false);
     }
-  }, [value, props.type]);
+  }, [value, persistentLabel]);
 
   const handleInput = useCallback(
     (event: FormEvent) => {
@@ -211,8 +205,6 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
     },
     [props.type, props.setValue]
   );
-
-  const handleFileInput = useCallback((event: FormEvent<HTMLInputElement>) => {}, []);
 
   // Templates
   const prependTemplate = prependIcon ? (
@@ -243,24 +235,34 @@ function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | F
       />
     );
   } else if (props.type === "select") {
+    let valueIndex;
+    if (value !== "") {
+      valueIndex = 0;
+      while (value !== props.selectItems[valueIndex][1]) {
+        valueIndex++;
+      }
+    }
+
     inputTemplate = (
       <>
-        <div className={inputFieldStyles.selectionContainer}>{isActive && value}</div>
+        <div className={inputFieldStyles.selectionContainer}>
+          {isActive && valueIndex !== undefined && props.selectItems[valueIndex][0]}
+        </div>
         <Icon iconName="arrow_drop_down" className={inputFieldStyles["arrow-container"]} />
         {selectActive && (
           <ul className={inputFieldStyles["drop-down"]}>
-            {props.selectItems!.map((item) => (
-              <Ripple key={item}>
+            {props.selectItems!.map(([itemText, itemValue]) => (
+              <Ripple key={itemValue}>
                 <li
                   onClick={(event) => {
-                    props.setValue(item);
+                    props.setValue(itemValue);
                     if (props.onSelect) {
-                      props.onSelect(event, item);
+                      props.onSelect(event, itemValue);
                     }
                     setSelectActive(false);
                   }}
                 >
-                  {item}
+                  {itemText}
                 </li>
               </Ripple>
             ))}
