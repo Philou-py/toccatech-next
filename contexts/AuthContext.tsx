@@ -26,6 +26,12 @@ interface User {
   username: string;
   avatarURL?: string;
   authToken: string;
+  pieces: {
+    id: string;
+    title: string;
+    scoreURL?: string;
+    composer: { id: string; name: string; photoURL: string };
+  }[];
 }
 
 export const AuthContext = createContext<{
@@ -65,6 +71,16 @@ async function fetchCurrentUser(authToken: string) {
             id
             username
             avatarURL
+            pieces {
+              id
+              title
+              scoreURL
+              composer {
+                id
+                name
+                avatarURL
+              }
+            }
           }
         }
       }
@@ -76,7 +92,7 @@ async function fetchCurrentUser(authToken: string) {
     },
   });
 
-  if (user.queryUser.length !== 0) {
+  if (user && user.queryUser.length !== 0) {
     const firstUser = user.queryUser[0];
     return {
       id: firstUser.id,
@@ -85,6 +101,7 @@ async function fetchCurrentUser(authToken: string) {
       username: firstUser.userProfile.username,
       avatarURL: firstUser.userProfile.avatarURL,
       authToken: authToken,
+      pieces: firstUser.userProfile.pieces,
     } as User;
   } else {
     return null;
@@ -111,6 +128,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       if (response.status == 200) {
         haveASnack("success", <h6>Vous êtes à présent déconnecté !</h6>);
         setIsAuthenticated(false);
+        setCurrentUser(undefined);
       } else {
         haveASnack("error", <h6>Oh non, une erreur non identifiée est survenue !</h6>);
       }

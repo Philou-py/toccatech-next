@@ -9,6 +9,7 @@ module.exports = {
       "toccatech.com",
       "upload.wikimedia.org",
       "firebasestorage.googleapis.com",
+      "images.unsplash.com",
     ],
   },
 };

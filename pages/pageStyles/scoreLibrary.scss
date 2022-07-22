@@ -1,0 +1,26 @@
+.scoreLibrary {
+  .imgContainer {
+    position: relative;
+    width: 35px;
+    height: 50px;
+    display: flex;
+    margin-right: 15px;
+
+    &.xs {
+      display: none;
+    }
+  }
+}
+
+.piecesTable::before {
+  content: "";
+  display: block;
+  position: absolute;
+  opacity: 0.08;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/images/bg-score-library.png");
+  background-size: 30%;
+}

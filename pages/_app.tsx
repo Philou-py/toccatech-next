@@ -48,7 +48,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               logoPath="https://toccatech.com/img/logo.fa766f7b.png"
               navLinks={[
                 ["Encyclopédie", "/encyclopaedia", false],
-                ["Ma Partothèque", "/demo", false],
+                ["Ma Partothèque", "/score-library", false],
               ]}
               userAvatar={
                 <Avatar
@@ -77,7 +77,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               }
               navLinks={[
                 ["Encyclopédie", "/encyclopaedia"],
-                ["Ma Partothèque", "/demo", true],
+                ["Ma Partothèque", "/score-library", true],
               ]}
               handleAuth
             />
