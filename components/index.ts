@@ -11,3 +11,4 @@ export { default as Ripple } from "./Ripple";
 export { default as SideBar } from "./SideBar";
 export { default as Spacer } from "./Spacer";
 export { default as SnackBar } from "./SnackBar";
+export { default as DataTable, SortOrder } from "./DataTable";
