@@ -77,7 +77,7 @@ function SideBar({ showSideBar, title, navLinks, authButton, handleAuth, onClose
                   type="image-avatar"
                   className={sideBarStyles.avatar}
                   borderColour="#33c9ff"
-                  src="https://file-server.toccatech.com/files/620d31e0219aa20013c63653"
+                  src={currentUser!.avatarURL}
                   size={150}
                 />
               )}
