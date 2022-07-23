@@ -34,15 +34,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     setSideBarOpen(false);
   }, []);
 
-  const disconnectUser = useCallback(() => {
-    console.log("Disconnection!");
-  }, []);
-
   return (
     <ApolloProvider client={client}>
-      <BreakpointsProvider breakpointsList={breakpointsList}>
-        <SnackProvider>
-          <AuthProvider>
+      <SnackProvider>
+        <AuthProvider>
+          <BreakpointsProvider breakpointsList={breakpointsList}>
             <NavBar
               title="Toccatech"
               logoPath="https://toccatech.com/img/logo.fa766f7b.png"
@@ -85,9 +81,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               <Component {...pageProps} />
             </div>
             <Footer />
-          </AuthProvider>
-        </SnackProvider>
-      </BreakpointsProvider>
+          </BreakpointsProvider>
+        </AuthProvider>
+      </SnackProvider>
     </ApolloProvider>
   );
 }

@@ -22,7 +22,7 @@ function SignUpForm({ alreadyAnAccountFunc, onCompleted }: ConnexionFormProps) {
   console.log("SignUpForm rendered!");
   const { setCurrentUser, setIsAuthenticated } = useContext(AuthContext);
   const { haveASnack } = useContext(SnackContext);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
 
   const {
     data: newUser,
@@ -40,13 +40,13 @@ function SignUpForm({ alreadyAnAccountFunc, onCompleted }: ConnexionFormProps) {
   const uploadImage = useCallback(async () => {
     const formData = new FormData();
     formData.append("file", newUser.file);
-    formData.append("visibility", "unlisted");
-    formData.append("category", "userAvatars");
+    formData.append("isPublic", "true");
+    formData.append("sharedWith", "[]");
+    formData.append("resource", "userAvatars");
     try {
       const response = await fetch("https://file-server.toccatech.com/files/upload", {
         method: "POST",
         body: formData,
-        credentials: "include",
       });
       const { file, error } = await response.json();
       if (error) {
@@ -73,7 +73,6 @@ function SignUpForm({ alreadyAnAccountFunc, onCompleted }: ConnexionFormProps) {
       const response = await fetch("https://auth-server.toccatech.com/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({
           email: newUser.email,
           password: newUser.pwd,

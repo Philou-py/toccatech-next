@@ -136,7 +136,7 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
   const handleDeleteScore = useCallback(
     async (scoreURL: string) => {
       try {
-        const response = await fetch(scoreURL, { method: "DELETE", credentials: "include" });
+        const response = await fetch(scoreURL, { method: "DELETE" });
         if (response.status === 200) console.log("Score successfully deleted!");
         else if (response.status === 400) console.log("This score does not exist!");
         return "Ok!";
@@ -186,13 +186,13 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
   const uploadFile = useCallback(async () => {
     const formData = new FormData();
     formData.append("file", editablePiece.scoreFile);
-    formData.append("visibility", "unlisted");
-    formData.append("category", "userScores");
+    formData.append("isPublic", "false");
+    formData.append("sharedWith", "[]");
+    formData.append("resource", "userScores");
     try {
       const response = await fetch("https://file-server.toccatech.com/files/upload", {
         method: "POST",
         body: formData,
-        credentials: "include",
       });
       const { file, error } = await response.json();
       if (error) {
@@ -333,7 +333,7 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
     } else {
       return [];
     }
-  }, [cbp, currentUser, isAuthenticated, handleDeletePiece, handleModalOpen, setData, composers]);
+  }, [cbp, currentUser, isAuthenticated, handleDeletePiece, handleModalOpen, setData]);
 
   return (
     <Container className="scoreLibrary">

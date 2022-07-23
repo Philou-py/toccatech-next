@@ -115,7 +115,7 @@ export default function DataTable<TableItem extends { [key: string]: any }>({
 
   const mobileHeaderList = useMemo(
     () =>
-      [["Aucun tri", ""]].concat(
+      [["Aucun tri", "key"]].concat(
         headers
           .filter((header) => header.isSortable !== false)
           .map((header) => [header.text, header.value])

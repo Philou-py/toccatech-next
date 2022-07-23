@@ -12,8 +12,6 @@ import { SnackContext } from "./SnackContext";
 import { Modal } from "../components";
 import ConnexionForm from "../layouts/ConnexionForm";
 import SignUpForm from "../layouts/SignUpForm";
-import client from "../apollo-client";
-import { gql } from "@apollo/client";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -61,8 +59,11 @@ function getCookie(cookieName: string) {
 }
 
 async function fetchCurrentUser(authToken: string) {
-  const { data: user } = await client.query({
-    query: gql`
+  const response = await fetch("https://dgraph.toccatech.com/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Toccatech-Auth": authToken },
+    body: JSON.stringify({
+      query: `
       query {
         queryUser {
           id
@@ -78,22 +79,20 @@ async function fetchCurrentUser(authToken: string) {
               composer {
                 id
                 name
-                avatarURL
+                photoURL
               }
             }
           }
         }
       }
     `,
-    context: {
-      headers: {
-        "X-Toccatech-Auth": authToken,
-      },
-    },
+    }),
   });
+  const result = await response.json();
+  const queryData = result.data;
 
-  if (user && user.queryUser.length !== 0) {
-    const firstUser = user.queryUser[0];
+  if (queryData && queryData.queryUser.length !== 0) {
+    const firstUser = queryData.queryUser[0];
     return {
       id: firstUser.id,
       userProfileId: firstUser.userProfile.id,
@@ -122,9 +121,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const signOut = useCallback(async () => {
     console.log("Déconnexion...");
     try {
-      const response = await fetch("https://auth-server.toccatech.com/signout", {
-        credentials: "include",
-      });
+      const response = await fetch("https://auth-server.toccatech.com/signout");
       if (response.status == 200) {
         haveASnack("success", <h6>Vous êtes à présent déconnecté !</h6>);
         setIsAuthenticated(false);

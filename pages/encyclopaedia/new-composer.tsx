@@ -74,8 +74,9 @@ export default function NewComposer() {
     console.log("Uploading image!");
     const formData = new FormData();
     formData.append("file", rawNewComposer.photoFile);
-    formData.append("visibility", "unlisted");
-    formData.append("category", "composerAvatars");
+    formData.append("isPublic", "true");
+    formData.append("sharedWith", "[]");
+    formData.append("resource", "composerPhotos");
     try {
       const response = await fetch("https://file-server.toccatech.com/files/upload", {
         method: "POST",

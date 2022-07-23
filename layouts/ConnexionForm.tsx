@@ -40,7 +40,6 @@ function ConnexionForm({ noAccountFunc, onCompleted }: ConnexionFormProps) {
       const response = await fetch("https://auth-server.toccatech.com/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({
           username: user.username,
           password: user.pwd,
