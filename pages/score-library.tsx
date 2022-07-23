@@ -86,23 +86,23 @@ const DELETE_PIECE = `
 `;
 
 const UPDATE_PIECE = `
-mutation UpdatePiece($updatePieceInput: UpdatePieceInput!) {
-  updatePiece(input: $updatePieceInput) {
-    piece {
-      id
-      title
-      scoreURL
-      composer {
+  mutation UpdatePiece($updatePieceInput: UpdatePieceInput!) {
+    updatePiece(input: $updatePieceInput) {
+      piece {
         id
-        name
-        photoURL
-      }
-      userProfile {
-        username
+        title
+        scoreURL
+        composer {
+          id
+          name
+          photoURL
+        }
+        userProfile {
+          username
+        }
       }
     }
   }
-}
 `;
 
 export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
@@ -195,12 +195,11 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
         credentials: "include",
         body: formData,
       });
-      const { file, error } = await response.json();
+      const { fileId, error } = await response.json();
       if (error) {
         console.log(error);
       } else {
-        console.log("Uploaded file", file);
-        const newURL = `https://file-server.toccatech.com/files/${file._id}`;
+        const newURL = `https://file-server.toccatech.com/files/${fileId}`;
         return newURL;
       }
     } catch (error) {

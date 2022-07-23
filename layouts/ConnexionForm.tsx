@@ -21,7 +21,7 @@ interface ConnexionFormProps {
 function ConnexionForm({ noAccountFunc, onCompleted }: ConnexionFormProps) {
   const { setCurrentUser, setIsAuthenticated } = useContext(AuthContext);
   const { haveASnack } = useContext(SnackContext);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
 
   const {
     data: user,

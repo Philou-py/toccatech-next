@@ -146,12 +146,11 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
         credentials: "include",
         body: formData,
       });
-      const { file, error } = await response.json();
+      const { fileId, error } = await response.json();
       if (error) {
         console.log(error);
       } else {
-        console.log(file);
-        const newURL = `https://file-server.toccatech.com/files/${file._id}`;
+        const newURL = `https://file-server.toccatech.com/files/${fileId}`;
         return newURL;
       }
     } catch (error) {
