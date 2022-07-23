@@ -39,6 +39,7 @@ function ConnexionForm({ noAccountFunc, onCompleted }: ConnexionFormProps) {
     try {
       const response = await fetch("https://auth-server.toccatech.com/signin", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: user.username,

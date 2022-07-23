@@ -122,6 +122,7 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
       try {
         const response = await fetch(rawComposer.photoURL, {
           method: "DELETE",
+          credentials: "include",
         });
         const { msg, error } = await response.json();
         if (error) {
@@ -142,6 +143,7 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
     try {
       const response = await fetch("https://file-server.toccatech.com/files/upload", {
         method: "POST",
+        credentials: "include",
         body: formData,
       });
       const { file, error } = await response.json();

@@ -80,6 +80,7 @@ export default function NewComposer() {
     try {
       const response = await fetch("https://file-server.toccatech.com/files/upload", {
         method: "POST",
+        credentials: "include",
         body: formData,
       });
       const { file, error } = await response.json();
