@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { BreakpointsContext } from "../contexts/BreakpointsContext";
 import { AuthContext } from "../contexts/AuthContext";
 import { Container, Button, Icon } from "../components";
@@ -32,9 +33,20 @@ export default function Home() {
         />
         <Container large className="container">
           <h1 className="title">Votre boîte à outils musicale... découvrez la vite !</h1>
-          <Button className="blue-grey" size="x-large">
-            C&rsquo;est parti !
-          </Button>
+          {!isAuthenticated && (
+            <a href="#authSection">
+              <Button className="blue-grey" size="x-large">
+                C&rsquo;est parti !
+              </Button>
+            </a>
+          )}
+          {isAuthenticated && (
+            <Link href="/score-library">
+              <Button className="blue-grey" size="x-large">
+                C&rsquo;est parti !
+              </Button>
+            </Link>
+          )}
         </Container>
         <div className="waves">
           <WavesSVG />
@@ -125,7 +137,7 @@ export default function Home() {
         </a>
       </div>
       {!isAuthenticated && (
-        <div className={cn("authSection", cbp)}>
+        <div className={cn("authSection", cbp)} id="authSection">
           <ConnexionForm />
           <SignUpForm />
         </div>
