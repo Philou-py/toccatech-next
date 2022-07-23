@@ -4,11 +4,12 @@ import "../styles/typography.scss";
 import "../styles/colours.scss";
 import "./pageStyles/index.scss";
 import { AppProps } from "next/app";
+import toccatechLogo from "../public/images/logo.png";
 import BreakpointsProvider from "../contexts/BreakpointsContext";
 import AuthProvider from "../contexts/AuthContext";
 import SnackProvider from "../contexts/SnackContext";
 import Footer from "../layouts/Footer";
-import { NavBar, SideBar, Avatar } from "../components";
+import { NavBar, SideBar } from "../components";
 import { useCallback, useMemo, useState } from "react";
 import { ApolloProvider } from "@apollo/client";
 import client from "../apollo-client";
@@ -41,19 +42,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <BreakpointsProvider breakpointsList={breakpointsList}>
             <NavBar
               title="Toccatech"
-              logoPath="https://toccatech.com/img/logo.fa766f7b.png"
+              logoPath={toccatechLogo}
               navLinks={[
                 ["Encyclopédie", "/encyclopaedia", false],
                 ["Ma Partothèque", "/score-library", false],
               ]}
-              userAvatar={
-                <Avatar
-                  type="image-avatar"
-                  borderColour="#33c9ff"
-                  src="https://file-server.toccatech.com/files/620d31e0219aa20013c63653"
-                  size={50}
-                />
-              }
               centerNavSmScreens
               onNavIconClick={handleNavIconClick}
               handleAuth
@@ -62,15 +55,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               showSideBar={sideBarOpen}
               onClose={handleBgClick}
               title="Toccatech"
-              userAvatar={
-                <Avatar
-                  type="image-avatar"
-                  borderColour="#33c9ff"
-                  src="https://file-server.toccatech.com/files/620d31e0219aa20013c63653"
-                  size={150}
-                  centerAvatar
-                />
-              }
               navLinks={[
                 ["Encyclopédie", "/encyclopaedia"],
                 ["Ma Partothèque", "/score-library", true],

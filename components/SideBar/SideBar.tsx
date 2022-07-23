@@ -1,39 +1,22 @@
-import {
-  cloneElement,
-  ReactElement,
-  useCallback,
-  useContext,
-  useRef,
-  MouseEvent,
-  memo,
-} from "react";
+import { ReactElement, useCallback, useContext, useRef, MouseEvent, memo } from "react";
 import Link from "next/link";
 import sideBarStyles from "./SideBar.module.scss";
 import cn from "classnames";
 import { CSSTransition } from "react-transition-group";
 import { AuthContext } from "../../contexts/AuthContext";
-import Button from "../Button";
+import { Button, Avatar } from "..";
 
 interface SideBarProps {
   showSideBar: boolean;
   title: string;
-  userAvatar?: ReactElement;
   navLinks: [string, string, boolean?][];
   authButton?: ReactElement;
   handleAuth?: boolean;
   onClose: () => void;
 }
 
-function SideBar({
-  showSideBar,
-  title,
-  userAvatar,
-  navLinks,
-  authButton,
-  handleAuth,
-  onClose,
-}: SideBarProps) {
-  const { isAuthenticated, setModalOpen, signOut } = useContext(AuthContext);
+function SideBar({ showSideBar, title, navLinks, authButton, handleAuth, onClose }: SideBarProps) {
+  const { isAuthenticated, setModalOpen, signOut, currentUser } = useContext(AuthContext);
 
   const bgRef = useRef(null);
   const handleSideBarClose = useCallback(
@@ -84,12 +67,33 @@ function SideBar({
             }}
           >
             <div className={sideBarStyles.content}>
-              {!userAvatar && (
+              {!isAuthenticated && (
                 <Link href="/" passHref>
                   <h3 className={sideBarStyles.title}>Toccatech</h3>
                 </Link>
               )}
-              {userAvatar && cloneElement(userAvatar, { className: sideBarStyles.avatar })}
+              {isAuthenticated && currentUser!.avatarURL && (
+                <Avatar
+                  type="image-avatar"
+                  className={sideBarStyles.avatar}
+                  borderColour="#33c9ff"
+                  src="https://file-server.toccatech.com/files/620d31e0219aa20013c63653"
+                  size={150}
+                />
+              )}
+              {isAuthenticated && !currentUser!.avatarURL && (
+                <Avatar
+                  type="initials-avatar"
+                  className={sideBarStyles.avatar}
+                  initials={currentUser!.username
+                    .split(" ")
+                    .map((part) => part[0].toUpperCase())
+                    .join("")}
+                  borderColour="#33c9ff"
+                  size={150}
+                />
+              )}
+
               <ul className={sideBarStyles.navList}>
                 {navLinks.map(([name, url, isDisabled]) => (
                   <Link href={url} passHref key={name}>

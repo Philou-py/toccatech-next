@@ -1,18 +1,16 @@
-import { ReactElement, useContext, useCallback } from "react";
-import Image from "next/image";
+import { useContext, useCallback } from "react";
+import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import navBarStyles from "./NavBar.module.scss";
 import cn from "classnames";
-import Container from "../Container";
-import Button from "../Button";
+import { Container, Button, Avatar } from "..";
 import { BreakpointsContext } from "../../contexts/BreakpointsContext";
 import { AuthContext } from "../../contexts/AuthContext";
 
 interface NavBarProps {
-  logoPath: string;
+  logoPath: string | StaticImageData;
   title: string;
   navLinks: [string, string | (() => void), boolean?][];
-  userAvatar?: ReactElement;
   centerNavSmScreens?: boolean;
   onNavIconClick?: () => void;
   fixed?: boolean;
@@ -25,14 +23,13 @@ export default function NavBar({
   logoPath,
   title,
   navLinks,
-  userAvatar,
   onNavIconClick,
   fixed = true,
   flat,
   handleAuth,
 }: NavBarProps) {
   const { currentBreakpoint } = useContext(BreakpointsContext);
-  const { setModalOpen, isAuthenticated, signOut } = useContext(AuthContext);
+  const { setModalOpen, isAuthenticated, signOut, currentUser } = useContext(AuthContext);
 
   const signInSignOut = useCallback(() => {
     if (isAuthenticated) {
@@ -112,9 +109,33 @@ export default function NavBar({
           </Link>
         </div>
         {["md", "lg", "xl"].includes(currentBreakpoint) && navMenu}
-        {["md", "lg", "xl"].includes(currentBreakpoint) && userAvatar && (
-          <div className={navBarStyles.avatarContainer}>{userAvatar}</div>
-        )}
+        {["md", "lg", "xl"].includes(currentBreakpoint) &&
+          isAuthenticated &&
+          currentUser!.avatarURL && (
+            <div className={navBarStyles.avatarContainer}>
+              <Avatar
+                type="image-avatar"
+                borderColour="#33c9ff"
+                src={currentUser!.avatarURL}
+                size={50}
+              />
+            </div>
+          )}
+        {["md", "lg", "xl"].includes(currentBreakpoint) &&
+          isAuthenticated &&
+          !currentUser!.avatarURL && (
+            <div className={navBarStyles.avatarContainer}>
+              <Avatar
+                type="initials-avatar"
+                initials={currentUser!.username
+                  .split(" ")
+                  .map((part) => part[0].toUpperCase())
+                  .join("")}
+                borderColour="#33c9ff"
+                size={50}
+              />
+            </div>
+          )}
       </Container>
     </div>
   );

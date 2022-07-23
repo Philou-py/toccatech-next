@@ -40,7 +40,7 @@ const DGRAPH_URL = "https://dgraph.toccatech.com/graphql";
 
 const QUERY_COMPOSERS = `
   query QueryComposers {
-    queryComposer {
+    queryComposer(filter: { isDeleted: false }) {
       id
       name
     }

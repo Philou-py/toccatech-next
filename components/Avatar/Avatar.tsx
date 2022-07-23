@@ -6,7 +6,6 @@ import cn from "classnames";
 interface CommonAvatarProps {
   borderColour?: string;
   size?: number;
-  centerAvatar?: boolean;
   className?: string;
 }
 

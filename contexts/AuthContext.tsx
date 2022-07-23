@@ -121,7 +121,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const signOut = useCallback(async () => {
     console.log("Déconnexion...");
     try {
-      const response = await fetch("https://auth-server.toccatech.com/signout");
+      const response = await fetch("https://auth-server.toccatech.com/signout", {
+        credentials: "include",
+      });
       if (response.status == 200) {
         haveASnack("success", <h6>Vous êtes à présent déconnecté !</h6>);
         setIsAuthenticated(false);
