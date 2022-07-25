@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useContext, useState } from "react";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
+import axios from "axios";
 import { BreakpointsContext } from "../../../contexts/BreakpointsContext";
 import { SnackContext } from "../../../contexts/SnackContext";
 import { AuthContext } from "../../../contexts/AuthContext";
@@ -17,9 +19,6 @@ import {
   useForm,
 } from "../../../components";
 import cn from "classnames";
-import client from "../../../apollo-client";
-import { gql, useMutation } from "@apollo/client";
-import { useRouter } from "next/router";
 
 interface RawComposer {
   id: string;
@@ -35,7 +34,9 @@ interface RawComposer {
   }[];
 }
 
-const UPDATE_INFO = gql`
+const DGRAPH_URL = "https://dgraph.toccatech.com/graphql";
+
+const UPDATE_INFO = `
   mutation UpdateComposer($updateComposerInput: UpdateComposerInput!) {
     updateComposer(input: $updateComposerInput) {
       composer {
@@ -54,31 +55,27 @@ const UPDATE_INFO = gql`
   }
 `;
 
+const GET_COMPOSER = `
+  query GetComposer($composerId: ID!) {
+    getComposer(id: $composerId) {
+      id
+      name
+      birthDate
+      deathDate
+      photoURL
+      biography
+      musicalStyles
+    }
+  }
+`;
+
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const { data: composer } = await client.query({
-    query: gql`
-      query ($composerId: ID!) {
-        getComposer(id: $composerId) {
-          id
-          name
-          birthDate
-          deathDate
-          photoURL
-          biography
-          musicalStyles
-        }
-      }
-    `,
-    variables: {
-      composerId: params!.composerId,
-    },
+  const { data } = await axios.post(DGRAPH_URL, {
+    query: GET_COMPOSER,
+    variables: { composerId: params!.composerId },
   });
 
-  return {
-    props: {
-      rawComposer: composer.getComposer,
-    },
-  };
+  return { props: { rawComposer: data.data.getComposer } };
 };
 
 export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawComposer }) {
@@ -187,25 +184,51 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
     };
   }, [rawNewComposer.photoFile, rawNewComposer.photoURL, setData]);
 
-  const [sendUpdateInfo] = useMutation(UPDATE_INFO, {
-    onCompleted: () => {
-      haveASnack(
-        "success",
-        <h6>La biographie de {rawNewComposer.name} a bien été mise à jour !</h6>
-      );
-      router.push(`/encyclopaedia/${rawComposer.id}`);
+  const sendUpdateInfo = useCallback(
+    async (photoURL: string) => {
+      const response = await fetch("https://dgraph.toccatech.com/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Toccatech-Auth": isAuthenticated ? currentUser!.authToken : "",
+        },
+        body: JSON.stringify({
+          query: UPDATE_INFO,
+          variables: {
+            updateComposerInput: {
+              filter: {
+                id: rawComposer.id,
+              },
+              set: {
+                name: rawNewComposer.name,
+                birthDate: rawNewComposer.birthDate,
+                deathDate: rawNewComposer.deathDate,
+                photoURL: photoURL,
+                biography: rawNewComposer.biography,
+                musicalStyles: rawNewComposer.musicalStyles,
+                contributors: {
+                  id: currentUser!.userProfileId,
+                },
+              },
+            },
+          },
+        }),
+      });
+      const result = await response.json();
+      if (response.status === 200) {
+        haveASnack(
+          "success",
+          <h6>La biographie de {rawNewComposer.name} a bien été mise à jour !</h6>
+        );
+        router.push(`/encyclopaedia/${rawComposer.id}`);
+      } else {
+        console.error("Could not update composer info", result);
+        setIsLoading(false);
+        haveASnack("error", <h6>Oh non, une erreur non identifiée est survenue !</h6>);
+      }
     },
-    onError: (error) => {
-      console.error("Could not update composer info", error);
-      setIsLoading(false);
-      haveASnack("error", <h6>Oh non, une erreur non identifiée est survenue !</h6>);
-    },
-    context: {
-      headers: {
-        "X-Toccatech-Auth": isAuthenticated ? currentUser!.authToken : "",
-      },
-    },
-  });
+    [currentUser, isAuthenticated, rawComposer.id, rawNewComposer, haveASnack, router]
+  );
 
   const handleSubmit = useCallback(async () => {
     setIsLoading(true);
@@ -224,27 +247,8 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
 
     console.log("Sending composer updated info!");
 
-    sendUpdateInfo({
-      variables: {
-        updateComposerInput: {
-          filter: {
-            id: rawComposer.id,
-          },
-          set: {
-            name: rawNewComposer.name,
-            birthDate: rawNewComposer.birthDate,
-            deathDate: rawNewComposer.deathDate,
-            photoURL: newURL,
-            biography: rawNewComposer.biography,
-            musicalStyles: rawNewComposer.musicalStyles,
-            contributors: {
-              id: currentUser!.userProfileId,
-            },
-          },
-        },
-      },
-    });
-  }, [rawComposer.id, rawNewComposer, sendUpdateInfo, uploadImage, currentUser]);
+    sendUpdateInfo(newURL);
+  }, [rawNewComposer, sendUpdateInfo, uploadImage]);
 
   return (
     <Container className="mt-4">

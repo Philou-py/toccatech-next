@@ -17,10 +17,9 @@ import {
 } from "../../components";
 import cn from "classnames";
 import { useRouter } from "next/router";
-import { gql, useMutation } from "@apollo/client";
 
-const CREATE_COMPOSER = gql`
-  mutation UpdateComposer($newComposerInput: [AddComposerInput!]!) {
+const CREATE_COMPOSER = `
+  mutation AddComposer($newComposerInput: [AddComposerInput!]!) {
     addComposer(input: $newComposerInput) {
       composer {
         id
@@ -124,25 +123,49 @@ export default function NewComposer() {
     };
   }, [rawNewComposer.photoFile, rawNewComposer.photoURL, setData]);
 
-  const [sendCreateComposer] = useMutation(CREATE_COMPOSER, {
-    onCompleted: () => {
-      haveASnack(
-        "success",
-        <h6>La biographie de {rawNewComposer.name} a bien été enregistrée !</h6>
-      );
-      router.push(`/encyclopaedia`);
+  const sendCreateComposer = useCallback(
+    async (photoURL: string) => {
+      const response = await fetch("https://dgraph.toccatech.com/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Toccatech-Auth": isAuthenticated ? currentUser!.authToken : "",
+        },
+        body: JSON.stringify({
+          query: CREATE_COMPOSER,
+          variables: {
+            newComposerInput: [
+              {
+                name: rawNewComposer.name,
+                birthDate: rawNewComposer.birthDate,
+                deathDate: rawNewComposer.deathDate,
+                photoURL: photoURL,
+                biography: rawNewComposer.biography,
+                musicalStyles: rawNewComposer.musicalStyles,
+                isDeleted: false,
+                contributors: {
+                  id: currentUser!.userProfileId,
+                },
+              },
+            ],
+          },
+        }),
+      });
+      const result = await response.json();
+      if (response.status === 200) {
+        haveASnack(
+          "success",
+          <h6>La biographie de {rawNewComposer.name} a bien été enregistrée !</h6>
+        );
+        router.push(`/encyclopaedia`);
+      } else {
+        console.error("Could not create new composer", result);
+        setIsLoading(false);
+        haveASnack("error", <h6>Oh non, une erreur non identifiée est survenue !</h6>);
+      }
     },
-    onError: (error) => {
-      console.error("Could not create new composer", error);
-      setIsLoading(false);
-      haveASnack("error", <h6>Oh non, une erreur non identifiée est survenue !</h6>);
-    },
-    context: {
-      headers: {
-        "X-Toccatech-Auth": isAuthenticated ? currentUser!.authToken : "",
-      },
-    },
-  });
+    [currentUser, isAuthenticated, haveASnack, rawNewComposer, router]
+  );
 
   const handleSubmit = useCallback(async () => {
     setIsLoading(true);
@@ -161,25 +184,8 @@ export default function NewComposer() {
 
     console.log("Sending composer updated info!");
 
-    sendCreateComposer({
-      variables: {
-        newComposerInput: [
-          {
-            name: rawNewComposer.name,
-            birthDate: rawNewComposer.birthDate,
-            deathDate: rawNewComposer.deathDate,
-            photoURL: newURL,
-            biography: rawNewComposer.biography,
-            musicalStyles: rawNewComposer.musicalStyles,
-            isDeleted: false,
-            contributors: {
-              id: currentUser!.userProfileId,
-            },
-          },
-        ],
-      },
-    });
-  }, [rawNewComposer, sendCreateComposer, uploadImage, currentUser]);
+    sendCreateComposer(newURL);
+  }, [rawNewComposer, sendCreateComposer, uploadImage]);
 
   return (
     <Container className="mt-4">

@@ -48,9 +48,7 @@ const QUERY_COMPOSERS = `
 `;
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const { data } = await axios.post(DGRAPH_URL, {
-    query: QUERY_COMPOSERS,
-  });
+  const { data } = await axios.post(DGRAPH_URL, { query: QUERY_COMPOSERS });
   return { props: { composers: data.data.queryComposer } };
 };
 

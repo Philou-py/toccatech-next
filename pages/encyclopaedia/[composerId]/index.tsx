@@ -16,8 +16,7 @@ import {
   Spacer,
 } from "../../../components";
 import cn from "classnames";
-import client from "../../../apollo-client";
-import { gql } from "@apollo/client";
+import axios from "axios";
 
 interface RawComposer {
   id: string;
@@ -44,6 +43,8 @@ type Composer = Modify<
   }
 >;
 
+const DGRAPH_URL = "https://dgraph.toccatech.com/graphql";
+
 const MARK_AS_DELETED = `
   mutation UpdateComposer($updateComposerInput: UpdateComposerInput!) {
     updateComposer(input: $updateComposerInput) {
@@ -54,32 +55,31 @@ const MARK_AS_DELETED = `
   }
 `;
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const { data: composer } = await client.query({
-    query: gql`
-      query {
-        getComposer(id: "${params!.composerId}") {
-          id
-          name
-          birthDate
-          deathDate
-          photoURL
-          biography
-          musicalStyles
-          contributors {
-            id
-            username
-          }
-        }
+const GET_COMPOSER = `
+  query GetComposer($composerId: ID!) {
+    getComposer(id: $composerId) {
+      id
+      name
+      birthDate
+      deathDate
+      photoURL
+      biography
+      musicalStyles
+      contributors {
+        id
+        username
       }
-    `,
+    }
+  }
+`;
+
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const { data } = await axios.post(DGRAPH_URL, {
+    query: GET_COMPOSER,
+    variables: { composerId: params!.composerId },
   });
 
-  return {
-    props: {
-      rawComposer: composer.getComposer,
-    },
-  };
+  return { props: { rawComposer: data.data.getComposer } };
 };
 
 export default function ComposerDetails({ rawComposer }: { rawComposer: RawComposer }) {

@@ -11,8 +11,6 @@ import SnackProvider from "../contexts/SnackContext";
 import Footer from "../layouts/Footer";
 import { NavBar, SideBar } from "../components";
 import { useCallback, useMemo, useState } from "react";
-import { ApolloProvider } from "@apollo/client";
-import client from "../apollo-client";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const breakpointsList = useMemo(
@@ -36,38 +34,36 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <ApolloProvider client={client}>
-      <SnackProvider>
-        <AuthProvider>
-          <BreakpointsProvider breakpointsList={breakpointsList}>
-            <NavBar
-              title="Toccatech"
-              logoPath={toccatechLogo}
-              navLinks={[
-                ["Encyclopédie", "/encyclopaedia", false],
-                ["Ma Partothèque", "/score-library", false],
-              ]}
-              centerNavSmScreens
-              onNavIconClick={handleNavIconClick}
-              handleAuth
-            />
-            <SideBar
-              showSideBar={sideBarOpen}
-              onClose={handleBgClick}
-              title="Toccatech"
-              navLinks={[
-                ["Encyclopédie", "/encyclopaedia"],
-                ["Ma Partothèque", "/score-library", true],
-              ]}
-              handleAuth
-            />
-            <div style={{ paddingTop: 60, paddingBottom: 20, overflow: "hidden" }}>
-              <Component {...pageProps} />
-            </div>
-            <Footer />
-          </BreakpointsProvider>
-        </AuthProvider>
-      </SnackProvider>
-    </ApolloProvider>
+    <SnackProvider>
+      <AuthProvider>
+        <BreakpointsProvider breakpointsList={breakpointsList}>
+          <NavBar
+            title="Toccatech"
+            logoPath={toccatechLogo}
+            navLinks={[
+              ["Encyclopédie", "/encyclopaedia", false],
+              ["Ma Partothèque", "/score-library", false],
+            ]}
+            centerNavSmScreens
+            onNavIconClick={handleNavIconClick}
+            handleAuth
+          />
+          <SideBar
+            showSideBar={sideBarOpen}
+            onClose={handleBgClick}
+            title="Toccatech"
+            navLinks={[
+              ["Encyclopédie", "/encyclopaedia"],
+              ["Ma Partothèque", "/score-library", true],
+            ]}
+            handleAuth
+          />
+          <div style={{ paddingTop: 60, paddingBottom: 20, overflow: "hidden" }}>
+            <Component {...pageProps} />
+          </div>
+          <Footer />
+        </BreakpointsProvider>
+      </AuthProvider>
+    </SnackProvider>
   );
 }

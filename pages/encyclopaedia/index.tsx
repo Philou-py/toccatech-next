@@ -5,8 +5,7 @@ import { Container, Button, Card, CardHeader, CardContent, CardActions } from ".
 import { BreakpointsContext } from "../../contexts/BreakpointsContext";
 import cn from "classnames";
 import { GetServerSideProps } from "next";
-import client from "../../apollo-client";
-import { gql } from "@apollo/client";
+import axios from "axios";
 
 interface RawComposer {
   id: string;
@@ -28,33 +27,30 @@ type Composer = Modify<
   }
 >;
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const { data: composers } = await client.query({
-    query: gql`
-      query {
-        queryComposer(filter: { isDeleted: false }) {
-          id
-          name
-          birthDate
-          deathDate
-          photoURL
-          musicalStyles
-        }
-      }
-    `,
-  });
+const DGRAPH_URL = "https://dgraph.toccatech.com/graphql";
 
-  return {
-    props: {
-      rawComposers: composers.queryComposer,
-    },
-  };
+const QUERY_COMPOSERS = `
+  query {
+    queryComposer(filter: { isDeleted: false }) {
+      id
+      name
+      birthDate
+      deathDate
+      photoURL
+      musicalStyles
+    }
+  }
+`;
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const { data } = await axios.post(DGRAPH_URL, { query: QUERY_COMPOSERS });
+  return { props: { rawComposers: data.data.queryComposer } };
 };
 
 export default function Encyclopaedia({ rawComposers }: { rawComposers: RawComposer[] }) {
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
 
-  const [composers, setComposers] = useState(() => {
+  const [composers] = useState(() => {
     // console.log("Composers initialised!");
     return rawComposers.map((rawComposer) => {
       const isDead = !!rawComposer.deathDate;
