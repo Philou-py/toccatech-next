@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState, useCallback } from "react";
+import { useContext, useMemo, useState, useCallback, ReactNode } from "react";
 import { BreakpointsContext } from "../../contexts/BreakpointsContext";
 import { Icon, InputField } from "..";
 import dtStyles from "./DataTable.module.scss";
@@ -28,7 +28,14 @@ interface DataTableProps<TableItem> {
 
 let cx = cn.bind(dtStyles);
 
-export default function DataTable<TableItem extends { [key: string]: any }>({
+export default function DataTable<
+  TableItem extends {
+    [key: string]: {
+      rawContent: string | number;
+      content?: ReactNode;
+    };
+  }
+>({
   headers,
   items,
   sortBy = "key",
@@ -38,8 +45,6 @@ export default function DataTable<TableItem extends { [key: string]: any }>({
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
   const [sortedBy, setSortedBy] = useState(sortBy);
   const [sortedOrder, setSortedOrder] = useState(sortOrder);
-  // const [mobileSorted, setMobileSorted] = useState(sortBy);
-  // const [mobileSortOrder, setMobileSortOrder] = useState(sortOrder);
 
   const handleSortToggle = useCallback(
     (headerVal: string) => {
@@ -61,9 +66,9 @@ export default function DataTable<TableItem extends { [key: string]: any }>({
       const sortedArray = [...items];
       sortedArray.sort((itemA, itemB) => {
         if (sortedOrder === SortOrder.ASC) {
-          return itemA[sortedBy] < itemB[sortedBy] ? -1 : 1;
+          return itemA[sortedBy].rawContent < itemB[sortedBy].rawContent ? -1 : 1;
         } else {
-          return itemA[sortedBy] > itemB[sortedBy] ? -1 : 1;
+          return itemA[sortedBy].rawContent > itemB[sortedBy].rawContent ? -1 : 1;
         }
       });
       return sortedArray;
@@ -95,7 +100,7 @@ export default function DataTable<TableItem extends { [key: string]: any }>({
   );
 
   const itemsTemplate = sortedItems.map((item) => (
-    <tr key={item.key}>
+    <tr key={item.key.rawContent}>
       {headers.map(({ value: headerVal, text: headerText, alignContent = "start", unitSuffix }) => (
         <td
           key={`${headerVal}-${item.key}`}
@@ -104,7 +109,7 @@ export default function DataTable<TableItem extends { [key: string]: any }>({
           <div className={cx("tdContent")}>
             {cbp === "xs" && <div className={cx("tdHeader")}>{headerText}</div>}
             <div className={cx("valDisplay", alignContent)}>
-              {item[headerVal]}
+              {item[headerVal].content ? item[headerVal].content : item[headerVal].rawContent}
               {unitSuffix ? unitSuffix : ""}
             </div>
           </div>

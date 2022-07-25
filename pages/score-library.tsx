@@ -273,62 +273,68 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
   const dataTableItems = useMemo(() => {
     if (isAuthenticated && currentUser && currentUser.pieces) {
       return currentUser.pieces.map((piece) => ({
-        composer: [
-          <div
-            key={piece.id + "-" + piece.composer.id + "-image"}
-            className={cn("imgContainer", cbp)}
-          >
-            <Image
-              src={piece.composer.photoURL}
-              alt="Composer Avatar"
-              layout="fill"
-              objectFit="cover"
-              objectPosition="top"
-            />
-          </div>,
-          <div key={piece.id + "-" + piece.composer.id + "-name"}>{piece.composer.name}</div>,
-        ],
-        "piece-title": piece.title,
-        actions: [
-          piece.scoreURL ? (
-            <a href={piece.scoreURL + "?attachment=true"} key={piece.id + "-download"}>
-              <Button type="icon" iconName="cloud_download" className="green--text" isFlat />
-            </a>
-          ) : (
+        composer: {
+          rawContent: piece.composer.name,
+          content: [
+            <div
+              key={piece.id + "-" + piece.composer.id + "-image"}
+              className={cn("imgContainer", cbp)}
+            >
+              <Image
+                src={piece.composer.photoURL}
+                alt="Composer Avatar"
+                layout="fill"
+                objectFit="cover"
+                objectPosition="top"
+              />
+            </div>,
+            <div key={piece.id + "-" + piece.composer.id + "-name"}>{piece.composer.name}</div>,
+          ],
+        },
+        "piece-title": { rawContent: piece.title },
+        actions: {
+          rawContent: "",
+          content: [
+            piece.scoreURL ? (
+              <a href={piece.scoreURL + "?attachment=true"} key={piece.id + "-download"}>
+                <Button type="icon" iconName="cloud_download" className="green--text" isFlat />
+              </a>
+            ) : (
+              <Button
+                type="icon"
+                iconName="cloud_download"
+                className="grey--text"
+                key={piece.id + "-download-disabled"}
+                isFlat
+                isDisabled
+              />
+            ),
             <Button
               type="icon"
-              iconName="cloud_download"
-              className="grey--text"
-              key={piece.id + "-download-disabled"}
+              iconName="edit"
+              className="orange--text"
+              key={piece.id + "-edit"}
+              onClick={() => {
+                setIsAddingPiece(false);
+                setPieceId(piece.id);
+                setData({ title: piece.title, scoreFile: "", composerId: piece.composer.id });
+                handleModalOpen();
+              }}
               isFlat
-              isDisabled
-            />
-          ),
-          <Button
-            type="icon"
-            iconName="edit"
-            className="orange--text"
-            key={piece.id + "-edit"}
-            onClick={() => {
-              setIsAddingPiece(false);
-              setPieceId(piece.id);
-              setData({ title: piece.title, scoreFile: "", composerId: piece.composer.id });
-              handleModalOpen();
-            }}
-            isFlat
-          />,
-          <Button
-            type="icon"
-            iconName="delete"
-            className="red--text ml-1"
-            key={piece.id + "-delete"}
-            onClick={() => {
-              handleDeletePiece(piece.id, piece.scoreURL);
-            }}
-            isFlat
-          />,
-        ],
-        key: piece.id,
+            />,
+            <Button
+              type="icon"
+              iconName="delete"
+              className="red--text ml-1"
+              key={piece.id + "-delete"}
+              onClick={() => {
+                handleDeletePiece(piece.id, piece.scoreURL);
+              }}
+              isFlat
+            />,
+          ],
+        },
+        key: { rawContent: piece.id },
       }));
     } else {
       return [];
