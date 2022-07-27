@@ -3,6 +3,7 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
+import { NextSeo } from "next-seo";
 import axios from "axios";
 import { BreakpointsContext } from "../../../contexts/BreakpointsContext";
 import { SnackContext } from "../../../contexts/SnackContext";
@@ -75,7 +76,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     variables: { composerId: params!.composerId },
   });
 
-  return { props: { rawComposer: data.data.getComposer } };
+  return {
+    props: { rawComposer: data.data.getComposer },
+    notFound: data.data.getComposer.length === 0,
+  };
 };
 
 export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawComposer }) {
@@ -252,6 +256,12 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
 
   return (
     <Container className="mt-4">
+      <NextSeo
+        title={`${rawComposer.name} - Contribuer - Toccatech`}
+        description={`${rawComposer.biography.slice(0, 50)}... - Enrichissez la biographie de ${
+          rawComposer.name
+        } !`}
+      />
       <Card className="modifyComposerInfo">
         <CardHeader
           title={

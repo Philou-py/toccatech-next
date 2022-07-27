@@ -3,6 +3,7 @@ import { useCallback, useContext, useState } from "react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { NextSeo } from "next-seo";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { BreakpointsContext } from "../../../contexts/BreakpointsContext";
 import { SnackContext } from "../../../contexts/SnackContext";
@@ -79,7 +80,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     variables: { composerId: params!.composerId },
   });
 
-  return { props: { rawComposer: data.data.getComposer } };
+  return {
+    props: { rawComposer: data.data.getComposer },
+    notFound: data.data.getComposer.length === 0,
+  };
 };
 
 export default function ComposerDetails({ rawComposer }: { rawComposer: RawComposer }) {
@@ -151,6 +155,10 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
 
   return (
     <Container className="mt-4">
+      <NextSeo
+        title={`${composer.name} - Toccatech`}
+        description={`${composer.biography.slice(0, 50)}... - Tout savoir sur ${composer.name} !`}
+      />
       <Card className="composerDetails">
         <CardHeader
           title={
