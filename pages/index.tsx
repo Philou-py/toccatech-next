@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { NextSeo } from "next-seo";
+import Head from "next/head";
 import { BreakpointsContext } from "../contexts/BreakpointsContext";
 import { AuthContext } from "../contexts/AuthContext";
 import { Container, Button, Icon } from "../components";
@@ -23,10 +23,13 @@ export default function Home() {
 
   return (
     <div className={cn("home", cbp)}>
-      <NextSeo
-        title="Page d'accueil - Toccatech"
-        description="Toccatech fournit aux musiciens des outils simples et pratiques. Il permet de créer et de gérer une partothèque personnelle en lien avec une encyclopédie musicale collaborative. Il permet également d'y déposer ses propres partitions."
-      />
+      <Head>
+        <title>Page d&rsquo;accueil - Toccatech</title>
+        <meta
+          name="description"
+          content="Toccatech fournit aux musiciens des outils simples et pratiques. Il permet de créer et de gérer une partothèque personnelle en lien avec une encyclopédie musicale collaborative. Il permet également d'y déposer ses propres partitions."
+        />
+      </Head>
       <div className="getStarted">
         <Image
           src={bgCoffeeImage}

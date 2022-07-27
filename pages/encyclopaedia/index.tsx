@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { NextSeo } from "next-seo";
+import Head from "next/head";
 import { Container, Button, Card, CardHeader, CardContent, CardActions } from "../../components";
 import { BreakpointsContext } from "../../contexts/BreakpointsContext";
 import cn from "classnames";
@@ -75,10 +75,13 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
 
   return (
     <Container narrow className="encyclopaedia">
-      <NextSeo
-        title="Encyclopédie - Toccatech"
-        description="L'encyclopédie Toccatech, constamment enrichie par la communauté, regroupe des informations sur de nombreux compositeurs de différents styles musicaux."
-      />
+      <Head>
+        <title>Encyclopédie - Toccatech</title>
+        <meta
+          name="description"
+          content="L'encyclopédie Toccatech, constamment enrichie par la communauté, regroupe des informations sur de nombreux compositeurs de différents styles musicaux."
+        />
+      </Head>
       <div className={cn("heading", cbp)}>
         <h1 className="pageTitle">Encyclopédie</h1>
         <Link href="/encyclopaedia/new-composer" passHref>

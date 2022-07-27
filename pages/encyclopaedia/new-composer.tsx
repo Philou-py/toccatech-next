@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { NextSeo } from "next-seo";
+import Head from "next/head";
 import { BreakpointsContext } from "../../contexts/BreakpointsContext";
 import { SnackContext } from "../../contexts/SnackContext";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -190,10 +190,13 @@ export default function NewComposer() {
 
   return (
     <Container className="mt-4">
-      <NextSeo
-        title="Nouveau Compositeur - Contribuer - Toccatech"
-        description="Contribuez à l'encyclopédie Toccatech en créant un nouveau compositeur !"
-      />
+      <Head>
+        <title>Nouveau Compositeur - Contribuer - Toccatech</title>
+        <meta
+          name="description"
+          content="Contribuez à l'encyclopédie Toccatech en créant un nouveau compositeur !"
+        />
+      </Head>
       <Card className="modifyComposerInfo">
         <CardHeader
           title={

@@ -1,7 +1,7 @@
 import { useContext, useMemo, useCallback, useState } from "react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
-import { NextSeo } from "next-seo";
+import Head from "next/head";
 import {
   Container,
   DataTable,
@@ -342,10 +342,13 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
 
   return (
     <Container className="scoreLibrary">
-      <NextSeo
-        title="Ma Partothèque - Toccatech"
-        description="Construisez votre partothèque personnelle et sauvegardez vos partitions pour garder une trace de chaque morceau que vous jouez."
-      />
+      <Head>
+        <title>Ma Partothèque - Toccatech</title>
+        <meta
+          name="description"
+          content="Construisez votre partothèque personnelle et sauvegardez vos partitions pour garder une trace de chaque morceau que vous jouez."
+        />
+      </Head>
       {!isAuthenticated && (
         <h3 className="pageTitle textCenter">
           Découvrez votre partothèque personnelle... Mais avant, connectez-vous !

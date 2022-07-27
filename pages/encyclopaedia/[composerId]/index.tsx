@@ -3,7 +3,7 @@ import { useCallback, useContext, useState } from "react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { NextSeo } from "next-seo";
+import Head from "next/head";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { BreakpointsContext } from "../../../contexts/BreakpointsContext";
 import { SnackContext } from "../../../contexts/SnackContext";
@@ -155,10 +155,15 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
 
   return (
     <Container className="mt-4">
-      <NextSeo
-        title={`${composer.name} - Toccatech`}
-        description={`${composer.biography.slice(0, 50)}... - Tout savoir sur ${composer.name} !`}
-      />
+      <Head>
+        <title>{composer.name} - Toccatech</title>
+        <meta
+          name="description"
+          content={`${composer.biography.slice(0, 150).replace("\n", " ")}... - Tout savoir sur ${
+            composer.name
+          } !`}
+        />
+      </Head>
       <Card className="composerDetails">
         <CardHeader
           title={
