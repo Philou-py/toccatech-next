@@ -362,6 +362,8 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
               className="indigo darken-1"
               onClick={() => {
                 setIsAddingPiece(true);
+                setPieceId("");
+                setData({ title: "", composerId: "", scoreFile: "" });
                 setModalOpen(true);
               }}
             >
