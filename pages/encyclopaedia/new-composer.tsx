@@ -72,13 +72,19 @@ export default function NewComposer() {
 
   const uploadImage = useCallback(async () => {
     console.log("Uploading image!");
+    const FS_BASE_URL =
+      window.location.hostname === "toccatech.fr"
+        ? "http://file-server.toccatech.fr"
+        : "https://file-server.toccatech.com";
+
     const formData = new FormData();
     formData.append("file", rawNewComposer.photoFile);
     formData.append("isPublic", "true");
     formData.append("sharedWith", "[]");
     formData.append("resource", "composerPhotos");
+
     try {
-      const response = await fetch("https://file-server.toccatech.com/files/upload", {
+      const response = await fetch(`${FS_BASE_URL}/files/upload`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -126,7 +132,12 @@ export default function NewComposer() {
 
   const sendCreateComposer = useCallback(
     async (photoURL: string) => {
-      const response = await fetch("https://dgraph.toccatech.com/graphql", {
+      const DGRAPH_URL =
+        window.location.hostname === "toccatech.fr"
+          ? "http://dgraph.toccatech.fr/graphql"
+          : "https://dgraph.toccatech.com/graphql";
+
+      const response = await fetch(DGRAPH_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

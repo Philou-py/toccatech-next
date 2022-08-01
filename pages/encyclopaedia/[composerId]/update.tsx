@@ -35,8 +35,6 @@ interface RawComposer {
   }[];
 }
 
-const DGRAPH_URL = "https://dgraph.toccatech.com/graphql";
-
 const UPDATE_INFO = `
   mutation UpdateComposer($updateComposerInput: UpdateComposerInput!) {
     updateComposer(input: $updateComposerInput) {
@@ -70,7 +68,12 @@ const GET_COMPOSER = `
   }
 `;
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, params }) => {
+  const DGRAPH_URL =
+    req.headers.host === "toccatech.fr"
+      ? "http://dgraph.toccatech.fr/graphql"
+      : "https://dgraph.toccatech.com/graphql";
+
   const { data } = await axios.post(DGRAPH_URL, {
     query: GET_COMPOSER,
     variables: { composerId: params!.composerId },
@@ -106,7 +109,13 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
 
   const [photoSelectDone, setPhotoSelectDone] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [photoToShow, setPhotoToShow] = useState(rawComposer.photoURL);
+  const [photoToShow, setPhotoToShow] = useState(() => {
+    const IS_LOCAL = window.location.hostname === "toccatech.fr";
+    if (IS_LOCAL && rawComposer.photoURL!.slice(0, 33) == "https://file-server.toccatech.com") {
+      return "http://file-server.toccatech.fr" + rawComposer.photoURL!.slice(33);
+    }
+    return rawComposer.photoURL;
+  });
   const [previewSrc, setPreviewSrc] = useState("");
 
   // Avoid uselessly re-rendering the Photo URL Input Field by memoizing the validation rules array
@@ -118,6 +127,11 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
   }, []);
 
   const uploadImage = useCallback(async () => {
+    const FS_BASE_URL =
+      window.location.hostname === "toccatech.fr"
+        ? "http://file-server.toccatech.fr"
+        : "https://file-server.toccatech.com";
+
     // Delete old picture
     if (rawComposer.photoURL.slice(0, 33) == "https://file-server.toccatech.com") {
       try {
@@ -142,7 +156,7 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
     formData.append("sharedWith", "[]");
     formData.append("resource", "composerPhotos");
     try {
-      const response = await fetch("https://file-server.toccatech.com/files/upload", {
+      const response = await fetch(`${FS_BASE_URL}/files/upload`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -190,7 +204,12 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
 
   const sendUpdateInfo = useCallback(
     async (photoURL: string) => {
-      const response = await fetch("https://dgraph.toccatech.com/graphql", {
+      const DGRAPH_URL =
+        window.location.hostname === "toccatech.fr"
+          ? "http://dgraph.toccatech.fr/graphql"
+          : "https://dgraph.toccatech.com/graphql";
+
+      const response = await fetch(DGRAPH_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -254,16 +273,17 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
     sendUpdateInfo(newURL);
   }, [rawNewComposer, sendUpdateInfo, uploadImage]);
 
+  const pageTitle = `${rawComposer.name} - Contribuer - Toccatech`;
+  const pageDescription = `${rawComposer.biography.slice(
+    0,
+    50
+  )}... - Enrichissez la biographie de ${rawComposer.name} !`;
+
   return (
     <Container className="mt-4">
       <Head>
-        <title>{rawComposer.name} - Contribuer - Toccatech</title>
-        <meta
-          name="description"
-          content={`${rawComposer.biography.slice(0, 50)}... - Enrichissez la biographie de ${
-            rawComposer.name
-          } !`}
-        />
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
       </Head>
       <Card className="modifyComposerInfo">
         <CardHeader

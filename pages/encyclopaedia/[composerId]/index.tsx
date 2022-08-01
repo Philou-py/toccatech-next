@@ -44,8 +44,6 @@ type Composer = Modify<
   }
 >;
 
-const DGRAPH_URL = "https://dgraph.toccatech.com/graphql";
-
 const MARK_AS_DELETED = `
   mutation UpdateComposer($updateComposerInput: UpdateComposerInput!) {
     updateComposer(input: $updateComposerInput) {
@@ -74,7 +72,12 @@ const GET_COMPOSER = `
   }
 `;
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, params }) => {
+  const DGRAPH_URL =
+    req.headers.host === "toccatech.fr"
+      ? "http://dgraph.toccatech.fr/graphql"
+      : "https://dgraph.toccatech.com/graphql";
+
   const { data } = await axios.post(DGRAPH_URL, {
     query: GET_COMPOSER,
     variables: { composerId: params!.composerId },
@@ -93,6 +96,13 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
   const router = useRouter();
 
   const [composer] = useState(() => {
+    const FS_BASE_URL =
+      window.location.hostname === "toccatech.fr"
+        ? "http://file-server.toccatech.fr"
+        : "https://file-server.toccatech.com";
+
+    const IS_LOCAL = FS_BASE_URL === "http://file-server.toccatech.fr";
+
     const isDead = !!rawComposer.deathDate;
     let parsedComposer: Partial<Composer> = {
       birthDate: new Date(rawComposer.birthDate),
@@ -109,13 +119,21 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
         yearInMiliseconds;
       parsedComposer.age = Math.floor(age);
     }
+    if (IS_LOCAL && parsedComposer.photoURL!.slice(0, 33) == "https://file-server.toccatech.com") {
+      parsedComposer.photoURL = FS_BASE_URL + parsedComposer.photoURL!.slice(33);
+    }
     return { ...rawComposer, ...parsedComposer } as Composer;
   });
 
   const handleDelete = useCallback(async () => {
     console.log("Deleting composer...");
+    const DGRAPH_URL =
+      window.location.hostname === "toccatech.fr"
+        ? "http://dgraph.toccatech.fr/graphql"
+        : "https://dgraph.toccatech.com/graphql";
+
     try {
-      const response = await fetch("https://dgraph.toccatech.com/graphql", {
+      const response = await fetch(DGRAPH_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Toccatech-Auth": currentUser!.authToken },
         body: JSON.stringify({
@@ -153,16 +171,16 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
     }
   }, [currentUser, haveASnack, rawComposer, router]);
 
+  const pageTitle = `${composer.name} - Toccatech`;
+  const pageDescription = `${composer.biography
+    .slice(0, 150)
+    .replace("\n", " ")}... - Tout savoir sur ${composer.name} !`;
+
   return (
     <Container className="mt-4">
       <Head>
-        <title>{composer.name} - Toccatech</title>
-        <meta
-          name="description"
-          content={`${composer.biography.slice(0, 150).replace("\n", " ")}... - Tout savoir sur ${
-            composer.name
-          } !`}
-        />
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
       </Head>
       <Card className="composerDetails">
         <CardHeader

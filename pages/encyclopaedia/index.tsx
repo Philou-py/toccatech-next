@@ -28,8 +28,6 @@ type Composer = Modify<
   }
 >;
 
-const DGRAPH_URL = "https://dgraph.toccatech.com/graphql";
-
 const QUERY_COMPOSERS = `
   query {
     queryComposer(filter: { isDeleted: false }) {
@@ -43,7 +41,12 @@ const QUERY_COMPOSERS = `
   }
 `;
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const DGRAPH_URL =
+    req.headers.host === "toccatech.fr"
+      ? "http://dgraph.toccatech.fr/graphql"
+      : "https://dgraph.toccatech.com/graphql";
+
   const { data } = await axios.post(DGRAPH_URL, { query: QUERY_COMPOSERS });
   return { props: { rawComposers: data.data.queryComposer } };
 };
@@ -52,7 +55,13 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
 
   const [composers] = useState(() => {
-    // console.log("Composers initialised!");
+    const FS_BASE_URL =
+      window.location.hostname === "toccatech.fr"
+        ? "http://file-server.toccatech.fr"
+        : "https://file-server.toccatech.com";
+
+    const IS_LOCAL = FS_BASE_URL === "http://file-server.toccatech.fr";
+
     return rawComposers.map((rawComposer) => {
       const isDead = !!rawComposer.deathDate;
       let parsedData: Partial<Composer> = {
@@ -68,6 +77,9 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
         const age =
           (parsedData.deathDate!.getTime() - parsedData.birthDate!.getTime()) / yearInMiliseconds;
         parsedData.age = Math.floor(age);
+      }
+      if (IS_LOCAL && parsedData.photoURL!.slice(0, 33) == "https://file-server.toccatech.com") {
+        parsedData.photoURL = FS_BASE_URL + parsedData.photoURL!.slice(33);
       }
       return { ...rawComposer, ...parsedData };
     }) as Composer[];

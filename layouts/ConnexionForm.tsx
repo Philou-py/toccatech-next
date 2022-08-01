@@ -36,8 +36,13 @@ function ConnexionForm({ noAccountFunc, onCompleted }: ConnexionFormProps) {
 
   const handleSubmit = useCallback(async () => {
     console.log("Connection...");
+    const SIGN_IN_URL =
+      window.location.hostname === "toccatech.fr"
+        ? "http://auth-server.toccatech.fr/signin"
+        : "https://auth-server.toccatech.com/signin";
+
     try {
-      const response = await fetch("https://auth-server.toccatech.com/signin", {
+      const response = await fetch(SIGN_IN_URL, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

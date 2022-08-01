@@ -37,8 +37,6 @@ interface Composer {
   name: string;
 }
 
-const DGRAPH_URL = "https://dgraph.toccatech.com/graphql";
-
 const QUERY_COMPOSERS = `
   query QueryComposers {
     queryComposer(filter: { isDeleted: false }) {
@@ -48,7 +46,12 @@ const QUERY_COMPOSERS = `
   }
 `;
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const DGRAPH_URL =
+    req.headers.host === "toccatech.fr"
+      ? "http://dgraph.toccatech.fr/graphql"
+      : "https://dgraph.toccatech.com/graphql";
+
   const { data } = await axios.post(DGRAPH_URL, { query: QUERY_COMPOSERS });
   return { props: { composers: data.data.queryComposer } };
 };
@@ -156,6 +159,12 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
           return;
         }
       }
+
+      const DGRAPH_URL =
+        window.location.hostname === "toccatech.fr"
+          ? "http://dgraph.toccatech.fr/graphql"
+          : "https://dgraph.toccatech.com/graphql";
+
       const response = await fetch(DGRAPH_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Toccatech-Auth": currentUser!.authToken },
@@ -183,13 +192,19 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
   );
 
   const uploadFile = useCallback(async () => {
+    const FS_BASE_URL =
+      window.location.hostname === "toccatech.fr"
+        ? "http://file-server.toccatech.fr"
+        : "https://file-server.toccatech.com";
+
     const formData = new FormData();
     formData.append("file", editablePiece.scoreFile);
     formData.append("isPublic", "false");
     formData.append("sharedWith", "[]");
     formData.append("resource", "userScores");
+
     try {
-      const response = await fetch("https://file-server.toccatech.com/files/upload", {
+      const response = await fetch(`${FS_BASE_URL}/files/upload`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -209,6 +224,11 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
 
   const handleSubmit = useCallback(
     async (updatePieceId?: string) => {
+      const DGRAPH_URL =
+        window.location.hostname === "toccatech.fr"
+          ? "http://dgraph.toccatech.fr/graphql"
+          : "https://dgraph.toccatech.com/graphql";
+
       const inputPiece = {
         title: editablePiece.title,
         scoreURL: editablePiece.scoreFile && (await uploadFile()),
@@ -280,7 +300,12 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
               className={cn("imgContainer", cbp)}
             >
               <Image
-                src={piece.composer.photoURL}
+                src={
+                  window.location.hostname === "toccatech.fr" &&
+                  piece.composer.photoURL.slice(0, 33) == "https://file-server.toccatech.com"
+                    ? "http://file-server.toccatech.fr" + piece.composer.photoURL.slice(33)
+                    : piece.composer.photoURL
+                }
                 alt="Composer Avatar"
                 layout="fill"
                 objectFit="cover"

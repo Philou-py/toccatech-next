@@ -11,6 +11,8 @@ module.exports = {
       "firebasestorage.googleapis.com",
       "images.unsplash.com",
     ],
+
+    minimumCacheTTL: 31_536_000, // One year
   },
 };
 

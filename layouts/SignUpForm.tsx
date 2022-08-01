@@ -38,13 +38,18 @@ function SignUpForm({ alreadyAnAccountFunc, onCompleted }: ConnexionFormProps) {
   const buttonTitle = !isFormValid ? "Le formulaire n'est pas valide !" : undefined;
 
   const uploadImage = useCallback(async () => {
+    const BASE_FILE_URL =
+      window.location.hostname === "toccatech.fr"
+        ? "http://file-server.toccatech.fr"
+        : "https://file-server.toccatech.com";
+
     const formData = new FormData();
     formData.append("file", newUser.file);
     formData.append("isPublic", "true");
     formData.append("sharedWith", "[]");
     formData.append("resource", "userAvatars");
     try {
-      const response = await fetch("https://file-server.toccatech.com/files/upload", {
+      const response = await fetch(BASE_FILE_URL + "/files/upload", {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -53,7 +58,7 @@ function SignUpForm({ alreadyAnAccountFunc, onCompleted }: ConnexionFormProps) {
       if (error) {
         console.log(error);
       } else {
-        const newURL = `https://file-server.toccatech.com/files/${fileId}`;
+        const newURL = `${BASE_FILE_URL}/files/${fileId}`;
         return newURL;
       }
     } catch (error) {
@@ -64,13 +69,18 @@ function SignUpForm({ alreadyAnAccountFunc, onCompleted }: ConnexionFormProps) {
 
   const handleSubmit = useCallback(async () => {
     console.log("Inscription...");
+    const SIGN_UP_URL =
+      window.location.hostname === "toccatech.fr"
+        ? "http://auth-server.toccatech.fr/signup"
+        : "https://auth-server.toccatech.com/signup";
+
     let avatarURL = "";
     if (newUser.file) {
       let result = await uploadImage();
       if (result) avatarURL = result;
     }
     try {
-      const response = await fetch("https://auth-server.toccatech.com/signup", {
+      const response = await fetch(SIGN_UP_URL, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

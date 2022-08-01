@@ -59,7 +59,12 @@ function getCookie(cookieName: string) {
 }
 
 async function fetchCurrentUser(authToken: string) {
-  const response = await fetch("https://dgraph.toccatech.com/graphql", {
+  const DGRAPH_URL =
+    window.location.hostname === "toccatech.fr"
+      ? "http://dgraph.toccatech.fr/graphql"
+      : "https://dgraph.toccatech.com/graphql";
+
+  const response = await fetch(DGRAPH_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Toccatech-Auth": authToken },
     body: JSON.stringify({
@@ -120,8 +125,13 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   const signOut = useCallback(async () => {
     console.log("Déconnexion...");
+    const SIGN_OUT_URL =
+      window.location.hostname === "toccatech.fr"
+        ? "http://auth-server.toccatech.fr/signout"
+        : "https://auth-server.toccatech.com/signout";
+
     try {
-      const response = await fetch("https://auth-server.toccatech.com/signout", {
+      const response = await fetch(SIGN_OUT_URL, {
         credentials: "include",
       });
       if (response.status == 200) {
