@@ -45,8 +45,10 @@ export default function NavBar({
         if (typeof action === "string") {
           if (!(requiresAuth && !isAuthenticated)) {
             return (
-              <Link href={action} passHref key={name}>
-                <li>{name}</li>
+              <Link href={action} key={name}>
+                <a style={{ textDecoration: "none", height: "100%" }}>
+                  <li>{name}</li>
+                </a>
               </Link>
             );
           } else {
@@ -99,13 +101,15 @@ export default function NavBar({
               isFlat
             />
           )}
-          <Link href="/" passHref>
-            <div className={navBarStyles.logoAndTitle}>
-              <div className={navBarStyles.logoContainer}>
-                <Image src={logoPath} alt="Logo" width={50} height={50} />
+          <Link href="/">
+            <a style={{ textDecoration: "none" }}>
+              <div className={navBarStyles.logoAndTitle}>
+                <div className={navBarStyles.logoContainer}>
+                  <Image src={logoPath} alt="Logo" width={50} height={50} />
+                </div>
+                <h4 className={navBarStyles.title}>{title}</h4>
               </div>
-              <h4 className={navBarStyles.title}>{title}</h4>
-            </div>
+            </a>
           </Link>
         </div>
         {["md", "lg", "xl"].includes(currentBreakpoint) && navMenu}

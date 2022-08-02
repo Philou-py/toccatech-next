@@ -48,8 +48,6 @@ export default function BreakpointsProvider({ children, breakpointsList }: Provi
       prevBrpt = breakpoint;
     }
     return () => {
-      console.log("Return ran!");
-
       for (let i = 0; i < mediaQueryLists.length; i++) {
         mediaQueryLists[i].removeEventListener("change", changeEventHandlers[i]);
       }

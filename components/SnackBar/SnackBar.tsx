@@ -1,6 +1,6 @@
 import snackBarStyles from "./SnackBar.module.scss";
 import { CSSTransition } from "react-transition-group";
-import { ReactElement, useState, useEffect } from "react";
+import { ReactElement, useState, useRef } from "react";
 import cn from "classnames";
 
 interface SnackBarProps {
@@ -10,11 +10,12 @@ interface SnackBarProps {
 }
 
 export default function SnackBar({ children, showSnackBar, snackBarType }: SnackBarProps) {
-  const [show, setShow] = useState(false);
+  const refForTransition = useRef(null);
 
   return (
     <div className={snackBarStyles.snackBarComp}>
       <CSSTransition
+        nodeRef={refForTransition}
         in={showSnackBar}
         timeout={500}
         mountOnEnter
@@ -26,7 +27,7 @@ export default function SnackBar({ children, showSnackBar, snackBarType }: Snack
           exitActive: snackBarStyles.tSnackBarExitActive,
         }}
       >
-        <div className={snackBarStyles.snackBarWrapper}>
+        <div className={snackBarStyles.snackBarWrapper} ref={refForTransition}>
           <div
             className={cn(snackBarStyles.snackBar, {
               green: snackBarType == "success",

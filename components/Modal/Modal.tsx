@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useRef, MouseEvent, Dispatch, SetStateAction } from "react";
+import { ReactElement, useCallback, useRef, MouseEvent, cloneElement } from "react";
 import modalStyles from "./Modal.module.scss";
 import { CSSTransition } from "react-transition-group";
 
@@ -10,10 +10,14 @@ interface ModalProps {
 
 export default function Modal({ showModal = false, closeFunc, children }: ModalProps) {
   const modalBgRef = useRef(null);
+  const transitionWrapperRef = useRef(null);
 
   const handleBgClick = useCallback(
     (event: MouseEvent) => {
-      if ((event.target as HTMLDivElement).isSameNode(modalBgRef.current)) {
+      if (
+        (event.target as HTMLDivElement).isSameNode(modalBgRef.current) ||
+        (event.target as HTMLDivElement).isSameNode(transitionWrapperRef.current)
+      ) {
         closeFunc(false);
       }
     },
@@ -23,6 +27,7 @@ export default function Modal({ showModal = false, closeFunc, children }: ModalP
   return (
     <div className={modalStyles.modal}>
       <CSSTransition
+        nodeRef={modalBgRef}
         in={showModal}
         timeout={300}
         mountOnEnter
@@ -36,6 +41,7 @@ export default function Modal({ showModal = false, closeFunc, children }: ModalP
       >
         <div className={modalStyles.bg} ref={modalBgRef} onClick={handleBgClick}>
           <CSSTransition
+            nodeRef={transitionWrapperRef}
             in={showModal}
             timeout={300}
             appear
@@ -48,7 +54,17 @@ export default function Modal({ showModal = false, closeFunc, children }: ModalP
               exitActive: modalStyles.tModalExitActive,
             }}
           >
-            <>{children}</>
+            <div
+              ref={transitionWrapperRef}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              {children}
+            </div>
           </CSSTransition>
         </div>
       </CSSTransition>

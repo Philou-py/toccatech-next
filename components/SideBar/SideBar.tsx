@@ -19,6 +19,8 @@ function SideBar({ showSideBar, title, navLinks, authButton, handleAuth, onClose
   const { isAuthenticated, setModalOpen, signOut, currentUser } = useContext(AuthContext);
 
   const bgRef = useRef(null);
+  const refForTransition2 = useRef(null);
+
   const handleSideBarClose = useCallback(
     (event: MouseEvent) => {
       if ((event.target as HTMLDivElement).isSameNode(bgRef.current)) {
@@ -41,6 +43,7 @@ function SideBar({ showSideBar, title, navLinks, authButton, handleAuth, onClose
   return (
     <div className={sideBarStyles.sidebar}>
       <CSSTransition
+        nodeRef={bgRef}
         in={showSideBar}
         mountOnEnter
         unmountOnExit
@@ -54,6 +57,7 @@ function SideBar({ showSideBar, title, navLinks, authButton, handleAuth, onClose
       >
         <div className={sideBarStyles.bg} ref={bgRef} onClick={handleSideBarClose}>
           <CSSTransition
+            nodeRef={refForTransition2}
             in={showSideBar}
             appear
             timeout={300}
@@ -66,10 +70,12 @@ function SideBar({ showSideBar, title, navLinks, authButton, handleAuth, onClose
               exitActive: sideBarStyles.tSidebarExitActive,
             }}
           >
-            <div className={sideBarStyles.content}>
+            <div className={sideBarStyles.content} ref={refForTransition2}>
               {!isAuthenticated && (
-                <Link href="/" passHref>
-                  <h3 className={sideBarStyles.title}>Toccatech</h3>
+                <Link href="/">
+                  <a style={{ textDecoration: "none" }}>
+                    <h3 className={sideBarStyles.title}>Toccatech</h3>
+                  </a>
                 </Link>
               )}
               {isAuthenticated && currentUser!.avatarURL && (
@@ -96,8 +102,10 @@ function SideBar({ showSideBar, title, navLinks, authButton, handleAuth, onClose
 
               <ul className={sideBarStyles.navList}>
                 {navLinks.map(([name, url, isDisabled]) => (
-                  <Link href={url} passHref key={name}>
-                    <li className={cn({ disabled: isDisabled })}>{name}</li>
+                  <Link href={url} key={name}>
+                    <a style={{ textDecoration: "none", color: "black" }}>
+                      <li className={cn({ disabled: isDisabled })}>{name}</li>
+                    </a>
                   </Link>
                 ))}
               </ul>

@@ -103,18 +103,7 @@ export default function ComposerDetails({
   const { haveASnack } = useContext(SnackContext);
   const router = useRouter();
 
-  const [composer, setComposer] = useState<Composer>({
-    id: "",
-    name: "",
-    age: 0,
-    birthDate: new Date(),
-    deathDate: new Date(),
-    biography: "",
-    photoURL: "",
-    musicalStyles: "",
-  });
-
-  useEffect(() => {
+  const processComposer = useCallback(() => {
     const isDead = !!rawComposer.deathDate;
     let parsedComposer: Partial<Composer> = {
       birthDate: new Date(rawComposer.birthDate),
@@ -131,8 +120,15 @@ export default function ComposerDetails({
         yearInMiliseconds;
       parsedComposer.age = Math.floor(age);
     }
-    setComposer({ ...rawComposer, ...parsedComposer } as Composer);
+    return { ...rawComposer, ...parsedComposer } as Composer;
   }, [rawComposer]);
+
+  const [composer, setComposer] = useState<Composer>(processComposer);
+
+  // Update composer in case of a route change
+  useEffect(() => {
+    setComposer(processComposer());
+  }, [processComposer]);
 
   const handleDelete = useCallback(async () => {
     console.log("Deleting composer...");
@@ -242,7 +238,7 @@ export default function ComposerDetails({
             </Button>
           )}
           {isAuthenticated && (
-            <Link href={`/encyclopaedia/${composer.id}/update`} passHref>
+            <Link href={`/encyclopaedia/${composer.id}/update`}>
               <a>
                 <Button className="indigo darken-1" isDisabled={!isAuthenticated}>
                   Envie de contribuer ?
@@ -267,7 +263,7 @@ export default function ComposerDetails({
       <div className="allComposers">
         {allComposers.map(({ id, name }) => (
           <Link href={`/encyclopaedia/${id}`} key={id}>
-            {name}
+            <a>{name}</a>
           </Link>
         ))}
       </div>

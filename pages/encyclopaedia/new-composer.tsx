@@ -323,7 +323,7 @@ export default function NewComposer() {
           </Form>
         </CardContent>
         <CardActions style={{ justifyContent: "center" }}>
-          <Link href={`/encyclopaedia`} passHref>
+          <Link href={`/encyclopaedia`}>
             <a>
               <Button className="red--text" type="outlined">
                 Annuler

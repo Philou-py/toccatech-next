@@ -64,7 +64,6 @@ interface CustomCSSProperties extends CSSProperties {
 }
 
 function InputField(props: TextInputProps | TextAreaProps | SelectInputProps | FileInputProps) {
-  console.log("Input Field rendered!");
   const {
     value,
     label,

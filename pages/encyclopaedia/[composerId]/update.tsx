@@ -398,7 +398,7 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
           </Form>
         </CardContent>
         <CardActions style={{ justifyContent: "center" }}>
-          <Link href={`/encyclopaedia/${rawComposer.id}`} passHref>
+          <Link href={`/encyclopaedia/${rawComposer.id}`}>
             <a>
               <Button className="red--text" type="outlined">
                 Annuler

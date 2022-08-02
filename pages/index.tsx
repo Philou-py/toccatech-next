@@ -50,9 +50,11 @@ export default function Home() {
           )}
           {isAuthenticated && (
             <Link href="/score-library">
-              <Button className="blue-grey" size="x-large">
-                C&rsquo;est parti !
-              </Button>
+              <a>
+                <Button className="blue-grey" size="x-large">
+                  C&rsquo;est parti !
+                </Button>
+              </a>
             </Link>
           )}
         </Container>

@@ -19,7 +19,6 @@ interface ConnexionFormProps {
 }
 
 function SignUpForm({ alreadyAnAccountFunc, onCompleted }: ConnexionFormProps) {
-  console.log("SignUpForm rendered!");
   const { setCurrentUser, setIsAuthenticated } = useContext(AuthContext);
   const { haveASnack } = useContext(SnackContext);
   const [isLoading] = useState(false);

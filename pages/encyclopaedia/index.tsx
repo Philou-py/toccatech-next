@@ -86,7 +86,7 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
       </Head>
       <div className={cn("heading", cbp)}>
         <h1 className="pageTitle">Encyclopédie</h1>
-        <Link href="/encyclopaedia/new-composer" passHref>
+        <Link href="/encyclopaedia/new-composer">
           <a>
             <Button className="blue-grey newComposer">Nouveau Compositeur</Button>
           </a>
@@ -125,7 +125,7 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
               </ul>
             </CardContent>
             <CardActions>
-              <Link href={`/encyclopaedia/${composer.id}`} passHref>
+              <Link href={`/encyclopaedia/${composer.id}`}>
                 <a style={{ width: "100%" }}>
                   <Button className="indigo darken-1" isFullWidth>
                     En savoir plus...

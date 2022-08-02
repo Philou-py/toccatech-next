@@ -11,7 +11,11 @@ export default function NotFound() {
       <h1 className="pageTitle textCenter">Erreur 404 ! 😢</h1>
       <h2 className="textCenter">Désolé, cette page n&rsquo;existe pas !</h2>
       <h4 className="textCenter">
-        Pourquoi ne pas revenir sur la <Link href="/">page d&rsquo;accueil</Link> ?
+        Pourquoi ne pas revenir sur la{" "}
+        <Link href="/">
+          <a>page d&rsquo;accueil</a>
+        </Link>{" "}
+        ?
       </h4>
     </Container>
   );

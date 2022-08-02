@@ -250,7 +250,6 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
           id: currentUser!.userProfileId,
         },
       };
-      console.log(inputPiece, JSON.stringify(inputPiece));
       const response = await fetch(DGRAPH_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Toccatech-Auth": currentUser!.authToken },
