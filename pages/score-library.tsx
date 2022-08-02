@@ -115,6 +115,8 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [isAddingPiece, setIsAddingPiece] = useState(true);
   const [pieceId, setPieceId] = useState("");
+  const [currentScoreURL, setCurrentScoreURL] = useState("");
+  const [keepScore, setKeepScore] = useState(true);
   const {
     data: editablePiece,
     setData,
@@ -145,11 +147,11 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
         const response = await fetch(scoreToDelete, { method: "DELETE", credentials: "include" });
         if (response.status === 200) console.log("Score successfully deleted!");
         else if (response.status === 400) console.log("This score does not exist!");
-        return "Ok!";
+        return "";
       } catch (error) {
         console.log(error);
         haveASnack("error", <h6>Oh non, le serveur de fichiers est inaccessible !</h6>);
-        return "Bad, bad, bad...";
+        return scoreURL;
       }
     },
     [haveASnack]
@@ -235,7 +237,11 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
 
       const inputPiece = {
         title: editablePiece.title,
-        scoreURL: editablePiece.scoreFile && (await uploadFile()),
+        scoreURL: editablePiece.scoreFile
+          ? await uploadFile()
+          : keepScore
+          ? currentScoreURL
+          : handleDeleteScore(currentScoreURL),
         composer: {
           id: editablePiece.composerId,
         },
@@ -275,7 +281,17 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
         }
       });
     },
-    [editablePiece, uploadFile, haveASnack, setCurrentUser, currentUser, isAddingPiece]
+    [
+      editablePiece,
+      uploadFile,
+      haveASnack,
+      setCurrentUser,
+      currentUser,
+      isAddingPiece,
+      currentScoreURL,
+      handleDeleteScore,
+      keepScore,
+    ]
   );
 
   const dataTableHeaders = useMemo<TableHeader[]>(
@@ -340,6 +356,7 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
               onClick={() => {
                 setIsAddingPiece(false);
                 setPieceId(piece.id);
+                setCurrentScoreURL(piece.scoreURL || "");
                 setData({ title: piece.title, scoreFile: "", composerId: piece.composer.id });
                 handleModalOpen();
               }}
@@ -431,6 +448,21 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
                 acceptTypes="image/*,application/pdf"
                 {...register("scoreFile", editablePiece.scoreFile)}
               />
+              {!isAddingPiece && (
+                <div style={{ display: "flex", fontSize: "18px" }}>
+                  <input
+                    id="keepScoreCheckBox"
+                    type="checkbox"
+                    checked={keepScore}
+                    onChange={() => {
+                      setKeepScore((prev) => !prev);
+                    }}
+                    disabled={!!editablePiece.scoreFile}
+                    style={{ marginRight: "10px" }}
+                  />
+                  <label htmlFor="keepScoreCheckBox">Conserver la partition existante</label>
+                </div>
+              )}
             </Form>
           </CardContent>
           <CardActions>
