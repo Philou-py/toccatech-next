@@ -113,10 +113,10 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
             <CardHeader title={<h5>{composer.name}</h5>} centerTitle />
             <CardContent>
               <ul style={{ margin: 0, paddingLeft: 0, listStylePosition: "inside" }}>
-                <li>Date de naissance : {composer.birthDate.toLocaleDateString()}</li>
+                <li>Date de naissance : {composer.birthDate.toLocaleDateString("fr-FR")}</li>
                 {composer.deathDate && (
                   <li>
-                    Date de décès : {composer.deathDate.toLocaleDateString()} (décédé(e) à{" "}
+                    Date de décès : {composer.deathDate.toLocaleDateString("fr-FR")} (décédé(e) à{" "}
                     {composer.age} ans)
                   </li>
                 )}
