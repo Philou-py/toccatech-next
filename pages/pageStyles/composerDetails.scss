@@ -86,3 +86,16 @@
     }
   }
 }
+
+.allComposers {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  a {
+    font-size: 18px;
+    margin: 0 20px;
+  }
+}

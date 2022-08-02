@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useState, useEffect, useMemo } from "react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,10 +28,6 @@ interface RawComposer {
   musicalStyles: string;
   biography: string;
   age: number;
-  contributors: {
-    id: string;
-    username: string;
-  }[];
 }
 
 type Modify<T, R> = Omit<T, keyof R> & R;
@@ -44,6 +40,11 @@ type Composer = Modify<
   }
 >;
 
+interface MinimalComposer {
+  id: string;
+  name: string;
+}
+
 const MARK_AS_DELETED = `
   mutation UpdateComposer($updateComposerInput: UpdateComposerInput!) {
     updateComposer(input: $updateComposerInput) {
@@ -54,8 +55,8 @@ const MARK_AS_DELETED = `
   }
 `;
 
-const GET_COMPOSER = `
-  query GetComposer($composerId: ID!) {
+const GET_COMPOSERS = `
+  query GetComposers($composerId: ID!) {
     getComposer(id: $composerId) {
       id
       name
@@ -64,10 +65,11 @@ const GET_COMPOSER = `
       photoURL
       biography
       musicalStyles
-      contributors {
-        id
-        username
-      }
+    }
+
+    queryComposer(filter: { isDeleted: false }) {
+      id
+      name
     }
   }
 `;
@@ -79,23 +81,40 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params }) =>
       : "https://dgraph.toccatech.com/graphql";
 
   const { data } = await axios.post(DGRAPH_URL, {
-    query: GET_COMPOSER,
+    query: GET_COMPOSERS,
     variables: { composerId: params!.composerId },
   });
 
   return {
-    props: { rawComposer: data.data.getComposer },
+    props: { rawComposer: data.data.getComposer, allComposers: data.data.queryComposer },
     notFound: data.data.getComposer.length === 0,
   };
 };
 
-export default function ComposerDetails({ rawComposer }: { rawComposer: RawComposer }) {
+export default function ComposerDetails({
+  rawComposer,
+  allComposers,
+}: {
+  rawComposer: RawComposer;
+  allComposers: MinimalComposer[];
+}) {
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
   const { isAuthenticated, currentUser } = useContext(AuthContext);
   const { haveASnack } = useContext(SnackContext);
   const router = useRouter();
 
-  const [composer] = useState(() => {
+  const [composer, setComposer] = useState<Composer>({
+    id: "",
+    name: "",
+    age: 0,
+    birthDate: new Date(),
+    deathDate: new Date(),
+    biography: "",
+    photoURL: "",
+    musicalStyles: "",
+  });
+
+  useEffect(() => {
     const isDead = !!rawComposer.deathDate;
     let parsedComposer: Partial<Composer> = {
       birthDate: new Date(rawComposer.birthDate),
@@ -112,8 +131,8 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
         yearInMiliseconds;
       parsedComposer.age = Math.floor(age);
     }
-    return { ...rawComposer, ...parsedComposer } as Composer;
-  });
+    setComposer({ ...rawComposer, ...parsedComposer } as Composer);
+  }, [rawComposer]);
 
   const handleDelete = useCallback(async () => {
     console.log("Deleting composer...");
@@ -161,10 +180,14 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
     }
   }, [currentUser, haveASnack, rawComposer, router]);
 
-  const pageTitle = `${composer.name} - Toccatech`;
-  const pageDescription = `${composer.biography
-    .slice(0, 150)
-    .replace("\n", " ")}... - Tout savoir sur ${composer.name} !`;
+  const pageTitle = useMemo(() => `${composer.name} - Toccatech`, [composer.name]);
+  const pageDescription = useMemo(
+    () =>
+      `${composer.biography.slice(0, 150).replace("\n", " ")}... - Tout savoir sur ${
+        composer.name
+      } !`,
+    [composer.name, composer.biography]
+  );
 
   return (
     <Container className="mt-4">
@@ -177,15 +200,17 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
           title={
             <div className={cn("heading", cbp)}>
               <h1 className={cbp}>{composer.name}</h1>
-              <div className={cn("photoContainer", cbp)}>
-                <Image
-                  src={composer.photoURL}
-                  layout="fill"
-                  objectFit="cover"
-                  objectPosition="top"
-                  alt="Composer Avatar"
-                />
-              </div>
+              {composer.photoURL && (
+                <div className={cn("photoContainer", cbp)}>
+                  <Image
+                    src={composer.photoURL}
+                    layout="fill"
+                    objectFit="cover"
+                    objectPosition="top"
+                    alt="Composer Avatar"
+                  />
+                </div>
+              )}
             </div>
           }
         />
@@ -236,6 +261,16 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
           )}
         </CardActions>
       </Card>
+      <h4 className="textCenter" style={{ marginTop: "30px" }}>
+        Intéressant ? Pourquoi ne pas consulter également...
+      </h4>
+      <div className="allComposers">
+        {allComposers.map(({ id, name }) => (
+          <Link href={`/encyclopaedia/${id}`} key={id}>
+            {name}
+          </Link>
+        ))}
+      </div>
     </Container>
   );
 }
