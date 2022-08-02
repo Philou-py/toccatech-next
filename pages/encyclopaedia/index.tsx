@@ -55,13 +55,6 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
   const { currentBreakpoint: cbp } = useContext(BreakpointsContext);
 
   const [composers] = useState(() => {
-    const FS_BASE_URL =
-      window.location.hostname === "toccatech.fr"
-        ? "http://file-server.toccatech.fr"
-        : "https://file-server.toccatech.com";
-
-    const IS_LOCAL = FS_BASE_URL === "http://file-server.toccatech.fr";
-
     return rawComposers.map((rawComposer) => {
       const isDead = !!rawComposer.deathDate;
       let parsedData: Partial<Composer> = {
@@ -77,9 +70,6 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
         const age =
           (parsedData.deathDate!.getTime() - parsedData.birthDate!.getTime()) / yearInMiliseconds;
         parsedData.age = Math.floor(age);
-      }
-      if (IS_LOCAL && parsedData.photoURL!.slice(0, 33) == "https://file-server.toccatech.com") {
-        parsedData.photoURL = FS_BASE_URL + parsedData.photoURL!.slice(33);
       }
       return { ...rawComposer, ...parsedData };
     }) as Composer[];

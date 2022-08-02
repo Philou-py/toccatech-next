@@ -138,7 +138,11 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
   const handleDeleteScore = useCallback(
     async (scoreURL: string) => {
       try {
-        const response = await fetch(scoreURL, { method: "DELETE", credentials: "include" });
+        let scoreToDelete = scoreURL;
+        if (window.location.hostname === "toccatech.fr") {
+          scoreToDelete = "http://file-server.toccatech.fr" + scoreToDelete.slice(33);
+        }
+        const response = await fetch(scoreToDelete, { method: "DELETE", credentials: "include" });
         if (response.status === 200) console.log("Score successfully deleted!");
         else if (response.status === 400) console.log("This score does not exist!");
         return "Ok!";
@@ -300,12 +304,7 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
               className={cn("imgContainer", cbp)}
             >
               <Image
-                src={
-                  window.location.hostname === "toccatech.fr" &&
-                  piece.composer.photoURL.slice(0, 33) == "https://file-server.toccatech.com"
-                    ? "http://file-server.toccatech.fr" + piece.composer.photoURL.slice(33)
-                    : piece.composer.photoURL
-                }
+                src={piece.composer.photoURL}
                 alt="Composer Avatar"
                 layout="fill"
                 objectFit="cover"

@@ -96,13 +96,6 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
   const router = useRouter();
 
   const [composer] = useState(() => {
-    const FS_BASE_URL =
-      window.location.hostname === "toccatech.fr"
-        ? "http://file-server.toccatech.fr"
-        : "https://file-server.toccatech.com";
-
-    const IS_LOCAL = FS_BASE_URL === "http://file-server.toccatech.fr";
-
     const isDead = !!rawComposer.deathDate;
     let parsedComposer: Partial<Composer> = {
       birthDate: new Date(rawComposer.birthDate),
@@ -118,9 +111,6 @@ export default function ComposerDetails({ rawComposer }: { rawComposer: RawCompo
         (parsedComposer.deathDate!.getTime() - parsedComposer.birthDate!.getTime()) /
         yearInMiliseconds;
       parsedComposer.age = Math.floor(age);
-    }
-    if (IS_LOCAL && parsedComposer.photoURL!.slice(0, 33) == "https://file-server.toccatech.com") {
-      parsedComposer.photoURL = FS_BASE_URL + parsedComposer.photoURL!.slice(33);
     }
     return { ...rawComposer, ...parsedComposer } as Composer;
   });

@@ -109,13 +109,7 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
 
   const [photoSelectDone, setPhotoSelectDone] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [photoToShow, setPhotoToShow] = useState(() => {
-    const IS_LOCAL = window.location.hostname === "toccatech.fr";
-    if (IS_LOCAL && rawComposer.photoURL!.slice(0, 33) == "https://file-server.toccatech.com") {
-      return "http://file-server.toccatech.fr" + rawComposer.photoURL!.slice(33);
-    }
-    return rawComposer.photoURL;
-  });
+  const [photoToShow, setPhotoToShow] = useState(rawComposer.photoURL);
   const [previewSrc, setPreviewSrc] = useState("");
 
   // Avoid uselessly re-rendering the Photo URL Input Field by memoizing the validation rules array
@@ -135,7 +129,11 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
     // Delete old picture
     if (rawComposer.photoURL.slice(0, 33) == "https://file-server.toccatech.com") {
       try {
-        const response = await fetch(rawComposer.photoURL, {
+        let photoToDelete = rawComposer.photoURL;
+        if (window.location.hostname === "toccatech.fr") {
+          photoToDelete = "http://file-server.toccatech.fr" + photoToDelete.slice(33);
+        }
+        const response = await fetch(photoToDelete, {
           method: "DELETE",
           credentials: "include",
         });
