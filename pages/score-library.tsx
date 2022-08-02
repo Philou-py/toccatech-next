@@ -226,6 +226,7 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
       console.log(error);
       haveASnack("error", <h6>Oh non, le serveur de fichiers est inaccessible !</h6>);
     }
+    return "";
   }, [editablePiece.scoreFile, haveASnack]);
 
   const handleSubmit = useCallback(
@@ -241,7 +242,7 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
           ? await uploadFile()
           : keepScore
           ? currentScoreURL
-          : handleDeleteScore(currentScoreURL),
+          : await handleDeleteScore(currentScoreURL),
         composer: {
           id: editablePiece.composerId,
         },
@@ -249,6 +250,7 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
           id: currentUser!.userProfileId,
         },
       };
+      console.log(inputPiece, JSON.stringify(inputPiece));
       const response = await fetch(DGRAPH_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-Toccatech-Auth": currentUser!.authToken },
@@ -356,6 +358,7 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
               onClick={() => {
                 setIsAddingPiece(false);
                 setPieceId(piece.id);
+                setKeepScore(true);
                 setCurrentScoreURL(piece.scoreURL || "");
                 setData({ title: piece.title, scoreFile: "", composerId: piece.composer.id });
                 handleModalOpen();
@@ -404,6 +407,8 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
               onClick={() => {
                 setIsAddingPiece(true);
                 setPieceId("");
+                setKeepScore(true);
+                setCurrentScoreURL("");
                 setData({ title: "", composerId: "", scoreFile: "" });
                 setModalOpen(true);
               }}
