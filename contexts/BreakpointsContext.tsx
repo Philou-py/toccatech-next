@@ -10,7 +10,7 @@ export const BreakpointsContext = createContext<{
   currentBreakpoint: string;
 }>({
   breakpoints: {},
-  currentBreakpoint: "xs",
+  currentBreakpoint: "lg",
 });
 
 export default function BreakpointsProvider({ children, breakpointsList }: ProviderProps) {
