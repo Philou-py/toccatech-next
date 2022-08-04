@@ -15,7 +15,7 @@ export const BreakpointsContext = createContext<{
 
 export default function BreakpointsProvider({ children, breakpointsList }: ProviderProps) {
   const [breakpoints, setBreakpoints] = useState<Record<string, boolean>>({});
-  const [currentBreakpoint, setCurrentBreakpoint] = useState<string>("");
+  const [currentBreakpoint, setCurrentBreakpoint] = useState<string>("lg");
 
   useEffect(() => {
     const matches: Record<string, boolean> = {};
