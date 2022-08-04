@@ -2,7 +2,6 @@ import { useCallback, useMemo, useContext, useState } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import Link from "next/link";
 import Head from "next/head";
 import axios from "axios";
 import { BreakpointsContext } from "../../../contexts/BreakpointsContext";
@@ -398,13 +397,14 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
           </Form>
         </CardContent>
         <CardActions style={{ justifyContent: "center" }}>
-          <Link href={`/encyclopaedia/${rawComposer.id}`}>
-            <a>
-              <Button className="red--text" type="outlined">
-                Annuler
-              </Button>
-            </a>
-          </Link>
+          <Button
+            className="red--text"
+            type="outlined"
+            href={`/encyclopaedia/${rawComposer.id}`}
+            isLink
+          >
+            Annuler
+          </Button>
           <span style={{ width: "10px", display: "inline-block" }}></span>
           <Button
             className="purple"

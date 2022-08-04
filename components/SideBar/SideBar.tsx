@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useContext, useRef, MouseEvent, memo } from "react";
+import { useCallback, useContext, useRef, MouseEvent, memo } from "react";
 import Link from "next/link";
 import sideBarStyles from "./SideBar.module.scss";
 import cn from "classnames";
@@ -8,14 +8,12 @@ import { Button, Avatar } from "..";
 
 interface SideBarProps {
   showSideBar: boolean;
-  title: string;
-  navLinks: [string, string, boolean?][];
-  authButton?: ReactElement;
+  navLinks: [string, string][];
   handleAuth?: boolean;
   onClose: () => void;
 }
 
-function SideBar({ showSideBar, title, navLinks, authButton, handleAuth, onClose }: SideBarProps) {
+function SideBar({ showSideBar, navLinks, handleAuth, onClose }: SideBarProps) {
   const { isAuthenticated, setModalOpen, signOut, currentUser } = useContext(AuthContext);
 
   const bgRef = useRef(null);
@@ -100,15 +98,13 @@ function SideBar({ showSideBar, title, navLinks, authButton, handleAuth, onClose
                 />
               )}
 
-              <ul className={sideBarStyles.navList}>
-                {navLinks.map(([name, url, isDisabled]) => (
+              <nav className={sideBarStyles.navList}>
+                {navLinks.map(([name, url]) => (
                   <Link href={url} key={name}>
-                    <a style={{ textDecoration: "none", color: "black" }}>
-                      <li className={cn({ disabled: isDisabled })}>{name}</li>
-                    </a>
+                    <a>{name}</a>
                   </Link>
                 ))}
-              </ul>
+              </nav>
               {handleAuth && (
                 <Button
                   className={cn("blue-grey", sideBarStyles.authButton)}

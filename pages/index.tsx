@@ -41,22 +41,18 @@ export default function Home() {
         />
         <Container large className="container">
           <h1 className="title">Votre boîte à outils musicale... découvrez la vite !</h1>
-          {!isAuthenticated && (
-            <a href="#authSection">
-              <Button className="blue-grey" size="x-large">
+          <div>
+            {!isAuthenticated && (
+              <Button className="blue-grey" size="x-large" href="#authSection" isLink>
                 C&rsquo;est parti !
               </Button>
-            </a>
-          )}
-          {isAuthenticated && (
-            <Link href="/score-library">
-              <a>
-                <Button className="blue-grey" size="x-large">
-                  C&rsquo;est parti !
-                </Button>
-              </a>
-            </Link>
-          )}
+            )}
+            {isAuthenticated && (
+              <Button className="blue-grey" size="x-large" href="/score-library" isLink>
+                C&rsquo;est parti !
+              </Button>
+            )}
+          </div>
         </Container>
         <div className="waves">
           <WavesSVG />

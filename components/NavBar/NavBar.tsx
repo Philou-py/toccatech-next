@@ -10,7 +10,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 interface NavBarProps {
   logoPath: string | StaticImageData;
   title: string;
-  navLinks: [string, string | (() => void), boolean?][];
+  navLinks: [string, string][];
   centerNavSmScreens?: boolean;
   onNavIconClick?: () => void;
   fixed?: boolean;
@@ -40,42 +40,18 @@ export default function NavBar({
   }, [setModalOpen, isAuthenticated, signOut]);
 
   const navMenu = (
-    <ul className={navBarStyles.navMenu}>
-      {navLinks.map(([name, action, requiresAuth]) => {
-        if (typeof action === "string") {
-          if (!(requiresAuth && !isAuthenticated)) {
-            return (
-              <Link href={action} key={name}>
-                <a style={{ textDecoration: "none", height: "100%" }}>
-                  <li>{name}</li>
-                </a>
-              </Link>
-            );
-          } else {
-            return (
-              <li className={navBarStyles.disabled} key={name}>
-                {name}
-              </li>
-            );
-          }
-        } else {
-          return (
-            <li
-              className={cn({ [navBarStyles.disabled]: requiresAuth })}
-              onClick={!(requiresAuth && !isAuthenticated) ? action : undefined}
-              key={name}
-            >
-              {name}
-            </li>
-          );
-        }
-      })}
+    <nav className={navBarStyles.navMenu}>
+      {navLinks.map(([name, url]) => (
+        <Link href={url} key={name}>
+          <a>{name}</a>
+        </Link>
+      ))}
       {handleAuth && (
-        <li onClick={signInSignOut} key={"sign-in-sign-out"}>
+        <div onClick={signInSignOut} key="sign-in-sign-out" className={navBarStyles.authTrigger}>
           {isAuthenticated ? "Déconnexion" : "Connexion"}
-        </li>
+        </div>
       )}
-    </ul>
+    </nav>
   );
 
   return (
@@ -102,7 +78,14 @@ export default function NavBar({
             />
           )}
           <Link href="/">
-            <a style={{ textDecoration: "none" }}>
+            <a
+              style={{
+                textDecoration: "none",
+                position: "relative",
+                left: "-28px",
+                margin: "0 auto",
+              }}
+            >
               <div className={navBarStyles.logoAndTitle}>
                 <div className={navBarStyles.logoContainer}>
                   <Image src={logoPath} alt="Logo" width={50} height={50} />

@@ -32,6 +32,11 @@
 
   .getStarted .container {
     margin-top: 80px;
+
+    & > div {
+      display: flex;
+      justify-content: center;
+    }
   }
 
   .arsenalRoom a {

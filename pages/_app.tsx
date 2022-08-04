@@ -41,8 +41,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             title="Toccatech"
             logoPath={toccatechLogo}
             navLinks={[
-              ["Encyclopédie", "/encyclopaedia", false],
-              ["Ma Partothèque", "/score-library", false],
+              ["Encyclopédie", "/encyclopaedia"],
+              ["Ma Partothèque", "/score-library"],
             ]}
             centerNavSmScreens
             onNavIconClick={handleNavIconClick}
@@ -51,10 +51,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <SideBar
             showSideBar={sideBarOpen}
             onClose={handleBgClick}
-            title="Toccatech"
             navLinks={[
               ["Encyclopédie", "/encyclopaedia"],
-              ["Ma Partothèque", "/score-library", true],
+              ["Ma Partothèque", "/score-library"],
             ]}
             handleAuth
           />

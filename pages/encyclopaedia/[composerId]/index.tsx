@@ -233,28 +233,24 @@ export default function ComposerDetails({
         <CardActions>
           <Spacer />
           {isAuthenticated && (
-            <Button className="red--text mr-4" type="outlined" onClick={handleDelete}>
+            <Button
+              className="red--text mr-4"
+              type="outlined"
+              onClick={handleDelete}
+              prependIcon="delete"
+            >
               Supprimer
             </Button>
           )}
-          {isAuthenticated && (
-            <Link href={`/encyclopaedia/${composer.id}/update`}>
-              <a>
-                <Button className="indigo darken-1" isDisabled={!isAuthenticated}>
-                  Envie de contribuer ?
-                </Button>
-              </a>
-            </Link>
-          )}
-          {!isAuthenticated && (
-            <Button
-              className="indigo darken-1"
-              isDisabled={!isAuthenticated}
-              title="Connectez-vous pour contribuer !"
-            >
-              Envie de contribuer ?
-            </Button>
-          )}
+          <Button
+            className="indigo darken-1"
+            isDisabled={!isAuthenticated}
+            href={`/encyclopaedia/${composer.id}/update`}
+            title={!isAuthenticated ? "Connectez-vous pour contribuer !" : undefined}
+            isLink
+          >
+            Envie de contribuer ?
+          </Button>
         </CardActions>
       </Card>
       <h4 className="textCenter" style={{ marginTop: "30px" }}>

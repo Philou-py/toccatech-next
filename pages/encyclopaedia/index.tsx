@@ -1,5 +1,4 @@
 import { useContext, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
 import { Container, Button, Card, CardHeader, CardContent, CardActions } from "../../components";
@@ -86,11 +85,9 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
       </Head>
       <div className={cn("heading", cbp)}>
         <h1 className="pageTitle">Encyclopédie</h1>
-        <Link href="/encyclopaedia/new-composer">
-          <a>
-            <Button className="blue-grey newComposer">Nouveau Compositeur</Button>
-          </a>
-        </Link>
+        <Button className="blue-grey newComposer" href="/encyclopaedia/new-composer" isLink>
+          Nouveau Compositeur
+        </Button>
       </div>
       <div className={cn("composersGrid", cbp)}>
         {composers.map((composer) => (
@@ -125,13 +122,14 @@ export default function Encyclopaedia({ rawComposers }: { rawComposers: RawCompo
               </ul>
             </CardContent>
             <CardActions>
-              <Link href={`/encyclopaedia/${composer.id}`}>
-                <a style={{ width: "100%" }}>
-                  <Button className="indigo darken-1" isFullWidth>
-                    En savoir plus...
-                  </Button>
-                </a>
-              </Link>
+              <Button
+                className="indigo darken-1"
+                isFullWidth
+                href={`/encyclopaedia/${composer.id}`}
+                isLink
+              >
+                En savoir plus...
+              </Button>
             </CardActions>
           </Card>
         ))}

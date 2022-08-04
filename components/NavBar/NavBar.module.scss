@@ -1,3 +1,5 @@
+$navMenuHeight: 60px;
+
 .navBar {
   background-color: #9e1030;
   box-shadow: 0 2px 4px 0 darkgrey;
@@ -15,7 +17,7 @@
 
   .navBarContainer {
     display: flex;
-    height: 60px;
+    height: $navMenuHeight;
   }
 
   .presentation {
@@ -59,34 +61,32 @@
     }
   }
 
-  ul.navMenu {
+  nav.navMenu {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     flex-grow: 1;
     margin: 0;
     padding: 0;
-    list-style-type: none;
 
-    li {
-      display: flex;
-      align-items: center;
-      height: 100%;
+    a,
+    .authTrigger {
+      height: $navMenuHeight;
+      line-height: $navMenuHeight;
       padding: 0 15px;
-      text-decoration: none;
       text-align: center;
-      color: white;
-      cursor: pointer;
+      text-decoration: none;
       transition: background-color 400ms ease;
+      color: white;
 
       &:hover {
         background-color: #755139;
       }
+    }
 
-      &.disabled {
-        // pointer-events: none;
-        cursor: not-allowed;
-      }
+    .authTrigger {
+      font-size: 18px;
+      cursor: pointer;
     }
   }
 

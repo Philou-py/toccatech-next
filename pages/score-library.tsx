@@ -335,20 +335,17 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
         actions: {
           rawContent: "",
           content: [
-            piece.scoreURL ? (
-              <a href={piece.scoreURL + "?attachment=true"} key={piece.id + "-download"}>
-                <Button type="icon" iconName="cloud_download" className="green--text" isFlat />
-              </a>
-            ) : (
-              <Button
-                type="icon"
-                iconName="cloud_download"
-                className="grey--text"
-                key={piece.id + "-download-disabled"}
-                isFlat
-                isDisabled
-              />
-            ),
+            <Button
+              type="icon"
+              iconName="cloud_download"
+              className={piece.scoreURL ? "green--text" : "grey--text"}
+              isFlat
+              isLink
+              href={piece.scoreURL + "?attachment=true"}
+              key={piece.id + "-download"}
+              isDisabled={!piece.scoreURL}
+              title={!piece.scoreURL ? "Aucune partition n'est associée à ce morceau !" : undefined}
+            />,
             <Button
               type="icon"
               iconName="edit"
@@ -400,7 +397,7 @@ export default function ScoreLibrary({ composers }: { composers: Composer[] }) {
       {isAuthenticated && (
         <>
           <h1 className="pageTitle textCenter">Ma Partothèque Personnelle</h1>
-          <div className="textCenter" style={{ margin: "30px 0 30px" }}>
+          <div style={{ display: "flex", justifyContent: "center", margin: "30px 0 30px" }}>
             <Button
               className="indigo darken-1"
               onClick={() => {
