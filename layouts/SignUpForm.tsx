@@ -16,9 +16,10 @@ import { AuthContext } from "../contexts/AuthContext";
 interface ConnexionFormProps {
   alreadyAnAccountFunc?: () => void;
   onCompleted?: () => void;
+  className?: string;
 }
 
-function SignUpForm({ alreadyAnAccountFunc, onCompleted }: ConnexionFormProps) {
+function SignUpForm({ alreadyAnAccountFunc, onCompleted, className }: ConnexionFormProps) {
   const { setCurrentUser, setIsAuthenticated } = useContext(AuthContext);
   const { haveASnack } = useContext(SnackContext);
   const [isLoading] = useState(false);
@@ -115,7 +116,7 @@ function SignUpForm({ alreadyAnAccountFunc, onCompleted }: ConnexionFormProps) {
   }, [uploadImage, newUser, haveASnack, setCurrentUser, setIsAuthenticated, onCompleted]);
 
   return (
-    <Card cssWidth={alreadyAnAccountFunc ? "clamp(300px, 40%, 600px)" : ""}>
+    <Card cssWidth={alreadyAnAccountFunc ? "clamp(300px, 40%, 600px)" : ""} className={className}>
       <CardHeader title={<h3>Inscription</h3>} centerTitle />
       <CardContent>
         <Form>

@@ -1,54 +1,31 @@
+.bg {
+  top: 0;
+  left: 0;
+  position: fixed;
+  background: rgba(#000, 0.5);
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
 .modal {
-  .bg {
-    top: 0;
-    left: 0;
-    position: fixed;
-    background: rgba(#000, 0.5);
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  visibility: hidden;
+  transform: scale(0);
+  transition: transform 0.3s ease, visibility 0.3s ease;
 
-  .tBgEnter,
-  .tBgAppear {
-    opacity: 0;
-  }
-
-  .tBgEnterActive,
-  .tBgAppearActive {
-    opacity: 1;
-    transition: opacity 0.3s;
-  }
-
-  .tBgExit {
-    opacity: 1;
-  }
-
-  .tBgExitActive {
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .tModalEnter,
-  .tModalAppear {
-    transform: scale(0);
-  }
-
-  .tModalEnterActive,
-  .tModalAppearActive {
+  &.show {
     transform: scale(1);
-    transition: transform 0.3s;
-  }
-
-  .tModalExit {
-    transform: scale(1);
-  }
-
-  .tModalExitActive {
-    transform: scale(0);
-    transition: transform 0.3s;
+    visibility: visible;
   }
 }

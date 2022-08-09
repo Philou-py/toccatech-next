@@ -16,9 +16,10 @@ import {
 interface ConnexionFormProps {
   noAccountFunc?: () => void;
   onCompleted?: () => void;
+  className?: string;
 }
 
-function ConnexionForm({ noAccountFunc, onCompleted }: ConnexionFormProps) {
+function ConnexionForm({ noAccountFunc, onCompleted, className }: ConnexionFormProps) {
   const { setCurrentUser, setIsAuthenticated } = useContext(AuthContext);
   const { haveASnack } = useContext(SnackContext);
   const [isLoading] = useState(false);
@@ -79,7 +80,7 @@ function ConnexionForm({ noAccountFunc, onCompleted }: ConnexionFormProps) {
   }, [user, haveASnack, setCurrentUser, setIsAuthenticated, onCompleted]);
 
   return (
-    <Card cssWidth={noAccountFunc ? "clamp(300px, 40%, 600px)" : ""}>
+    <Card cssWidth={noAccountFunc ? "clamp(300px, 40%, 600px)" : ""} className={className}>
       <CardHeader title={<h3>Connexion</h3>} centerTitle />
       <CardContent>
         <Form>

@@ -1,6 +1,5 @@
 import snackBarStyles from "./SnackBar.module.scss";
-import { CSSTransition } from "react-transition-group";
-import { ReactElement, useState, useRef } from "react";
+import { ReactElement } from "react";
 import cn from "classnames";
 
 interface SnackBarProps {
@@ -10,35 +9,17 @@ interface SnackBarProps {
 }
 
 export default function SnackBar({ children, showSnackBar, snackBarType }: SnackBarProps) {
-  const refForTransition = useRef(null);
-
   return (
-    <div className={snackBarStyles.snackBarComp}>
-      <CSSTransition
-        nodeRef={refForTransition}
-        in={showSnackBar}
-        timeout={500}
-        mountOnEnter
-        unmountOnExit
-        classNames={{
-          enter: snackBarStyles.tSnackBarEnter,
-          enterActive: snackBarStyles.tSnackBarEnterActive,
-          exit: snackBarStyles.tSnackBarExit,
-          exitActive: snackBarStyles.tSnackBarExitActive,
-        }}
+    <div className={cn(snackBarStyles.snackBarWrapper, { [snackBarStyles.show]: showSnackBar })}>
+      <div
+        className={cn(snackBarStyles.snackBar, {
+          green: snackBarType == "success",
+          blue: snackBarType == "info",
+          red: snackBarType == "error",
+        })}
       >
-        <div className={snackBarStyles.snackBarWrapper} ref={refForTransition}>
-          <div
-            className={cn(snackBarStyles.snackBar, {
-              green: snackBarType == "success",
-              blue: snackBarType == "info",
-              red: snackBarType == "error",
-            })}
-          >
-            {children}
-          </div>
-        </div>
-      </CSSTransition>
+        {children}
+      </div>
     </div>
   );
 }
