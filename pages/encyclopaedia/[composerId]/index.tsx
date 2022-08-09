@@ -176,7 +176,7 @@ export default function ComposerDetails({
     }
   }, [currentUser, haveASnack, rawComposer, router]);
 
-  const pageTitle = useMemo(() => `${composer.name} - Toccatech`, [composer.name]);
+  const pageTitle = useMemo(() => `${composer.name} - Encyclopédie Toccatech`, [composer.name]);
   const pageDescription = useMemo(
     () =>
       `${composer.biography.slice(0, 150).replace("\n", " ")}... - Tout savoir sur ${

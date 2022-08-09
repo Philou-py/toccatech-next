@@ -270,7 +270,7 @@ export default function ModifyComposerInfo({ rawComposer }: { rawComposer: RawCo
     sendUpdateInfo(newURL);
   }, [rawNewComposer, sendUpdateInfo, uploadImage]);
 
-  const pageTitle = `${rawComposer.name} - Contribuer - Toccatech`;
+  const pageTitle = `${rawComposer.name} - Contribuer - Encyclopédie Toccatech`;
   const pageDescription = `${rawComposer.biography.slice(
     0,
     50
