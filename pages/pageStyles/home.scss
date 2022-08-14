@@ -1,0 +1,152 @@
+.home {
+  .title {
+    font-size: 63px;
+    color: black;
+    font-weight: 500;
+    margin-bottom: 30px;
+    line-height: 1;
+  }
+
+  &.xs .title {
+    font-size: 55px;
+  }
+
+  .getStarted,
+  .easyTools,
+  .arsenalRoom {
+    height: 500px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .getStarted .container,
+  .arsenalRoom .container {
+    // Appliquer 'position: relative' au container au dessus des images
+    // permet de faire en sorte qu'il reste au dessus, car un élément
+    // avec une position non statique est positionné au dessus d'un
+    // élément avec une position statique.
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .getStarted .container {
+    margin-top: 80px;
+
+    & > div {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .arsenalRoom a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding-top: 200px;
+  }
+
+  .waves svg,
+  .waves2 svg,
+  .layeredWaves svg,
+  .peakWaves svg,
+  .smallWaves svg {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+  }
+
+  .waves svg,
+  .waves2 svg,
+  .smallWaves svg {
+    bottom: 0;
+  }
+
+  .layeredWaves svg,
+  .peakWaves svg {
+    top: 0;
+  }
+
+  .useCases {
+    display: flex;
+    margin-top: 40px;
+
+    &.xs {
+      flex-direction: column;
+
+      & > div {
+        margin: 0;
+        width: 100%;
+      }
+    }
+
+    // Flex items
+    & > div {
+      margin: 0 1%;
+      width: 31.33%;
+      text-align: center;
+    }
+
+    .icon {
+      color: #795548;
+      font-size: 48px;
+    }
+
+    h4 {
+      font-weight: 400;
+    }
+  }
+
+  .easyTools {
+    h2 {
+      position: absolute;
+      z-index: 2;
+      top: 150px;
+      right: 50%;
+      bottom: 150px;
+      left: 10%;
+      // margin: 150px 50% 150px 10%;
+      text-align: center;
+      color: #9b4c06;
+    }
+
+    &.sm h2 {
+      right: 25%;
+    }
+
+    &.xs h2 {
+      right: 10%;
+      top: 100px;
+    }
+  }
+
+  .contact {
+    padding: 30px 0;
+
+    h3 {
+      text-align: center;
+    }
+
+    p {
+      text-align: justify;
+    }
+  }
+
+  .authSection {
+    display: flex;
+
+    & > div {
+      flex-grow: 1;
+      margin: 2%;
+    }
+
+    &.xs,
+    &.sm {
+      flex-direction: column;
+    }
+  }
+}
